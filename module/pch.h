@@ -13,4 +13,7 @@
 #include <ntstatus.h>
 #pragma warning( pop )
 
+#define KILOBYTE	1024
+#define MEGABYTE	1024 * KILOBYTE
+
 #include "log.h"

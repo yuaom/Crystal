@@ -1,33 +1,46 @@
 #include "pch.h"
 #include "entrypoints.h"
 
-extern "C" HRESULT APIENTRY OpenAdapter10( D3D10DDIARG_OPENADAPTER* arg1 )
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C HRESULT APIENTRY OpenAdapter10( D3D10DDIARG_OPENADAPTER* arg1 )
 {
+	LOG_DLL_ENTRY;
 	return S_OK;
 }
 
-extern "C" HRESULT APIENTRY OpenAdapter10_2( D3D10DDIARG_OPENADAPTER* arg1 )
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C HRESULT APIENTRY OpenAdapter10_2( D3D10DDIARG_OPENADAPTER* arg1 )
 {
+	LOG_DLL_ENTRY;
 	return S_OK;
 }
 
-EXTERN_C _Check_return_ NTSTATUS APIENTRY D3DKMTCreateDevice( _Inout_ D3DKMT_CREATEDEVICE* )
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( _Inout_ D3DKMT_CREATEDEVICE* )
 {
+	LOG_DLL_ENTRY;
 	return 1;
 }
 
-EXTERN_C _Check_return_ NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName( _Inout_ D3DKMT_OPENADAPTERFROMGDIDISPLAYNAME* )
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName( _Inout_ D3DKMT_OPENADAPTERFROMGDIDISPLAYNAME* )
 {
+	LOG_DLL_ENTRY;
 	return 1;
 }
 
-EXTERN_C _Check_return_ NTSTATUS APIENTRY D3DKMTOpenAdapterFromDeviceName( _Inout_ D3DKMT_OPENADAPTERFROMDEVICENAME* )
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromDeviceName( _Inout_ D3DKMT_OPENADAPTERFROMDEVICENAME* )
 {
+	LOG_DLL_ENTRY;
 	return 1;
 }
 
-EXTERN_C _Check_return_ NTSTATUS APIENTRY D3DKMTQueryAdapterInfo( _Inout_ CONST D3DKMT_QUERYADAPTERINFO* adapterInfo )
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo( _Inout_ CONST D3DKMT_QUERYADAPTERINFO* adapterInfo )
 {
+	LOG_DLL_ENTRY;
+
 	NTSTATUS result = STATUS_SUCCESS;
 
 	switch (adapterInfo->Type)

@@ -10,6 +10,7 @@ BOOL WINAPI DllMain(
 	switch( reason )
 	{
 	case DLL_PROCESS_ATTACH:
+		Log::OnDllProcessAttach();
 		break;
 
 	case DLL_THREAD_ATTACH:
@@ -19,6 +20,7 @@ BOOL WINAPI DllMain(
 		break;
 
 	case DLL_PROCESS_DETACH:
+		Log::OnDllProcessDetach();
 		break;
 	}
 

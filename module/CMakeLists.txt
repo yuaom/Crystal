@@ -4,15 +4,23 @@ set( MODULE_HEADERS
 	dllmain.h
 	entrypoints.h 
 	log.h
+	dllcontext.h
+	debugvars.h
 	)
 
 set( MODULE_SOURCE 
 	dllmain.cpp
 	entrypoints.cpp 
+	dllcontext.cpp
 	log.cpp
+	debugvars.cpp
 	)
 
 source_group( "PCH" FILES 
+	dllcontext.h
+	dllcontext.cpp
+	debugvars.h
+	debugvars.cpp
 	pch.cpp
 	pch.h
 	log.cpp
@@ -35,3 +43,5 @@ list(APPEND MODULE_SOURCE pch.cpp )
 add_library( Crystal SHARED ${MODULE_SOURCE} ${MODULE_HEADERS} exports.def )
 target_include_directories(Crystal PRIVATE ${WDK_KM})
 set_target_properties( Crystal PROPERTIES FOLDER "Crystal")
+set_property(TARGET Crystal PROPERTY CXX_STANDARD 17)
+set_property(TARGET Crystal PROPERTY CXX_STANDARD_REQUIRED ON)

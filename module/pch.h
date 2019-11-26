@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <assert.h>
+#include <variant>
 
 #include <Windows.h>
 #include <d3d10umddi.h>
@@ -16,4 +17,10 @@
 #define KILOBYTE	1024
 #define MEGABYTE	1024 * KILOBYTE
 
+namespace Utilities
+{
+	bool GetEnvironmentVariable( const std::wstring& name, std::wstring& out );
+}
+
+#include "dllcontext.h"
 #include "log.h"

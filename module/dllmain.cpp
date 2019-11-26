@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "dllmain.h"
 
 BOOL WINAPI DllMain(
 	HINSTANCE const instance,
@@ -10,7 +9,7 @@ BOOL WINAPI DllMain(
 	switch( reason )
 	{
 	case DLL_PROCESS_ATTACH:
-		Log::OnDllProcessAttach();
+		Crystal::DllContext::OnDllProcessAttach();
 		break;
 
 	case DLL_THREAD_ATTACH:
@@ -20,7 +19,7 @@ BOOL WINAPI DllMain(
 		break;
 
 	case DLL_PROCESS_DETACH:
-		Log::OnDllProcessDetach();
+		Crystal::DllContext::OnDllProcessDetach();
 		break;
 	}
 

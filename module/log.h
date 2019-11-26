@@ -3,20 +3,16 @@
 struct Log
 {
 public:
+
 	enum MESSAGE_TYPE
 	{
 		MESSAGE_DLL_ENTRY
 	};
 
-	static void OnDllProcessAttach();
+	Log();
+	~Log();
 
-	static void OnDllProcessDetach();
-
-	static void Message( MESSAGE_TYPE type, const char* str );
-
-private:
-
-	static std::unique_ptr<Log>	m_pLog;
+	void Message( MESSAGE_TYPE type, const char* str );
 };
 
-#define LOG_DLL_ENTRY	Log::Message( Log::MESSAGE_DLL_ENTRY, __FUNCTION__ )
+#define LOG_DLL_ENTRY	Crystal::DllContext::get()->getLog()->Message( Log::MESSAGE_DLL_ENTRY, __FUNCTION__ )

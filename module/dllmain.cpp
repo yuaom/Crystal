@@ -9,7 +9,7 @@ BOOL WINAPI DllMain(
 	switch( reason )
 	{
 	case DLL_PROCESS_ATTACH:
-		Crystal::DllContext::OnDllProcessAttach();
+		Crystal::DllContext::OnDllProcessAttach( instance );
 		break;
 
 	case DLL_THREAD_ATTACH:

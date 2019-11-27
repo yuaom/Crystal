@@ -7,11 +7,11 @@ namespace Crystal
 	std::unique_ptr<DllContext>	DllContext::m_pContext = nullptr;
 
 	////////////////////////////////////////////////////////////////////////////////
-	void DllContext::OnDllProcessAttach()
+	void DllContext::OnDllProcessAttach( HINSTANCE hInstance )
 	{
 		if( m_pContext == nullptr )
 		{
-			m_pContext = std::make_unique<DllContext>();
+			m_pContext = std::make_unique<DllContext>( hInstance );
 		}
 	}
 
@@ -22,10 +22,12 @@ namespace Crystal
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	DllContext::DllContext() :
+	DllContext::DllContext( HINSTANCE hInst ) :
 		m_pDebugVars( std::make_unique<DebugVariables>() ),
 		m_pLog( std::make_unique<Log>() ),
-		m_pDisplays( std::make_unique<Displays>() )
+		m_pDisplays( std::make_unique<Displays>() ),
+		m_pKmdAdapterManger( std::make_unique<KmdAdapterManager>() ),
+		m_ModuleHandle( static_cast<HMODULE>( hInst ) )
 	{
 
 	}
@@ -58,5 +60,17 @@ namespace Crystal
 	std::unique_ptr<Displays>& DllContext::getDisplays()
 	{
 		return m_pDisplays;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	std::unique_ptr<KmdAdapterManager>& DllContext::getKmdAdapterManager()
+	{
+		return m_pKmdAdapterManger;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	HMODULE DllContext::GetModuleHandle() const
+	{
+		return m_ModuleHandle;
 	}
 }

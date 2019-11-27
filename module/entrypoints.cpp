@@ -31,20 +31,21 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 {
 	LOG_DLL_ENTRY;
 
-	Crystal::KmdAdapter* pAdapter = new ( std::nothrow ) Crystal::KmdAdapter();
-
 	auto& pDisplays = Crystal::DllContext::get()->getDisplays();
 
 	Crystal::Displays::find_result_itr_t display;
 	if( pDisplays->FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
 	{
-		pOpenAdapterFromGdiDisplayName->hAdapter				= static_cast<D3DKMT_HANDLE>( 0x1 );
+		auto& pKmdAdapterManger = Crystal::DllContext::get()->getKmdAdapterManager();
+
+		auto& pAdapter = pKmdAdapterManger->CreateAdapter();
+
+		pOpenAdapterFromGdiDisplayName->hAdapter				= pAdapter->GetHandle();
 		pOpenAdapterFromGdiDisplayName->VidPnSourceId			= display->GetVidPinSourceId();
 		pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart		= 0;
-		pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart	= 1;
+		pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart	= pAdapter->GetHandle();
 	}
 
-	
 	return STATUS_SUCCESS;
 }
 
@@ -64,6 +65,8 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
 
 	NTSTATUS result = STATUS_SUCCESS;
 
+	auto& pDLLContext = Crystal::DllContext::get();
+
 	switch (adapterInfo->Type)
 	{
 	case KMTQAITYPE_UMDRIVERNAME:
@@ -73,7 +76,15 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
 		if (pFileNameInfo->Version == KMTUMDVERSION_DX10 ||
 			pFileNameInfo->Version == KMTUMDVERSION_DX11)
 		{
-			wcscpy( pFileNameInfo->UmdFileName, L"Crystal Rasterizer" );
+			DWORD dw = GetModuleFileNameW(
+				pDLLContext->GetModuleHandle(),
+				pFileNameInfo->UmdFileName,
+				_countof( pFileNameInfo->UmdFileName ) );
+
+			if( dw == 0 )
+			{
+				result = STATUS_INVALID_PARAMETER;
+			}
 		}
 		else
 		{
@@ -89,10 +100,14 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
 	break;
 	case KMTQAITYPE_GETSEGMENTSIZE:
 	{
-		D3DKMT_SEGMENTSIZEINFO* pSegmentInfo = reinterpret_cast<D3DKMT_SEGMENTSIZEINFO*>(adapterInfo->pPrivateDriverData);
-		pSegmentInfo->DedicatedVideoMemorySize  = 64 * MEGABYTE;
-		pSegmentInfo->DedicatedSystemMemorySize = 64 * MEGABYTE;
-		pSegmentInfo->SharedSystemMemorySize    = 64 * MEGABYTE;
+		MEMORYSTATUSEX mem_status;
+		mem_status.dwLength = sizeof( mem_status );
+		GlobalMemoryStatusEx( &mem_status );
+
+		D3DKMT_SEGMENTSIZEINFO* psi = reinterpret_cast<D3DKMT_SEGMENTSIZEINFO*>( adapterInfo->pPrivateDriverData );
+		psi->DedicatedVideoMemorySize	= 0;
+		psi->DedicatedSystemMemorySize	= 0;
+		psi->SharedSystemMemorySize		= std::max<std::uint64_t>( mem_status.ullTotalPhys / 2, 64 * MEGABYTE );
 	}
 	break;
 	default:

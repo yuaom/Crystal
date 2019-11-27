@@ -2,6 +2,7 @@
 #include "log.h"
 #include "debugvars.h"
 #include "display.h"
+#include "kmd_adapter.h"
 
 namespace Crystal
 {
@@ -10,11 +11,11 @@ namespace Crystal
 	public:
 		using ptr_t = std::unique_ptr<DllContext>;
 
-		DllContext::DllContext();
+		DllContext::DllContext( HINSTANCE hInst );
 
 		DllContext::~DllContext();
 
-		static void OnDllProcessAttach();
+		static void OnDllProcessAttach( HINSTANCE hInst );
 
 		static void OnDllProcessDetach();
 
@@ -23,6 +24,9 @@ namespace Crystal
 		std::unique_ptr<Log>&				getLog();
 		std::unique_ptr<DebugVariables>&	getDebugVars();
 		std::unique_ptr<Displays>&			getDisplays();
+		std::unique_ptr<KmdAdapterManager>& getKmdAdapterManager();
+
+		HMODULE	GetModuleHandle() const;
 
 	private:
 		static std::unique_ptr<DllContext>	m_pContext;
@@ -30,6 +34,9 @@ namespace Crystal
 		std::unique_ptr<DebugVariables>	m_pDebugVars;
 		std::unique_ptr<Log>			m_pLog;
 
-		std::unique_ptr<Displays>		m_pDisplays;
+		std::unique_ptr<Displays>			m_pDisplays;
+		std::unique_ptr<KmdAdapterManager>	m_pKmdAdapterManger;
+
+		HMODULE	m_ModuleHandle;
 	};
 }

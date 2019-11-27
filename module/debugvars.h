@@ -15,11 +15,11 @@ namespace Crystal
 
 			bool										m_IsSet;
 			TYPE										m_Type;
-			std::variant<std::uint32_t, std::wstring>	m_Value;
+			std::variant<uint32_t, std::wstring>	m_Value;
 
 			Entry( const wchar_t* name, TYPE type );
 
-			std::uint32_t	asUint32();
+			uint32_t	asUint32();
 			std::wstring&	asString();
 
 			bool			isSet();

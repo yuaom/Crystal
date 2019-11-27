@@ -92,7 +92,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
 		D3DKMT_SEGMENTSIZEINFO* psi = reinterpret_cast<D3DKMT_SEGMENTSIZEINFO*>( adapterInfo->pPrivateDriverData );
 		psi->DedicatedVideoMemorySize	= 0;
 		psi->DedicatedSystemMemorySize	= 0;
-		psi->SharedSystemMemorySize		= std::max<std::uint64_t>( mem_status.ullTotalPhys / 2, 64 * MEGABYTE );
+		psi->SharedSystemMemorySize		= std::max<uint64_t>( mem_status.ullTotalPhys / 2, 64 * MEGABYTE );
 	}
 	break;
 	default:

@@ -11,10 +11,10 @@ namespace Crystal
 		class Display
 		{
 		public:
-			Display( const DISPLAY_DEVICEW& desc, std::uint32_t VidPinSourceId );
+			Display( const DISPLAY_DEVICEW& desc, uint32_t VidPinSourceId );
 
 			const std::wstring& GetDeviceName() const;
-			std::uint32_t		GetVidPinSourceId() const;
+			uint32_t		GetVidPinSourceId() const;
 
 			void				SetMonitor( HMONITOR monitor );
 
@@ -22,7 +22,7 @@ namespace Crystal
 			std::wstring	m_DeviceName;
 			DISPLAY_DEVICEW m_Desc;
 			HMONITOR		m_hMonitor;
-			std::uint32_t	m_VidPinSourceId;
+			uint32_t	m_VidPinSourceId;
 		};
 
 		////////////////////////////////////////////////////////////////////////////////

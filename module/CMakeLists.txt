@@ -60,8 +60,8 @@ source_group( "Source" FILES
 source_group( "Source\\KMD" FILES
 	kmd_adapter.h
 	kmd_adapter.cpp
-	entrypoints.h
-	entrypoints.cpp
+	kmd_entrypoints.h
+	kmd_entrypoints.cpp
 	)
 
 source_group( "Source\\UMD" FILES

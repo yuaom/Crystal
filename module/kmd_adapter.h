@@ -32,8 +32,8 @@ namespace Crystal
 
 	private:
 
-		static D3DKMT_HANDLE ListIndexToKmtHandle( std::uint32_t i );
-		static std::uint32_t KmtHandleToListIndex( D3DKMT_HANDLE handle );
+		static D3DKMT_HANDLE ListIndexToKmtHandle( uint32_t i );
+		static uint32_t KmtHandleToListIndex( D3DKMT_HANDLE handle );
 
 		std::vector<KmdAdapter::ptr_t> m_Adapters;
 	};

@@ -17,6 +17,12 @@ namespace Crystal
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
+		Adapter* Adapter::FromHandle( D3D10DDI_HADAPTER handle )
+		{
+			return reinterpret_cast<Adapter*>( handle.pDrvPrivate );
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
 		Adapter::Adapter( D3D10DDIARG_OPENADAPTER* pOpenAdapter ) :
 			m_hRuntimeHandle( pOpenAdapter->hRTAdapter ),
 			m_Interface( pOpenAdapter->Interface ),
@@ -28,17 +34,31 @@ namespace Crystal
 				pOpenAdapter->pAdapterCallbacks,
 				sizeof( D3DDDI_ADAPTERCALLBACKS ) );
 
-			pOpenAdapter->pAdapterFuncs_2->pfnCalcPrivateDeviceSize = CalcPrivateDeviceSize;
-			pOpenAdapter->pAdapterFuncs_2->pfnCreateDevice			= CreateDevice;
-			pOpenAdapter->pAdapterFuncs_2->pfnCloseAdapter			= CloseAdapter;
-			pOpenAdapter->pAdapterFuncs_2->pfnGetCaps				= GetCaps;
-			pOpenAdapter->pAdapterFuncs_2->pfnGetSupportedVersions	= GetSupportedVersions;
+			m_SupportedVersions = {
+				D3D11_1_DDI_SUPPORTED,
+				D3D11_0_DDI_SUPPORTED,
+				D3D10_0_DDI_SUPPORTED,
+				D3D10_1_DDI_SUPPORTED
+			};
+
+			pOpenAdapter->pAdapterFuncs_2->pfnCalcPrivateDeviceSize = UMD::CalcPrivateDeviceSize;
+			pOpenAdapter->pAdapterFuncs_2->pfnCreateDevice			= UMD::CreateDevice;
+			pOpenAdapter->pAdapterFuncs_2->pfnCloseAdapter			= UMD::CloseAdapter;
+			pOpenAdapter->pAdapterFuncs_2->pfnGetCaps				= UMD::GetCaps;
+			pOpenAdapter->pAdapterFuncs_2->pfnGetSupportedVersions	= UMD::GetSupportedVersions;
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
 		Adapter::~Adapter()
 		{
 
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		/// @brief Returns the supported API versions
+		const std::vector<uint64_t>& Adapter::GetSupportedVersions() const
+		{
+			return m_SupportedVersions;
 		}
 
 #pragma endregion

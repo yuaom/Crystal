@@ -9,7 +9,7 @@ namespace Crystal
 	/// @input VidPinSourceId vid pin source id
 	Displays::Display::Display( 
 		const DISPLAY_DEVICEW& desc, 
-		std::uint32_t VidPinSourceId )
+		uint32_t VidPinSourceId )
 	{
 		m_DeviceName		= std::wstring( desc.DeviceName );
 		m_Desc				= desc;
@@ -24,7 +24,7 @@ namespace Crystal
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	std::uint32_t Displays::Display::GetVidPinSourceId() const
+	uint32_t Displays::Display::GetVidPinSourceId() const
 	{
 		return m_VidPinSourceId;
 	}
@@ -40,7 +40,7 @@ namespace Crystal
 	{
 		DISPLAY_DEVICEW displayDesc = { 0 };
 		displayDesc.cb = sizeof( DISPLAY_DEVICEW );
-		std::uint32_t i = 0;
+		uint32_t i = 0;
 		while( EnumDisplayDevicesW( nullptr, i, &displayDesc, 0 ) )
 		{
 			m_Displays.emplace_back( displayDesc, i++ );

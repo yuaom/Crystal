@@ -21,7 +21,7 @@ namespace Crystal
 			{
 			case TYPE_UINT:
 			{
-				std::uint32_t uintValue = 0;
+				uint32_t uintValue = 0;
 				std::wstringstream s( value );
 				s >> uintValue;
 				m_Value = uintValue;
@@ -34,9 +34,9 @@ namespace Crystal
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	std::uint32_t DebugVariables::Entry::asUint32()
+	uint32_t DebugVariables::Entry::asUint32()
 	{
-		return std::get<std::uint32_t>( m_Value );
+		return std::get<uint32_t>( m_Value );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

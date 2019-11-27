@@ -36,15 +36,15 @@ namespace Crystal
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	D3DKMT_HANDLE KmdAdapterManager::ListIndexToKmtHandle( std::uint32_t i )
+	D3DKMT_HANDLE KmdAdapterManager::ListIndexToKmtHandle( uint32_t i )
 	{
 		return static_cast<D3DKMT_HANDLE>( i + 1 );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	std::uint32_t KmdAdapterManager::KmtHandleToListIndex( D3DKMT_HANDLE handle )
+	uint32_t KmdAdapterManager::KmtHandleToListIndex( D3DKMT_HANDLE handle )
 	{
-		return static_cast<std::uint32_t>( handle ) - 1;
+		return static_cast<uint32_t>( handle ) - 1;
 	}
 
 #pragma endregion

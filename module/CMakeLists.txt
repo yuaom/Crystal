@@ -1,14 +1,18 @@
 # Module headers / source
 set( MODULE_HEADERS
+	display.h
 	pch.h
 	dllmain.h
 	entrypoints.h 
 	log.h
 	dllcontext.h
 	debugvars.h
+	kmd_adapter.h
 	)
 
 set( MODULE_SOURCE 
+	display.cpp
+	kmd_adapter.cpp
 	dllmain.cpp
 	entrypoints.cpp 
 	dllcontext.cpp
@@ -17,20 +21,29 @@ set( MODULE_SOURCE
 	)
 
 source_group( "PCH" FILES 
-	dllcontext.h
-	dllcontext.cpp
 	debugvars.h
 	debugvars.cpp
 	pch.cpp
 	pch.h
 	log.cpp
-	log.h )
+	log.h
+	)
 
 source_group( "Source" FILES
+	display.h
+	display.cpp
+	dllcontext.h
+	dllcontext.cpp
 	dllmain.h
 	dllmain.cpp
 	entrypoints.h
-	entrypoints.cpp )
+	entrypoints.cpp
+	)
+
+source_group( "Source\\KMD" FILES
+	kmd_adapter.h
+	kmd_adapter.cpp
+	)
 
 # Precompiled Header
 set_source_files_properties( pch.cpp PROPERTIES COMPILE_FLAGS "/Ycpch.h" )

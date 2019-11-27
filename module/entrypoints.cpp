@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "entrypoints.h"
 
+#include "kmd_adapter.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C HRESULT APIENTRY OpenAdapter10( D3D10DDIARG_OPENADAPTER* arg1 )
 {
@@ -24,10 +26,25 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName( 
+EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 	D3DKMT_OPENADAPTERFROMGDIDISPLAYNAME* pOpenAdapterFromGdiDisplayName )
 {
 	LOG_DLL_ENTRY;
+
+	Crystal::KmdAdapter* pAdapter = new ( std::nothrow ) Crystal::KmdAdapter();
+
+	auto& pDisplays = Crystal::DllContext::get()->getDisplays();
+
+	Crystal::Displays::find_result_itr_t display;
+	if( pDisplays->FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
+	{
+		pOpenAdapterFromGdiDisplayName->hAdapter				= static_cast<D3DKMT_HANDLE>( 0x1 );
+		pOpenAdapterFromGdiDisplayName->VidPnSourceId			= display->GetVidPinSourceId();
+		pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart		= 0;
+		pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart	= 1;
+	}
+
+	
 	return STATUS_SUCCESS;
 }
 

@@ -1,34 +1,38 @@
 #include "pch.h"
 #include "log.h"
 
-////////////////////////////////////////////////////////////////////////////////
-Log::Log()
+namespace Crystal
 {
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-Log::~Log()
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Log::Message( MESSAGE_TYPE type, const char* str )
-{
-	if( DV_VALUE( EnableLog ) )
+	////////////////////////////////////////////////////////////////////////////////
+	Log::Log()
 	{
-		std::stringstream s;
-		s << "CRYSTAL : Module : ";
 
-		switch( type )
-		{
-		case MESSAGE_DLL_ENTRY:	s << "DllEntry"; break;
-		default: assert( 0 ); break;
-		}
-
-		s << " : " << str << "\n";
-
-		OutputDebugStringA( s.str().c_str() );
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	Log::~Log()
+	{
+
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	void Log::Message( MESSAGE_TYPE type, const char* str )
+	{
+		if( DV_VALUE( EnableLog ) )
+		{
+			std::stringstream s;
+			s << "CRYSTAL : Module : ";
+
+			switch( type )
+			{
+			case MESSAGE_DLL_ENTRY:	s << "DllEntry"; break;
+			default: assert( 0 ); break;
+			}
+
+			s << " : " << str << "\n";
+
+			OutputDebugStringA( s.str().c_str() );
+		}
+	}
+
 }

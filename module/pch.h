@@ -5,6 +5,8 @@
 #include <sstream>
 #include <assert.h>
 #include <variant>
+#include <vector>
+#include <algorithm>
 
 #include <Windows.h>
 #include <d3d10umddi.h>

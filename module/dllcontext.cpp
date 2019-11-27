@@ -24,7 +24,8 @@ namespace Crystal
 	////////////////////////////////////////////////////////////////////////////////
 	DllContext::DllContext() :
 		m_pDebugVars( std::make_unique<DebugVariables>() ),
-		m_pLog( std::make_unique<Log>() )
+		m_pLog( std::make_unique<Log>() ),
+		m_pDisplays( std::make_unique<Displays>() )
 	{
 
 	}
@@ -51,5 +52,11 @@ namespace Crystal
 	std::unique_ptr<DebugVariables>& DllContext::getDebugVars()
 	{
 		return m_pDebugVars;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	std::unique_ptr<Displays>& DllContext::getDisplays()
+	{
+		return m_pDisplays;
 	}
 }

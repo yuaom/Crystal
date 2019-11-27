@@ -13,6 +13,8 @@ namespace Crystal
 
 			static void Create( D3D10DDIARG_OPENADAPTER* pOpenAdapter );
 
+			static void Destroy( D3D10DDI_HADAPTER hAdapter );
+
 			static Adapter* FromHandle( D3D10DDI_HADAPTER handle );
 
 			const std::vector<uint64_t>& Adapter::GetSupportedVersions() const;

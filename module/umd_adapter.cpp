@@ -17,6 +17,13 @@ namespace Crystal
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
+		void Adapter::Destroy( D3D10DDI_HADAPTER hAdapter )
+		{
+			Adapter* pAdapter = FromHandle( hAdapter );
+			delete pAdapter;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
 		Adapter* Adapter::FromHandle( D3D10DDI_HADAPTER handle )
 		{
 			return reinterpret_cast<Adapter*>( handle.pDrvPrivate );
@@ -67,6 +74,10 @@ namespace Crystal
 		////////////////////////////////////////////////////////////////////////////////
 		HRESULT APIENTRY CloseAdapter( D3D10DDI_HADAPTER hAdapter )
 		{
+			LOG_DLL_ENTRY;
+
+			Adapter::Destroy( hAdapter );
+
 			return S_OK;
 		}
 

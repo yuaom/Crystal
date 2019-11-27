@@ -23,7 +23,7 @@ int main()
 {
 	HRESULT hr = S_OK;
 	
-	UINT flags = 0;
+	UINT flags = D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_SINGLETHREADED;
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_1;
 	ID3D11Device* pDevice = nullptr;
 	ID3D11DeviceContext* pContext = nullptr;

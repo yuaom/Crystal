@@ -1,23 +1,41 @@
 # Module headers / source
 set( MODULE_HEADERS
-	display.h
-	pch.h
-	dllmain.h
-	entrypoints.h 
+	# PCH/DLL
 	log.h
 	dllcontext.h
 	debugvars.h
+	display.h
+	pch.h
+	dllmain.h
+
+	# KMD
 	kmd_adapter.h
+	kmd_entrypoints.h 
+
+	# UMD
+	umd_exports.h
+	umd_adapter.h
+	umd_device.h
+	umd_caps.h
 	)
 
 set( MODULE_SOURCE 
-	display.cpp
-	kmd_adapter.cpp
-	dllmain.cpp
-	entrypoints.cpp 
-	dllcontext.cpp
+	# PCH/DLL
 	log.cpp
+	dllcontext.cpp
 	debugvars.cpp
+	display.cpp
+	dllmain.cpp
+
+	# KMD
+	kmd_adapter.cpp
+	kmd_entrypoints.cpp 
+
+	# UMD
+	umd_exports.cpp
+	umd_adapter.cpp
+	umd_device.cpp
+	umd_caps.cpp
 	)
 
 source_group( "PCH" FILES 
@@ -29,6 +47,7 @@ source_group( "PCH" FILES
 	log.h
 	)
 
+# Project Filters
 source_group( "Source" FILES
 	display.h
 	display.cpp
@@ -36,13 +55,24 @@ source_group( "Source" FILES
 	dllcontext.cpp
 	dllmain.h
 	dllmain.cpp
-	entrypoints.h
-	entrypoints.cpp
 	)
 
 source_group( "Source\\KMD" FILES
 	kmd_adapter.h
 	kmd_adapter.cpp
+	entrypoints.h
+	entrypoints.cpp
+	)
+
+source_group( "Source\\UMD" FILES
+	umd_exports.h
+	umd_exports.cpp
+	umd_adapter.h
+	umd_adapter.cpp
+	umd_device.cpp
+	umd_device.h
+	umd_caps.h
+	umd_caps.cpp
 	)
 
 # Precompiled Header

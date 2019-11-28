@@ -5,6 +5,47 @@ namespace Crystal
 {
 	namespace UMD
 	{
+#pragma region Device
+
+		////////////////////////////////////////////////////////////////////////////////
+		void Device::Create( 
+			D3D10DDIARG_CREATEDEVICE* pCreateDevice,
+			Adapter* pAdapter )
+		{
+			new( reinterpret_cast<void*>( pCreateDevice->hDrvDevice.pDrvPrivate ) ) Device( 
+				pCreateDevice, 
+				pAdapter );
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		void Device::Destroy()
+		{
+
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		uint32_t Device::CalculateSize( const D3D10DDIARG_CALCPRIVATEDEVICESIZE* pCalcSize )
+		{
+			return sizeof( Device );
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		Device::Device( 
+			D3D10DDIARG_CREATEDEVICE* pCreateDevice,
+			Adapter* pAdapter ) :
+			m_RuntimeHandle( pCreateDevice->hRTDevice ),
+			m_pAdapter( pAdapter )
+		{
+
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		Device::~Device()
+		{
+
+		}
+
+#pragma endregion
 #pragma region DDI Entrypoints
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -13,6 +54,8 @@ namespace Crystal
 			const D3D10DDIARG_CALCPRIVATEDEVICESIZE* pCalcPrivateDeviceSize )
 		{
 			LOG_DLL_ENTRY;
+
+			size_t size = Device::CalculateSize( pCalcPrivateDeviceSize );
 
 			return 0;
 		}
@@ -23,6 +66,10 @@ namespace Crystal
 			D3D10DDIARG_CREATEDEVICE* pCreateDevice )
 		{
 			LOG_DLL_ENTRY;
+
+			Adapter* pAdpater = Adapter::FromHandle( hAdapter );
+
+			Device::Create( pCreateDevice, pAdpater );
 
 			return S_OK;
 		}

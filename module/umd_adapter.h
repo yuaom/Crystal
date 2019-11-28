@@ -24,6 +24,9 @@ namespace Crystal
 			template<>					HRESULT GetCaps( D3D11DDI_THREADING_CAPS* pThreading ) const;
 			template<>					HRESULT GetCaps( D3D11DDI_3DPIPELINESUPPORT_CAPS* pPipelineSupport ) const;
 			template<>					HRESULT GetCaps( D3D11DDI_SHADER_CAPS* pShader ) const;
+			template<>					HRESULT GetCaps( D3D11_1DDI_D3D11_OPTIONS_DATA* pD3D11Options ) const;
+			template<>					HRESULT GetCaps( D3DDDICAPS_ARCHITECTURE_INFO* pArchInfo ) const;
+			template<>					HRESULT GetCaps( D3DDDICAPS_SHADER_MIN_PRECISION_SUPPORT* pShaderMin ) const;
 
 		private:
 			Adapter( D3D10DDIARG_OPENADAPTER* pOpenAdapter );
@@ -51,6 +54,7 @@ namespace Crystal
 		HRESULT Adapter::GetCaps( D3D11DDI_THREADING_CAPS* pThreading ) const
 		{
 			pThreading->Caps = 0;
+
 			return S_OK;
 		}
 
@@ -63,6 +67,7 @@ namespace Crystal
 				D3D11DDI_ENCODE_3DPIPELINESUPPORT_CAP( D3D11DDI_3DPIPELINELEVEL_10_1 ) |
 				D3D11DDI_ENCODE_3DPIPELINESUPPORT_CAP( D3D11DDI_3DPIPELINELEVEL_11_0 ) |
 				D3D11DDI_ENCODE_3DPIPELINESUPPORT_CAP( D3D11_1DDI_3DPIPELINELEVEL_11_1 );
+
 			return S_OK;
 		}
 
@@ -70,8 +75,37 @@ namespace Crystal
 		template<>
 		HRESULT Adapter::GetCaps( D3D11DDI_SHADER_CAPS* pShaders ) const
 		{
-			// Don't currently support any shader extended features
-			pShaders->Caps = 0;
+			pShaders->Caps = D3D11DDICAPS_SHADER_COMPUTE_PLUS_RAW_AND_STRUCTURED_BUFFERS_IN_SHADER_4_X;
+
+			return S_OK;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		template<>
+		HRESULT Adapter::GetCaps( D3D11_1DDI_D3D11_OPTIONS_DATA* pD3D11Options ) const
+		{
+			pD3D11Options->OutputMergerLogicOp		= TRUE;
+			pD3D11Options->AssignDebugBinarySupport	= FALSE;
+
+			return S_OK;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		template<>
+		HRESULT Adapter::GetCaps( D3DDDICAPS_ARCHITECTURE_INFO* pArchInfo ) const
+		{
+			pArchInfo->TileBasedDeferredRenderer = FALSE;
+
+			return S_OK;
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		template<>
+		HRESULT Adapter::GetCaps( D3DDDICAPS_SHADER_MIN_PRECISION_SUPPORT* pShaderMin ) const
+		{
+			pShaderMin->VertexShaderMinPrecision	= D3DDDICAPS_SHADER_MIN_PRECISION_10_BIT;
+			pShaderMin->PixelShaderMinPrecision		= D3DDDICAPS_SHADER_MIN_PRECISION_10_BIT;
+
 			return S_OK;
 		}
 

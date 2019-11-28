@@ -71,7 +71,28 @@ namespace Crystal
 					static_cast<D3D11DDI_3DPIPELINESUPPORT_CAPS*>( pCaps->pData );
 				hr = pAdapter->GetCaps( pPipelineSupport );
 			}
-				break;
+			break;
+			case D3D11_1DDICAPS_D3D11_OPTIONS:
+			{
+				D3D11_1DDI_D3D11_OPTIONS_DATA* pD3D11Options =
+					static_cast<D3D11_1DDI_D3D11_OPTIONS_DATA*>( pCaps->pData );
+				hr = pAdapter->GetCaps( pD3D11Options );
+			}
+			break;
+			case D3D11_1DDICAPS_ARCHITECTURE_INFO:
+			{
+				D3DDDICAPS_ARCHITECTURE_INFO* pArchInfo =
+					static_cast<D3DDDICAPS_ARCHITECTURE_INFO*>( pCaps->pData );
+				hr = pAdapter->GetCaps( pArchInfo );
+			}
+			break;
+			case D3D11_1DDICAPS_SHADER_MIN_PRECISION_SUPPORT:
+			{
+				D3DDDICAPS_SHADER_MIN_PRECISION_SUPPORT* pArchInfo =
+					static_cast<D3DDDICAPS_SHADER_MIN_PRECISION_SUPPORT*>( pCaps->pData );
+				hr = pAdapter->GetCaps( pArchInfo );
+			}
+			break;
 			default:
 				hr = E_NOTIMPL;
 				break;

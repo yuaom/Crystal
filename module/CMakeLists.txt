@@ -17,6 +17,9 @@ set( MODULE_HEADERS
 	umd_adapter.h
 	umd_device.h
 	umd_caps.h
+
+	# UMD/DDI
+	umd_ddi.h
 	)
 
 set( MODULE_SOURCE 
@@ -36,6 +39,10 @@ set( MODULE_SOURCE
 	umd_adapter.cpp
 	umd_device.cpp
 	umd_caps.cpp
+
+	# UMD/DDI
+	umd_ddi_dynamic.cpp
+	umd_ddi_check.cpp
 	)
 
 source_group( "PCH" FILES 
@@ -73,6 +80,12 @@ source_group( "Source\\UMD" FILES
 	umd_device.h
 	umd_caps.h
 	umd_caps.cpp
+	)
+
+source_group( "Source\\UMD\\DDI" FILES
+	umd_ddi.h
+	umd_ddi_dynamic.cpp
+	umd_ddi_check.cpp
 	)
 
 # Precompiled Header

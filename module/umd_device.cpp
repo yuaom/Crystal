@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "umd_device.h"
+#include "umd_ddi.h"
 
 namespace Crystal
 {
@@ -36,7 +37,18 @@ namespace Crystal
 			m_RuntimeHandle( pCreateDevice->hRTDevice ),
 			m_pAdapter( pAdapter )
 		{
+			uint32_t cnt = sizeof( *pCreateDevice->pWDDM2_6DeviceFuncs ) / sizeof( void* );
+			uint64_t* pFunc = reinterpret_cast<uint64_t*>( pCreateDevice->pWDDM2_6DeviceFuncs );
+			for( uint64_t i = 0; i < cnt; i++, pFunc++ )*pFunc = ( 1ULL << 32 ) | ( i + 1 );
 
+			cnt = sizeof( *pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 ) / sizeof( void* );
+			pFunc = reinterpret_cast<uint64_t*>( pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 );
+			for( uint64_t i = 0; i < cnt; i++, pFunc++ )*pFunc = ( 2ULL << 32 ) | ( i + 1 );
+
+			pCreateDevice->p11_1DeviceFuncs->pfnCheckFormatSupport = CheckFormatSupport;
+			pCreateDevice->p11_1DeviceFuncs->pfnCheckMultisampleQualityLevels = CheckMultisampleQualityLevels;
+			pCreateDevice->p11_1DeviceFuncs->pfnCheckCounterInfo = CheckCounterInfo;
+			
 		}
 
 		////////////////////////////////////////////////////////////////////////////////

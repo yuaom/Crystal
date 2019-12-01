@@ -12,5 +12,5 @@ Uses Mako templating system to generate the files.
 # Run
 
 ```
-d3dentryparse.py --sdk <path> --output <path>
+d3dentryparse.py --wdk <path> --output <path>
 ```

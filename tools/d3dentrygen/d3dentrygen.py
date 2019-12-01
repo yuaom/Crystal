@@ -2,6 +2,7 @@ import sys
 import os
 import argparse
 import re
+from mako.template import Template
 
 # Clang Imports
 import clang.cindex
@@ -11,6 +12,12 @@ from clang.cindex import TypeKind
 
 class ParseException(Exception):
     pass
+
+
+class DDIEntrypoint:
+    def __init__(self, name, params):
+        self.name = name
+        self.params = params
 
 
 def get_parameter_name(type_string, suggested):
@@ -26,12 +33,12 @@ def get_parameter_name(type_string, suggested):
         return 'h' + result.group('name').lower().capitalize()
 
     # Calc/Creates next
-    result = re.match(".*D3D1[01]DDIARG_(?P<name>.*) .*", type_string)
+    result = re.match(".*D3D1[01]DDIARG_(?P<name>.*).*", type_string)
     if(result != None):
         return 'p' + result.group('name').lower().capitalize()
 
     # Primitive types second
-    primitive_types = ['UINT', 'DWORD', 'void *',
+    primitive_types = ['UINT', 'DWORD', 'void*',
                        'INT', 'FLOAT', 'BOOL', 'LPSTR']
     for prim_type in primitive_types:
         if(prim_type in type_string):
@@ -40,22 +47,22 @@ def get_parameter_name(type_string, suggested):
     # Custom names last
     custom_names = {
         'DXGI_FORMAT': 'format',
-        'D3D10_DDI_BOX *': 'pBox',
+        'D3D10_DDI_BOX*': 'pBox',
         'D3D10_DDI_MAP': 'map',
-        'D3D10DDI_COUNTER_INFO *': 'pCounterInfo',
+        'D3D10DDI_COUNTER_INFO*': 'pCounterInfo',
         'D3D10DDI_QUERY': 'query',
-        'D3D10DDI_COUNTER_TYPE *': 'pCounterType',
-        'D3D10DDI_MAPPED_SUBRESOURCE *': 'pSubresource',
+        'D3D10DDI_COUNTER_TYPE*': 'pCounterType',
+        'D3D10DDI_MAPPED_SUBRESOURCE*': 'pSubresource',
         'D3D10_DDI_PRIMITIVE_TOPOLOGY': 'topology',
-        'D3D10_DDI_VIEWPORT *': 'pViewport',
-        'D3D10_DDI_RECT *': 'pRect',
-        'D3D10_DDI_SAMPLER_DESC *': 'pSamplerDesc',
-        'D3D11_1DDI_DEVICEFUNCS *': 'pFuncs',
-        'D3D10_DDI_DEPTH_STENCIL_DESC *': 'pDepthStencilDesc',
-        'D3D11_1_DDI_BLEND_DESC *': 'pBlendDesc',
-        'D3D11_1_DDI_RASTERIZER_DESC *': 'pRasterizerDesc',
-        'D3D11_1DDIARG_STAGE_IO_SIGNATURES *': 'pIOSignatures',
-        'D3D11_1DDIARG_TESSELLATION_IO_SIGNATURES *': 'pIOSignatures'
+        'D3D10_DDI_VIEWPORT*': 'pViewport',
+        'D3D10_DDI_RECT*': 'pRect',
+        'D3D10_DDI_SAMPLER_DESC*': 'pSamplerDesc',
+        'D3D11_1DDI_DEVICEFUNCS*': 'pFuncs',
+        'D3D10_DDI_DEPTH_STENCIL_DESC*': 'pDepthStencilDesc',
+        'D3D11_1_DDI_BLEND_DESC*': 'pBlendDesc',
+        'D3D11_1_DDI_RASTERIZER_DESC*': 'pRasterizerDesc',
+        'D3D11_1DDIARG_STAGE_IO_SIGNATURES*': 'pIOSignatures',
+        'D3D11_1DDIARG_TESSELLATION_IO_SIGNATURES*': 'pIOSignatures'
     }
     for custom_name, result in custom_names.items():
         if custom_name == type_string:
@@ -65,11 +72,12 @@ def get_parameter_name(type_string, suggested):
         "Unable to translate argument name for %s" % type_string)
 
 
-def parse_ddi_table(args, cursor, pfnCursors):
+def parse_ddi_table(args, cursor, pfnCursors, ddi_entrypoints):
     print("  Found DDI Table '%s'..." % cursor.spelling)
     for child in cursor.get_children():
         try:
             print("    %s (%s)" % (child.spelling, child.type.spelling))
+            function_name = child.spelling[3:]
 
             type_cursor = pfnCursors[child.type.spelling]
             type_typedef_spelling = type_cursor.underlying_typedef_type.spelling
@@ -84,6 +92,8 @@ def parse_ddi_table(args, cursor, pfnCursors):
             for typedef_parm_cursor in type_cursor.get_children():
                 if(typedef_parm_cursor.kind == CursorKind.PARM_DECL):
                     param_type = typedef_parm_cursor.type.spelling
+                    param_type = param_type.replace(" *", "*")
+
                     param_name = get_parameter_name(
                         param_type, typedef_parm_cursor.spelling)
 
@@ -92,18 +102,16 @@ def parse_ddi_table(args, cursor, pfnCursors):
                         param_name = param_name + str(arg_num)
                         arg_num = arg_num + 1
 
-                    params.append(param_type)
-                    params.append(param_name)
+                    params.append((param_type, param_name))
 
-            if(args.debug):
-                print("      %s" % type_typedef_spelling)
-                print("      Params = %s" % str(params))
+            # Append entrypoint
+            ddi_entrypoints.append(DDIEntrypoint(function_name, params))
         except KeyError:
             raise ParseException("Error! Unable to find type information for %s!" %
                                  child.type.spelling)
 
 
-def parse_translation_unit(args, cursor, file, tables_to_parse):
+def parse_translation_unit(args, cursor, file, tables_to_parse, ddi_entrypoints):
     # cached pfn* typedef cursors
     pfnCursors = {}
 
@@ -112,12 +120,12 @@ def parse_translation_unit(args, cursor, file, tables_to_parse):
         if(child.location.file.name != cursor.spelling):
             continue
         if(child.kind == CursorKind.STRUCT_DECL and child.spelling in tables_to_parse):
-            parse_ddi_table(args, child, pfnCursors)
+            parse_ddi_table(args, child, pfnCursors, ddi_entrypoints)
         elif(child.kind == CursorKind.TYPEDEF_DECL and child.spelling[:3] == "PFN"):
             pfnCursors[child.spelling] = child
 
 
-def parse_header(file, args, tables_to_parse):
+def parse_header(file, args, tables_to_parse, ddi_entrypoints):
     success = True
 
     index = clang.cindex.Index.create()
@@ -134,7 +142,7 @@ def parse_header(file, args, tables_to_parse):
 
     try:
         parse_translation_unit(
-            args, translation_unit.cursor, file, tables_to_parse)
+            args, translation_unit.cursor, file, tables_to_parse, ddi_entrypoints)
     except ParseException as e:
         print(e)
         success = False
@@ -191,6 +199,11 @@ def configure_clang():
     return configured
 
 
+def write_template(template_file, entries):
+    template = Template(filename=template_file)
+    print(template.render(entries=entries))
+
+
 def main():
     success = True
 
@@ -226,10 +239,16 @@ def main():
         for header in headers_to_parse:
             header_path = os.path.join(args.wdk, header)
             print("Parsing %s..." % header_path)
-            success = parse_header(header_path, args, tables_to_parse)
+
+            ddi_entrypoints = []
+
+            success = parse_header(
+                header_path, args, tables_to_parse, ddi_entrypoints)
 
             if(not success):
                 break
+
+            write_template('template_ddi.cpp', ddi_entrypoints)
 
 
 if __name__ == "__main__":

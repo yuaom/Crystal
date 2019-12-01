@@ -1,6 +1,7 @@
 import sys
 import os
 import argparse
+import re
 
 # Clang Imports
 import clang.cindex
@@ -13,42 +14,52 @@ class ParseException(Exception):
 
 
 def get_parameter_name(type_string, suggested):
-    # Handles first since the most common
-    handle_string = "D3D10DDI_H"
-    handle_index = type_string.find(handle_string)
-    if(handle_index != -1):
-        return 'h' + type_string[handle_index+len(handle_string):].lower().capitalize()
+    if(suggested != ''):
+        return suggested
 
-    handle_string = "D3D11DDI_H"
-    handle_index = type_string.find(handle_string)
-    if(handle_index != -1):
-        return 'h' + type_string[handle_index+len(handle_string):].lower().capitalize()
+    type_string = type_string.replace("const ", "")
+    type_string = type_string.replace("struct ", "")
+
+    # Handles first since the most common
+    result = re.match(".*D3D1[01]DDI_H(?P<name>.*).*", type_string)
+    if(result != None):
+        return 'h' + result.group('name').lower().capitalize()
 
     # Calc/Creates next
+    result = re.match(".*D3D1[01]DDIARG_(?P<name>.*) .*", type_string)
+    if(result != None):
+        return 'p' + result.group('name').lower().capitalize()
 
     # Primitive types second
-    primitive_types = ['UINT', 'DWORD', 'void *', 'INT', 'FLOAT', 'BOOL']
+    primitive_types = ['UINT', 'DWORD', 'void *',
+                       'INT', 'FLOAT', 'BOOL', 'LPSTR']
     for prim_type in primitive_types:
         if(prim_type in type_string):
             return "arg"
 
     # Custom names last
-    if('D3D10_DDI_BOX *' in type_string):
-        return 'pBox'
-    if('D3D10_DDI_MAP' in type_string):
-        return 'map'
-    if('D3D10DDI_MAPPED_SUBRESOURCE *' in type_string):
-        return 'pSubresource'
-    if('DXGI_FORMAT' in type_string):
-        return 'format'
-    if('D3D10_DDI_PRIMITIVE_TOPOLOGY' in type_string):
-        return 'topology'
-    if('D3D10_DDI_VIEWPORT *' in type_string):
-        return 'pViewport'
-    if('D3D10_DDI_RECT *' in type_string):
-        return 'pRect'
-    if('D3D11_1DDI_DEVICEFUNCS *' in type_string):
-        return 'pFuncs'
+    custom_names = {
+        'DXGI_FORMAT': 'format',
+        'D3D10_DDI_BOX *': 'pBox',
+        'D3D10_DDI_MAP': 'map',
+        'D3D10DDI_COUNTER_INFO *': 'pCounterInfo',
+        'D3D10DDI_QUERY': 'query',
+        'D3D10DDI_COUNTER_TYPE *': 'pCounterType',
+        'D3D10DDI_MAPPED_SUBRESOURCE *': 'pSubresource',
+        'D3D10_DDI_PRIMITIVE_TOPOLOGY': 'topology',
+        'D3D10_DDI_VIEWPORT *': 'pViewport',
+        'D3D10_DDI_RECT *': 'pRect',
+        'D3D10_DDI_SAMPLER_DESC *': 'pSamplerDesc',
+        'D3D11_1DDI_DEVICEFUNCS *': 'pFuncs',
+        'D3D10_DDI_DEPTH_STENCIL_DESC *': 'pDepthStencilDesc',
+        'D3D11_1_DDI_BLEND_DESC *': 'pBlendDesc',
+        'D3D11_1_DDI_RASTERIZER_DESC *': 'pRasterizerDesc',
+        'D3D11_1DDIARG_STAGE_IO_SIGNATURES *': 'pIOSignatures',
+        'D3D11_1DDIARG_TESSELLATION_IO_SIGNATURES *': 'pIOSignatures'
+    }
+    for custom_name, result in custom_names.items():
+        if custom_name == type_string:
+            return result
 
     raise ParseException(
         "Unable to translate argument name for %s" % type_string)
@@ -67,14 +78,23 @@ def parse_ddi_table(args, cursor, pfnCursors):
                 raise ParseException(
                     "%s expected to be a pointer type!" % child.type.spelling)
 
+            # Generate parameter list
             params = []
+            arg_num = 0
             for typedef_parm_cursor in type_cursor.get_children():
                 if(typedef_parm_cursor.kind == CursorKind.PARM_DECL):
                     param_type = typedef_parm_cursor.type.spelling
                     param_name = get_parameter_name(
                         param_type, typedef_parm_cursor.spelling)
+
+                    # append argument number to native types
+                    if param_name == 'arg':
+                        param_name = param_name + str(arg_num)
+                        arg_num = arg_num + 1
+
                     params.append(param_type)
                     params.append(param_name)
+
             if(args.debug):
                 print("      %s" % type_typedef_spelling)
                 print("      Params = %s" % str(params))
@@ -179,7 +199,7 @@ def main():
     parser.add_argument('--wdk', metavar='PATH',
                         required=True, help='Define WDK path')
     parser.add_argument('--output', metavar='PATH', default=os.path.join(os.getcwd(), 'output'), required=False,
-                        help='Define output path. Default cwd\output')
+                        help='Define output path. Default cwd\\output')
     parser.add_argument('--debug', default=False, action="store_true")
     args = parser.parse_args()
 

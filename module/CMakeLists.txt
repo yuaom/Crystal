@@ -41,8 +41,7 @@ set( MODULE_SOURCE
 	umd_caps.cpp
 
 	# UMD/DDI
-	umd_ddi_dynamic.cpp
-	umd_ddi_check.cpp
+	umd_ddi.cpp
 	)
 
 source_group( "PCH" FILES 
@@ -84,8 +83,7 @@ source_group( "Source\\UMD" FILES
 
 source_group( "Source\\UMD\\DDI" FILES
 	umd_ddi.h
-	umd_ddi_dynamic.cpp
-	umd_ddi_check.cpp
+	umd_ddi.cpp
 	)
 
 # Precompiled Header

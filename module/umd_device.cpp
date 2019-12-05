@@ -45,10 +45,7 @@ namespace Crystal
 			pFunc = reinterpret_cast<uint64_t*>( pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 );
 			for( uint64_t i = 0; i < cnt; i++, pFunc++ )*pFunc = ( 2ULL << 32 ) | ( i + 1 );
 
-			pCreateDevice->p11_1DeviceFuncs->pfnCheckFormatSupport = CheckFormatSupport;
-			pCreateDevice->p11_1DeviceFuncs->pfnCheckMultisampleQualityLevels = CheckMultisampleQualityLevels;
-			pCreateDevice->p11_1DeviceFuncs->pfnCheckCounterInfo = CheckCounterInfo;
-			
+			Crystal::Autogen::FillDdiTable( pCreateDevice->p11_1DeviceFuncs );			
 		}
 
 		////////////////////////////////////////////////////////////////////////////////

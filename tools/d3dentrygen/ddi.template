@@ -1,12 +1,15 @@
 #include "pch.h"
 
+namespace Crystal
+{
+namespace Autogen
+{
+
 % for entry in entries:
 ////////////////////////////////////////////////////////////////////////////////
 void WINAPI ${entry.name}(
     % for i in range(len(entry.params)):
-    <%
-        param_type,param_name = entry.params[i]
-    %>${param_type} ${param_name}\
+    ${entry.params[i][0]} ${entry.params[i][1]}\
         %if i < len(entry.params)-1:
 ,
         %endif
@@ -17,3 +20,12 @@ void WINAPI ${entry.name}(
 }
 
 % endfor
+void FillDdiTable( ${table_name}* pTable )
+{
+    % for entry in entries:
+    pTable->pfn${entry.name} = ${entry.name};
+    % endfor
+}
+
+} // namespace Autogen
+} // namespace Crystal

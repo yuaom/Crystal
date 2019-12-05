@@ -11,17 +11,19 @@ from clang.cindex import TypeKind
 
 
 class ParseContext:
-    def __init__(self, input_file, output_file, tables, template_name):
+    def __init__(self, input_file, output_file, table, template_name):
         self.filename = input_file
         self.output = output_file
-        self.tables = tables
+        self.table = table
         self.template = template_name
         self.entrypoints = []
 
     def write_template(self):
         template = Template(filename=self.template)
         try:
-            render = template.render(entries=self.entrypoints)
+            render = template.render(
+                table_name=self.table,
+                entries=self.entrypoints)
 
             output_directory = os.path.dirname(self.output)
             if(not os.path.exists(output_directory)):
@@ -144,7 +146,7 @@ def parse_translation_unit(args, context, cursor):
         # Only parse the main file
         if(child.location.file.name != cursor.spelling):
             continue
-        if(child.kind == CursorKind.STRUCT_DECL and child.spelling in context.tables):
+        if(child.kind == CursorKind.STRUCT_DECL and child.spelling == context.table):
             parse_ddi_table(args, context, child, pfnCursors)
         elif(child.kind == CursorKind.TYPEDEF_DECL and child.spelling[:3] == "PFN"):
             pfnCursors[child.spelling] = child
@@ -236,9 +238,9 @@ def main():
 
     contexts = [
         ParseContext(os.path.join(args.wdk, 'um', 'd3d10umddi.h'),
-                     os.path.join(args.output, 'umd_entrypoints.cpp'),
-                     ['D3D11_1DDI_DEVICEFUNCS'],
-                     os.path.join(sys.path[0], 'template_ddi.cpp'))
+                     os.path.join(args.output, 'umd_ddi.cpp'),
+                     'D3D11_1DDI_DEVICEFUNCS',
+                     os.path.join(sys.path[0], 'ddi.template'))
     ]
 
     print("Checking environment...")

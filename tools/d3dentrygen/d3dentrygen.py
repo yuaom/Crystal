@@ -10,6 +10,29 @@ from clang.cindex import CursorKind
 from clang.cindex import TypeKind
 
 
+class ParseContext:
+    def __init__(self, input_file, output_file, tables, template_name):
+        self.filename = input_file
+        self.output = output_file
+        self.tables = tables
+        self.template = template_name
+        self.entrypoints = []
+
+    def write_template(self):
+        template = Template(filename=self.template)
+        try:
+            render = template.render(entries=self.entrypoints)
+
+            output_directory = os.path.dirname(self.output)
+            if(not os.path.exists(output_directory)):
+                os.makedirs(output_directory)
+
+            with open(self.output, "w") as file:
+                print(render, file=file)
+        except Exception as e:
+            print(e)
+
+
 class ParseException(Exception):
     pass
 
@@ -72,11 +95,13 @@ def get_parameter_name(type_string, suggested):
         "Unable to translate argument name for %s" % type_string)
 
 
-def parse_ddi_table(args, cursor, pfnCursors, ddi_entrypoints):
+def parse_ddi_table(args, context, cursor, pfnCursors):
     print("  Found DDI Table '%s'..." % cursor.spelling)
     for child in cursor.get_children():
         try:
-            print("    %s (%s)" % (child.spelling, child.type.spelling))
+            if(args.debug):
+                print("    %s (%s)" % (child.spelling, child.type.spelling))
+
             function_name = child.spelling[3:]
 
             type_cursor = pfnCursors[child.type.spelling]
@@ -105,13 +130,13 @@ def parse_ddi_table(args, cursor, pfnCursors, ddi_entrypoints):
                     params.append((param_type, param_name))
 
             # Append entrypoint
-            ddi_entrypoints.append(DDIEntrypoint(function_name, params))
+            context.entrypoints.append(DDIEntrypoint(function_name, params))
         except KeyError:
             raise ParseException("Error! Unable to find type information for %s!" %
                                  child.type.spelling)
 
 
-def parse_translation_unit(args, cursor, file, tables_to_parse, ddi_entrypoints):
+def parse_translation_unit(args, context, cursor):
     # cached pfn* typedef cursors
     pfnCursors = {}
 
@@ -119,13 +144,13 @@ def parse_translation_unit(args, cursor, file, tables_to_parse, ddi_entrypoints)
         # Only parse the main file
         if(child.location.file.name != cursor.spelling):
             continue
-        if(child.kind == CursorKind.STRUCT_DECL and child.spelling in tables_to_parse):
-            parse_ddi_table(args, child, pfnCursors, ddi_entrypoints)
+        if(child.kind == CursorKind.STRUCT_DECL and child.spelling in context.tables):
+            parse_ddi_table(args, context, child, pfnCursors)
         elif(child.kind == CursorKind.TYPEDEF_DECL and child.spelling[:3] == "PFN"):
             pfnCursors[child.spelling] = child
 
 
-def parse_header(file, args, tables_to_parse, ddi_entrypoints):
+def parse_header(args, context):
     success = True
 
     index = clang.cindex.Index.create()
@@ -133,24 +158,23 @@ def parse_header(file, args, tables_to_parse, ddi_entrypoints):
     include = '--include=%s' % r'Windows.h'
     search_path = '--include-directory=%s' % args.wdk
 
-    translation_unit = index.parse(file, [
-        '--language=c',
-        '-DWIN32_LEAN_AND_MEAN=1',
-        include,
-        search_path
-    ])
-
     try:
-        parse_translation_unit(
-            args, translation_unit.cursor, file, tables_to_parse, ddi_entrypoints)
-    except ParseException as e:
+        translation_unit = index.parse(context.filename, [
+            '--language=c',
+            '-DWIN32_LEAN_AND_MEAN=1',
+            include,
+            search_path
+        ])
+
+        parse_translation_unit(args, context, translation_unit.cursor)
+    except (clang.cindex.TranslationUnitLoadError, ParseException) as e:
         print(e)
         success = False
 
     return success
 
 
-def configure_environment(args, headers):
+def configure_environment(args, contexts):
     wdk_found = False
     headers_found = False
 
@@ -165,10 +189,9 @@ def configure_environment(args, headers):
 
     # Look for headers in WDK
     if(wdk_found):
-        for header in headers:
-            full_path = os.path.join(args.wdk, header)
-            print("  Looking for %s..." % full_path, end='')
-            if(os.path.exists(full_path)):
+        for parse_context in contexts:
+            print("  Looking for %s..." % parse_context.filename, end='')
+            if(os.path.exists(parse_context.filename)):
                 print("found!")
                 headers_found = True
             else:
@@ -199,11 +222,6 @@ def configure_clang():
     return configured
 
 
-def write_template(template_file, entries):
-    template = Template(filename=template_file)
-    print(template.render(entries=entries))
-
-
 def main():
     success = True
 
@@ -216,17 +234,16 @@ def main():
     parser.add_argument('--debug', default=False, action="store_true")
     args = parser.parse_args()
 
-    headers_to_parse = [
-        os.path.join('um', 'd3d10umddi.h')
-    ]
-
-    tables_to_parse = [
-        'D3D11_1DDI_DEVICEFUNCS'
+    contexts = [
+        ParseContext(os.path.join(args.wdk, 'um', 'd3d10umddi.h'),
+                     os.path.join(args.output, 'umd_entrypoints.cpp'),
+                     ['D3D11_1DDI_DEVICEFUNCS'],
+                     os.path.join(sys.path[0], 'template_ddi.cpp'))
     ]
 
     print("Checking environment...")
     if(success):
-        success = configure_environment(args, headers_to_parse)
+        success = configure_environment(args, contexts)
     if(success):
         success = configure_clang()
 
@@ -236,19 +253,15 @@ def main():
         print("")
 
     if(success):
-        for header in headers_to_parse:
-            header_path = os.path.join(args.wdk, header)
-            print("Parsing %s..." % header_path)
+        for context in contexts:
+            print("Parsing %s..." % context.filename)
 
-            ddi_entrypoints = []
-
-            success = parse_header(
-                header_path, args, tables_to_parse, ddi_entrypoints)
+            success = parse_header(args, context)
 
             if(not success):
                 break
 
-            write_template('template_ddi.cpp', ddi_entrypoints)
+            context.write_template()
 
 
 if __name__ == "__main__":

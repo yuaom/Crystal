@@ -40,7 +40,8 @@ class ParseException(Exception):
 
 
 class DDIEntrypoint:
-    def __init__(self, name, params):
+    def __init__(self, return_type, name, params):
+        self.return_type = return_type
         self.name = name
         self.params = params
 
@@ -155,8 +156,18 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
                         param[1] = param[1] + str(count)
                         occurances[key] = count - 1
 
+            # Get return type
+            return_type = "VOID"
+            if(child.type.kind == TypeKind.TYPEDEF):
+                for return_type_child in type_cursor.get_children():
+                    if (return_type_child.kind == CursorKind.TYPE_REF):
+                        return_type = return_type_child.spelling
+                        break
+
             # Append entrypoint
-            context.entrypoints.append(DDIEntrypoint(function_name, params))
+            context.entrypoints.append(DDIEntrypoint(
+                return_type, function_name, params))
+
         except KeyError:
             raise ParseException("Error! Unable to find type information for %s!" %
                                  child.type.spelling)

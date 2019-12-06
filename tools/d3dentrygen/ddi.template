@@ -7,7 +7,7 @@ namespace Autogen
 
 % for entry in entries:
 ////////////////////////////////////////////////////////////////////////////////
-void WINAPI ${entry.name}(
+${entry.return_type} WINAPI ${entry.name}(
     % for i in range(len(entry.params)):
     ${entry.params[i][0]} ${entry.params[i][1]}${entry.params[i][2]}\
         %if i < len(entry.params)-1:
@@ -17,6 +17,13 @@ void WINAPI ${entry.name}(
  )
 {
     LOG_DLL_ENTRY;
+    % if entry.return_type == "BOOL":
+    return FALSE;
+    % elif entry.return_type == "SIZE_T":
+    return 0;
+    % elif entry.return_type == "HRESULT":
+    return E_FAIL;
+    % endif
 }
 
 % endfor

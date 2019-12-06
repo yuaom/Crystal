@@ -9,7 +9,7 @@ namespace Autogen
 ////////////////////////////////////////////////////////////////////////////////
 void WINAPI ${entry.name}(
     % for i in range(len(entry.params)):
-    ${entry.params[i][0]} ${entry.params[i][1]}\
+    ${entry.params[i][0]} ${entry.params[i][1]}${entry.params[i][2]}\
         %if i < len(entry.params)-1:
 ,
         %endif

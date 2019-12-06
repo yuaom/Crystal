@@ -53,12 +53,12 @@ def get_parameter_name(type_string, suggested):
     type_string = type_string.replace("struct ", "")
 
     # Handles first since the most common
-    result = re.match(".*D3D1[01]DDI_H(?P<name>.*).*", type_string)
+    result = re.match(".*D3D1[01]DDI_H(?P<name>\w*).*", type_string)
     if(result != None):
         return 'h' + result.group('name').lower().capitalize()
 
     # Calc/Creates next
-    result = re.match(".*D3D1[01]DDIARG_(?P<name>.*).*", type_string)
+    result = re.match(".*D3D1[01]DDIARG_(?P<name>\w*).*", type_string)
     if(result != None):
         return 'p' + result.group('name').lower().capitalize()
 
@@ -118,18 +118,42 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
             arg_num = 0
             for typedef_parm_cursor in type_cursor.get_children():
                 if(typedef_parm_cursor.kind == CursorKind.PARM_DECL):
-                    param_type = typedef_parm_cursor.type.spelling
-                    param_type = param_type.replace(" *", "*")
+                    param_type = ""
+                    param_name = ""
+                    param_suffix = ""
 
-                    param_name = get_parameter_name(
-                        param_type, typedef_parm_cursor.spelling)
+                    # Reconstruct constant array
+                    if(typedef_parm_cursor.type.kind == TypeKind.CONSTANTARRAY):
+                        param_type = typedef_parm_cursor.type.element_type.spelling
+                        param_name = get_parameter_name(
+                            param_type,
+                            typedef_parm_cursor.spelling)
+                        param_suffix = "[%d]" % typedef_parm_cursor.type.element_count
+                    else:
+                        param_type = typedef_parm_cursor.type.spelling
+                        param_type = param_type.replace(" *", "*")
+                        param_name = get_parameter_name(
+                            param_type, typedef_parm_cursor.spelling)
 
-                    # append argument number to native types
-                    if param_name == 'arg':
-                        param_name = param_name + str(arg_num)
-                        arg_num = arg_num + 1
+                    params.append([param_type, param_name, param_suffix])
 
-                    params.append((param_type, param_name))
+            # Deduplicate params
+            occurances = {}
+            found_duplicates = False
+            for param in params:
+                key = param[1]
+                if key in occurances.keys():
+                    occurances[key] = occurances[key] + 1
+                    found_duplicates = True
+                else:
+                    occurances[key] = 1
+            if found_duplicates:
+                for param in reversed(params):
+                    key = param[1]
+                    count = occurances[key]
+                    if count > 1:
+                        param[1] = param[1] + str(count)
+                        occurances[key] = count - 1
 
             # Append entrypoint
             context.entrypoints.append(DDIEntrypoint(function_name, params))

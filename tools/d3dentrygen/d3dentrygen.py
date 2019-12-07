@@ -11,28 +11,45 @@ from clang.cindex import TypeKind
 
 
 class ParseContext:
-    def __init__(self, input_file, output_file, table, template_name):
+    def __init__(self, input_file, output_directory, output_filemap, table, template_name):
         self.filename = input_file
-        self.output = output_file
         self.table = table
         self.template = template_name
-        self.entrypoints = []
+        self.entrypoints = {}
+        self.output_directory = output_directory
+        self.output_filemap = output_filemap
+
+    def add_entrypoint(self, entry):
+        # Find matching output file
+        output_file = "umd_ddi.cpp"
+        for entry_expression, filename in self.output_filemap.items():
+            if(re.match(entry_expression, entry.name) != None):
+                output_file = filename
+                break
+
+        # Append entry-point to that file's list
+        if output_file not in self.entrypoints.keys():
+            self.entrypoints[output_file] = [entry]
+        else:
+            self.entrypoints[output_file].append(entry)
 
     def write_template(self):
-        template = Template(filename=self.template)
-        try:
-            render = template.render(
-                table_name=self.table,
-                entries=self.entrypoints)
+        for output_file in self.entrypoints.keys():
+            template = Template(filename=self.template)
+            try:
+                render = template.render(
+                    table_name=self.table,
+                    entries=self.entrypoints[output_file])
 
-            output_directory = os.path.dirname(self.output)
-            if(not os.path.exists(output_directory)):
-                os.makedirs(output_directory)
+                output_full = os.path.join(self.output_directory, output_file)
+                output_directory = os.path.dirname(output_full)
+                if(not os.path.exists(output_directory)):
+                    os.makedirs(output_directory)
 
-            with open(self.output, "w") as file:
-                print(render, file=file)
-        except Exception as e:
-            print(e)
+                with open(output_full, "w") as file:
+                    print(render, file=file)
+            except Exception as e:
+                print(e)
 
 
 class ParseException(Exception):
@@ -167,12 +184,11 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
                         break
 
             # Append entrypoint
-            context.entrypoints.append(DDIEntrypoint(
+            context.add_entrypoint(DDIEntrypoint(
                 return_type, function_name, params))
 
         except KeyError:
-            raise ParseException("Error! Unable to find type information for %s!" %
-                                 child.type.spelling)
+            raise ParseException("Error parsing %s!" % child.type.spelling)
 
 
 def parse_translation_unit(args, context, cursor):
@@ -273,9 +289,14 @@ def main():
     parser.add_argument('--debug', default=False, action="store_true")
     args = parser.parse_args()
 
+    filemap = {
+        "DefaultConstantBufferUpdateSubresourceUP": "umd_ddi_draw.cpp"
+    }
+
     contexts = [
         ParseContext(os.path.join(args.wdk, 'um', 'd3d10umddi.h'),
-                     os.path.join(args.output, 'umd_ddi.cpp'),
+                     args.output,
+                     filemap,
                      'D3D11_1DDI_DEVICEFUNCS',
                      os.path.join(sys.path[0], 'ddi.template'))
     ]

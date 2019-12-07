@@ -37,11 +37,15 @@ class ParseContext:
         for output_file in self.entrypoints.keys():
             template = Template(filename=self.template)
             try:
+                output_full = os.path.join(self.output_directory, output_file)
+
+                print("Generating %d entries into %s..." %
+                      (len(self.entrypoints[output_file]), output_full))
+
                 render = template.render(
                     table_name=self.table,
                     entries=self.entrypoints[output_file])
 
-                output_full = os.path.join(self.output_directory, output_file)
                 output_directory = os.path.dirname(output_full)
                 if(not os.path.exists(output_directory)):
                     os.makedirs(output_directory)
@@ -290,7 +294,20 @@ def main():
     args = parser.parse_args()
 
     filemap = {
-        "DefaultConstantBufferUpdateSubresourceUP": "umd_ddi_draw.cpp"
+        "[V|H|D|G|P|C]sSetConstantBuffers$": "umd_ddi_cbv.cpp",
+        "[V|H|D|G|P|C]sSetShaderResources$": "umd_ddi_srv.cpp",
+        "[V|H|D|G|P|C]sSetShader[WithIfaces]*": "umd_ddi_shader.cpp",
+        "[V|H|D|G|P|C]sSetSamplers$": "umd_ddi_samplers.cpp",
+        "[V|H|D|G|P|C]sSetUnorderedAccessViews$": "umd_ddi_uav.cpp",
+        "Draw.*": "umd_ddi_draw.cpp",
+        "Dispatch.*": "umd_ddi_dispatch.cpp",
+        "Dynamic.*": "umd_ddi_dynamic.cpp",
+        "Ia.*": "umd_ddi_input.cpp",
+        ".*WriteHazard$": "umd_ddi_hazard.cpp",
+        "SetPredication|Query.*": "umd_ddi_query.cpp",
+        ".*Resource$": "umd_ddi_resource.cpp",
+        ".*CommandList$": "umd_ddi_commandlist.cpp",
+        "Clear.*": "umd_ddi_clear.cpp"
     }
 
     contexts = [

@@ -139,22 +139,24 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
                     params.append([param_type, param_name, param_suffix])
 
             # Deduplicate params
-            occurances = {}
-            found_duplicates = False
+            duplicates = {}
             for param in params:
                 key = param[1]
-                if key in occurances.keys():
-                    occurances[key] = occurances[key] + 1
-                    found_duplicates = True
+                if key in duplicates.keys():
+                    count = duplicates[key]
+                    if(count == 0):
+                        duplicates[key] = 2
+                    else:
+                        duplicates[key] = count + 1
                 else:
-                    occurances[key] = 1
-            if found_duplicates:
+                    duplicates[key] = 0
+            if len(duplicates) > 1:
                 for param in reversed(params):
                     key = param[1]
-                    count = occurances[key]
-                    if count > 1:
+                    count = duplicates[key]
+                    if count >= 1:
                         param[1] = param[1] + str(count)
-                        occurances[key] = count - 1
+                        duplicates[key] = count - 1
 
             # Get return type
             return_type = "VOID"

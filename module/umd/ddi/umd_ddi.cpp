@@ -8,12 +8,12 @@ namespace Autogen
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DefaultConstantBufferUpdateSubresourceUP(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    const D3D10_DDI_BOX* pBox,
-    const void* arg2,
-    UINT arg3,
-    UINT arg4,
+    D3D10DDI_HRESOURCE hDstResource,
+    UINT DstSubresource,
+    const D3D10_DDI_BOX* pDstBox,
+    const void* pSysMemUP,
+    UINT RowPitch,
+    UINT DepthPitch,
     UINT CopyFlags )
 {
     LOG_DLL_ENTRY;
@@ -24,7 +24,7 @@ VOID WINAPI VsSetConstantBuffers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumBuffers,
-    const D3D10DDI_HRESOURCE* hResource,
+    const D3D10DDI_HRESOURCE* phBuffers,
     const UINT* pFirstConstant,
     const UINT* pNumConstants )
 {
@@ -36,7 +36,7 @@ VOID WINAPI PsSetShaderResources(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumViews,
-    const D3D10DDI_HSHADERRESOURCEVIEW* hShaderresourceview )
+    const D3D10DDI_HSHADERRESOURCEVIEW* phShaderResourceViews )
 {
     LOG_DLL_ENTRY;
 }
@@ -53,8 +53,8 @@ VOID WINAPI PsSetShader(
 VOID WINAPI PsSetSamplers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
-    UINT NumSamplers,
-    const D3D10DDI_HSAMPLER* hSampler )
+    UINT Offset,
+    const D3D10DDI_HSAMPLER* NumSamplers )
 {
     LOG_DLL_ENTRY;
 }
@@ -70,9 +70,9 @@ VOID WINAPI VsSetShader(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawIndexed(
     D3D10DDI_HDEVICE hDevice,
-    UINT arg1,
-    UINT arg2,
-    INT arg3 )
+    UINT StartIndexLocation,
+    UINT BaseVertexLocation,
+    INT IndexCount )
 {
     LOG_DLL_ENTRY;
 }
@@ -80,8 +80,8 @@ VOID WINAPI DrawIndexed(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI Draw(
     D3D10DDI_HDEVICE hDevice,
-    UINT arg1,
-    UINT arg2 )
+    UINT VertexCount,
+    UINT StartVertexLocation )
 {
     LOG_DLL_ENTRY;
 }
@@ -90,10 +90,10 @@ VOID WINAPI Draw(
 VOID WINAPI DynamicIABufferMapNoOverwrite(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    D3D10_DDI_MAP map,
-    UINT arg2,
-    D3D10DDI_MAPPED_SUBRESOURCE* pSubresource )
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -102,7 +102,7 @@ VOID WINAPI DynamicIABufferMapNoOverwrite(
 VOID WINAPI DynamicIABufferUnmap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    UINT Subresource )
 {
     LOG_DLL_ENTRY;
 }
@@ -111,10 +111,10 @@ VOID WINAPI DynamicIABufferUnmap(
 VOID WINAPI DynamicConstantBufferMapDiscard(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    D3D10_DDI_MAP map,
-    UINT arg2,
-    D3D10DDI_MAPPED_SUBRESOURCE* pSubresource )
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -123,10 +123,10 @@ VOID WINAPI DynamicConstantBufferMapDiscard(
 VOID WINAPI DynamicIABufferMapDiscard(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    D3D10_DDI_MAP map,
-    UINT arg2,
-    D3D10DDI_MAPPED_SUBRESOURCE* pSubresource )
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -135,7 +135,7 @@ VOID WINAPI DynamicIABufferMapDiscard(
 VOID WINAPI DynamicConstantBufferUnmap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    UINT Subresource )
 {
     LOG_DLL_ENTRY;
 }
@@ -145,7 +145,7 @@ VOID WINAPI PsSetConstantBuffers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumBuffers,
-    const D3D10DDI_HRESOURCE* hResource,
+    const D3D10DDI_HRESOURCE* phBuffers,
     const UINT* pFirstConstant,
     const UINT* pNumConstants )
 {
@@ -155,7 +155,7 @@ VOID WINAPI PsSetConstantBuffers(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI IaSetInputLayout(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HELEMENTLAYOUT hElementlayout )
+    D3D10DDI_HELEMENTLAYOUT hInputLayout )
 {
     LOG_DLL_ENTRY;
 }
@@ -165,9 +165,9 @@ VOID WINAPI IaSetVertexBuffers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumBuffers,
-    const D3D10DDI_HRESOURCE* hResource,
-    const UINT* arg1,
-    const UINT* arg2 )
+    const D3D10DDI_HRESOURCE* phBuffers,
+    const UINT* pStrides,
+    const UINT* pOffsets )
 {
     LOG_DLL_ENTRY;
 }
@@ -175,9 +175,9 @@ VOID WINAPI IaSetVertexBuffers(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI IaSetIndexBuffer(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    DXGI_FORMAT format,
-    UINT arg )
+    D3D10DDI_HRESOURCE hBuffer,
+    DXGI_FORMAT Format,
+    UINT Offset )
 {
     LOG_DLL_ENTRY;
 }
@@ -185,11 +185,11 @@ VOID WINAPI IaSetIndexBuffer(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawIndexedInstanced(
     D3D10DDI_HDEVICE hDevice,
-    UINT arg1,
-    UINT arg2,
-    UINT arg3,
-    INT arg4,
-    UINT arg5 )
+    UINT IndexCountPerInstance,
+    UINT InstanceCount,
+    UINT StartIndexLocation,
+    INT BaseVertexLocation,
+    UINT StartInstanceLocation )
 {
     LOG_DLL_ENTRY;
 }
@@ -197,10 +197,10 @@ VOID WINAPI DrawIndexedInstanced(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawInstanced(
     D3D10DDI_HDEVICE hDevice,
-    UINT arg1,
-    UINT arg2,
-    UINT arg3,
-    UINT arg4 )
+    UINT VertexCountPerInstance,
+    UINT InstanceCount,
+    UINT StartVertexLocation,
+    UINT StartInstanceLocation )
 {
     LOG_DLL_ENTRY;
 }
@@ -209,10 +209,10 @@ VOID WINAPI DrawInstanced(
 VOID WINAPI DynamicResourceMapDiscard(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    D3D10_DDI_MAP map,
-    UINT arg2,
-    D3D10DDI_MAPPED_SUBRESOURCE* pSubresource )
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -221,7 +221,7 @@ VOID WINAPI DynamicResourceMapDiscard(
 VOID WINAPI DynamicResourceUnmap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    UINT Subresource )
 {
     LOG_DLL_ENTRY;
 }
@@ -231,7 +231,7 @@ VOID WINAPI GsSetConstantBuffers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumBuffers,
-    const D3D10DDI_HRESOURCE* hResource,
+    const D3D10DDI_HRESOURCE* phBuffers,
     const UINT* pFirstConstant,
     const UINT* pNumConstants )
 {
@@ -249,7 +249,7 @@ VOID WINAPI GsSetShader(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI IaSetTopology(
     D3D10DDI_HDEVICE hDevice,
-    D3D10_DDI_PRIMITIVE_TOPOLOGY topology )
+    D3D10_DDI_PRIMITIVE_TOPOLOGY PrimitiveTopology )
 {
     LOG_DLL_ENTRY;
 }
@@ -258,10 +258,10 @@ VOID WINAPI IaSetTopology(
 VOID WINAPI StagingResourceMap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    D3D10_DDI_MAP map,
-    UINT arg2,
-    D3D10DDI_MAPPED_SUBRESOURCE* pSubresource )
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -270,7 +270,7 @@ VOID WINAPI StagingResourceMap(
 VOID WINAPI StagingResourceUnmap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    UINT Subresource )
 {
     LOG_DLL_ENTRY;
 }
@@ -280,7 +280,7 @@ VOID WINAPI VsSetShaderResources(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumViews,
-    const D3D10DDI_HSHADERRESOURCEVIEW* hShaderresourceview )
+    const D3D10DDI_HSHADERRESOURCEVIEW* phShaderResourceViews )
 {
     LOG_DLL_ENTRY;
 }
@@ -289,8 +289,8 @@ VOID WINAPI VsSetShaderResources(
 VOID WINAPI VsSetSamplers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
-    UINT NumSamplers,
-    const D3D10DDI_HSAMPLER* hSampler )
+    UINT Offset,
+    const D3D10DDI_HSAMPLER* NumSamplers )
 {
     LOG_DLL_ENTRY;
 }
@@ -300,7 +300,7 @@ VOID WINAPI GsSetShaderResources(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumViews,
-    const D3D10DDI_HSHADERRESOURCEVIEW* hShaderresourceview )
+    const D3D10DDI_HSHADERRESOURCEVIEW* phShaderResourceViews )
 {
     LOG_DLL_ENTRY;
 }
@@ -309,8 +309,8 @@ VOID WINAPI GsSetShaderResources(
 VOID WINAPI GsSetSamplers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
-    UINT NumSamplers,
-    const D3D10DDI_HSAMPLER* hSampler )
+    UINT Offset,
+    const D3D10DDI_HSAMPLER* NumSamplers )
 {
     LOG_DLL_ENTRY;
 }
@@ -335,8 +335,8 @@ VOID WINAPI SetRenderTargets(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ShaderResourceViewReadAfterWriteHazard(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HSHADERRESOURCEVIEW hShaderresourceview,
-    D3D10DDI_HRESOURCE hResource )
+    D3D10DDI_HSHADERRESOURCEVIEW hResource,
+    D3D10DDI_HRESOURCE hShaderResourceView )
 {
     LOG_DLL_ENTRY;
 }
@@ -352,9 +352,9 @@ VOID WINAPI ResourceReadAfterWriteHazard(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI SetBlendState(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HBLENDSTATE hBlendstate,
-    const FLOAT arg1[4],
-    UINT arg2 )
+    D3D10DDI_HBLENDSTATE hState,
+    const FLOAT FLOAT[4],
+    UINT pBlendFactor )
 {
     LOG_DLL_ENTRY;
 }
@@ -362,8 +362,8 @@ VOID WINAPI SetBlendState(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI SetDepthStencilState(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HDEPTHSTENCILSTATE hDepthstencilstate,
-    UINT arg )
+    D3D10DDI_HDEPTHSTENCILSTATE hState,
+    UINT StencilRef )
 {
     LOG_DLL_ENTRY;
 }
@@ -371,7 +371,7 @@ VOID WINAPI SetDepthStencilState(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI SetRasterizerState(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRASTERIZERSTATE hRasterizerstate )
+    D3D10DDI_HRASTERIZERSTATE hRasterizerState )
 {
     LOG_DLL_ENTRY;
 }
@@ -395,14 +395,14 @@ VOID WINAPI QueryBegin(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceCopyRegion(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource1,
-    UINT arg1,
-    UINT arg2,
-    UINT arg3,
-    UINT arg4,
-    D3D10DDI_HRESOURCE hResource2,
-    UINT arg5,
-    const D3D10_DDI_BOX* pBox,
+    D3D10DDI_HRESOURCE hDstResource,
+    UINT DstSubresource,
+    UINT DstX,
+    UINT DstY,
+    UINT DstZ,
+    D3D10DDI_HRESOURCE hSrcResource,
+    UINT SrcSubresource,
+    const D3D10_DDI_BOX* pSrcBox,
     UINT CopyFlags )
 {
     LOG_DLL_ENTRY;
@@ -411,12 +411,12 @@ VOID WINAPI ResourceCopyRegion(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceUpdateSubresourceUP(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    const D3D10_DDI_BOX* pBox,
-    const void* arg2,
-    UINT arg3,
-    UINT arg4,
+    D3D10DDI_HRESOURCE hDstResource,
+    UINT DstSubresource,
+    const D3D10_DDI_BOX* pDstBox,
+    const void* pSysMemUP,
+    UINT RowPitch,
+    UINT DepthPitch,
     UINT CopyFlags )
 {
     LOG_DLL_ENTRY;
@@ -427,8 +427,8 @@ VOID WINAPI SoSetTargets(
     D3D10DDI_HDEVICE hDevice,
     UINT NumBuffers,
     UINT ClearTargets,
-    const D3D10DDI_HRESOURCE* hResource,
-    const UINT* arg )
+    const D3D10DDI_HRESOURCE* phResource,
+    const UINT* pOffsets )
 {
     LOG_DLL_ENTRY;
 }
@@ -445,7 +445,7 @@ VOID WINAPI SetViewports(
     D3D10DDI_HDEVICE hDevice,
     UINT NumViewports,
     UINT ClearViewports,
-    const D3D10_DDI_VIEWPORT* pViewport )
+    const D3D10_DDI_VIEWPORT* pViewports )
 {
     LOG_DLL_ENTRY;
 }
@@ -455,7 +455,7 @@ VOID WINAPI SetScissorRects(
     D3D10DDI_HDEVICE hDevice,
     UINT NumRects,
     UINT ClearRects,
-    const D3D10_DDI_RECT* pRect )
+    const D3D10_DDI_RECT* pRects )
 {
     LOG_DLL_ENTRY;
 }
@@ -463,8 +463,8 @@ VOID WINAPI SetScissorRects(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ClearRenderTargetView(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRENDERTARGETVIEW hRendertargetview,
-    FLOAT arg[4] )
+    D3D10DDI_HRENDERTARGETVIEW pColorRGBA,
+    FLOAT hRenderTargetView[4] )
 {
     LOG_DLL_ENTRY;
 }
@@ -472,10 +472,10 @@ VOID WINAPI ClearRenderTargetView(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ClearDepthStencilView(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HDEPTHSTENCILVIEW hDepthstencilview,
-    UINT arg1,
-    FLOAT arg2,
-    UINT8 arg3 )
+    D3D10DDI_HDEPTHSTENCILVIEW hDepthStencilView,
+    UINT Stencil,
+    FLOAT Depth,
+    UINT8 Flags )
 {
     LOG_DLL_ENTRY;
 }
@@ -484,7 +484,7 @@ VOID WINAPI ClearDepthStencilView(
 VOID WINAPI SetPredication(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HQUERY hQuery,
-    BOOL arg )
+    BOOL PredicateValue )
 {
     LOG_DLL_ENTRY;
 }
@@ -493,9 +493,9 @@ VOID WINAPI SetPredication(
 VOID WINAPI QueryGetData(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HQUERY hQuery,
-    void* arg1,
+    void* pData,
     UINT DataSize,
-    UINT arg2 )
+    UINT arg )
 {
     LOG_DLL_ENTRY;
 }
@@ -512,7 +512,7 @@ BOOL WINAPI Flush(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI GenMips(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HSHADERRESOURCEVIEW hShaderresourceview )
+    D3D10DDI_HSHADERRESOURCEVIEW hShaderResourceView )
 {
     LOG_DLL_ENTRY;
 }
@@ -520,8 +520,8 @@ VOID WINAPI GenMips(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceCopy(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource1,
-    D3D10DDI_HRESOURCE hResource2 )
+    D3D10DDI_HRESOURCE hDstResource,
+    D3D10DDI_HRESOURCE hSrcResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -529,11 +529,11 @@ VOID WINAPI ResourceCopy(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceResolveSubresource(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource1,
-    UINT arg1,
-    D3D10DDI_HRESOURCE hResource2,
-    UINT arg2,
-    DXGI_FORMAT format )
+    D3D10DDI_HRESOURCE hDstResource,
+    UINT DstSubresource,
+    D3D10DDI_HRESOURCE hSrcResource,
+    UINT SrcSubresource,
+    DXGI_FORMAT ResolveFormat )
 {
     LOG_DLL_ENTRY;
 }
@@ -542,10 +542,10 @@ VOID WINAPI ResourceResolveSubresource(
 VOID WINAPI ResourceMap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    D3D10_DDI_MAP map,
-    UINT arg2,
-    D3D10DDI_MAPPED_SUBRESOURCE* pSubresource )
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -554,7 +554,7 @@ VOID WINAPI ResourceMap(
 VOID WINAPI ResourceUnmap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    UINT Subresource )
 {
     LOG_DLL_ENTRY;
 }
@@ -579,7 +579,7 @@ VOID WINAPI RelocateDeviceFuncs(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateResourceSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATERESOURCE* pCreateresource )
+    const D3D11DDIARG_CREATERESOURCE* pCreateResource )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -588,7 +588,7 @@ SIZE_T WINAPI CalcPrivateResourceSize(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateOpenedResourceSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_OPENRESOURCE* pOpenresource )
+    const D3D10DDIARG_OPENRESOURCE* pOpenResource )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -597,8 +597,8 @@ SIZE_T WINAPI CalcPrivateOpenedResourceSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateResource(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATERESOURCE* pCreateresource,
-    D3D10DDI_HRESOURCE hResource,
+    const D3D11DDIARG_CREATERESOURCE* pCreateResource,
+    D3D10DDI_HRESOURCE hRTResource,
     D3D10DDI_HRTRESOURCE hRtresource )
 {
     LOG_DLL_ENTRY;
@@ -607,8 +607,8 @@ VOID WINAPI CreateResource(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI OpenResource(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_OPENRESOURCE* pOpenresource,
-    D3D10DDI_HRESOURCE hResource,
+    const D3D10DDIARG_OPENRESOURCE* pOpenResource,
+    D3D10DDI_HRESOURCE hRTResource,
     D3D10DDI_HRTRESOURCE hRtresource )
 {
     LOG_DLL_ENTRY;
@@ -625,7 +625,7 @@ VOID WINAPI DestroyResource(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateShaderResourceViewSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATESHADERRESOURCEVIEW* pCreateshaderresourceview )
+    const D3D11DDIARG_CREATESHADERRESOURCEVIEW* pCreateShaderResourceView )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -634,8 +634,8 @@ SIZE_T WINAPI CalcPrivateShaderResourceViewSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateShaderResourceView(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATESHADERRESOURCEVIEW* pCreateshaderresourceview,
-    D3D10DDI_HSHADERRESOURCEVIEW hShaderresourceview,
+    const D3D11DDIARG_CREATESHADERRESOURCEVIEW* pCreateShaderResourceView,
+    D3D10DDI_HSHADERRESOURCEVIEW hRTShaderResourceView,
     D3D10DDI_HRTSHADERRESOURCEVIEW hRtshaderresourceview )
 {
     LOG_DLL_ENTRY;
@@ -644,7 +644,7 @@ VOID WINAPI CreateShaderResourceView(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyShaderResourceView(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HSHADERRESOURCEVIEW hShaderresourceview )
+    D3D10DDI_HSHADERRESOURCEVIEW hShaderResourceView )
 {
     LOG_DLL_ENTRY;
 }
@@ -652,7 +652,7 @@ VOID WINAPI DestroyShaderResourceView(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateRenderTargetViewSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreaterendertargetview )
+    const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreateRenderTargetView )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -661,8 +661,8 @@ SIZE_T WINAPI CalcPrivateRenderTargetViewSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateRenderTargetView(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreaterendertargetview,
-    D3D10DDI_HRENDERTARGETVIEW hRendertargetview,
+    const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreateRenderTargetView,
+    D3D10DDI_HRENDERTARGETVIEW hRTRenderTargetView,
     D3D10DDI_HRTRENDERTARGETVIEW hRtrendertargetview )
 {
     LOG_DLL_ENTRY;
@@ -671,7 +671,7 @@ VOID WINAPI CreateRenderTargetView(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyRenderTargetView(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRENDERTARGETVIEW hRendertargetview )
+    D3D10DDI_HRENDERTARGETVIEW hRenderTargetView )
 {
     LOG_DLL_ENTRY;
 }
@@ -679,7 +679,7 @@ VOID WINAPI DestroyRenderTargetView(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateDepthStencilViewSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEDEPTHSTENCILVIEW* pCreatedepthstencilview )
+    const D3D11DDIARG_CREATEDEPTHSTENCILVIEW* pCreateDepthStencilView )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -688,8 +688,8 @@ SIZE_T WINAPI CalcPrivateDepthStencilViewSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateDepthStencilView(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEDEPTHSTENCILVIEW* pCreatedepthstencilview,
-    D3D10DDI_HDEPTHSTENCILVIEW hDepthstencilview,
+    const D3D11DDIARG_CREATEDEPTHSTENCILVIEW* pCreateDepthStencilView,
+    D3D10DDI_HDEPTHSTENCILVIEW hRTDepthStencilView,
     D3D10DDI_HRTDEPTHSTENCILVIEW hRtdepthstencilview )
 {
     LOG_DLL_ENTRY;
@@ -698,7 +698,7 @@ VOID WINAPI CreateDepthStencilView(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyDepthStencilView(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HDEPTHSTENCILVIEW hDepthstencilview )
+    D3D10DDI_HDEPTHSTENCILVIEW hDepthStencilView )
 {
     LOG_DLL_ENTRY;
 }
@@ -706,7 +706,7 @@ VOID WINAPI DestroyDepthStencilView(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateElementLayoutSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATEELEMENTLAYOUT* pCreateelementlayout )
+    const D3D10DDIARG_CREATEELEMENTLAYOUT* pCreateElementLayout )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -715,8 +715,8 @@ SIZE_T WINAPI CalcPrivateElementLayoutSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateElementLayout(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATEELEMENTLAYOUT* pCreateelementlayout,
-    D3D10DDI_HELEMENTLAYOUT hElementlayout,
+    const D3D10DDIARG_CREATEELEMENTLAYOUT* pCreateElementLayout,
+    D3D10DDI_HELEMENTLAYOUT hRTElementLayout,
     D3D10DDI_HRTELEMENTLAYOUT hRtelementlayout )
 {
     LOG_DLL_ENTRY;
@@ -725,7 +725,7 @@ VOID WINAPI CreateElementLayout(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyElementLayout(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HELEMENTLAYOUT hElementlayout )
+    D3D10DDI_HELEMENTLAYOUT hElementLayout )
 {
     LOG_DLL_ENTRY;
 }
@@ -743,7 +743,7 @@ SIZE_T WINAPI CalcPrivateBlendStateSize(
 VOID WINAPI CreateBlendState(
     D3D10DDI_HDEVICE hDevice,
     const D3D11_1_DDI_BLEND_DESC* pBlendDesc,
-    D3D10DDI_HBLENDSTATE hBlendstate,
+    D3D10DDI_HBLENDSTATE hRTBlendState,
     D3D10DDI_HRTBLENDSTATE hRtblendstate )
 {
     LOG_DLL_ENTRY;
@@ -752,7 +752,7 @@ VOID WINAPI CreateBlendState(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyBlendState(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HBLENDSTATE hBlendstate )
+    D3D10DDI_HBLENDSTATE hBlendState )
 {
     LOG_DLL_ENTRY;
 }
@@ -770,7 +770,7 @@ SIZE_T WINAPI CalcPrivateDepthStencilStateSize(
 VOID WINAPI CreateDepthStencilState(
     D3D10DDI_HDEVICE hDevice,
     const D3D10_DDI_DEPTH_STENCIL_DESC* pDepthStencilDesc,
-    D3D10DDI_HDEPTHSTENCILSTATE hDepthstencilstate,
+    D3D10DDI_HDEPTHSTENCILSTATE hRTDepthStencilState,
     D3D10DDI_HRTDEPTHSTENCILSTATE hRtdepthstencilstate )
 {
     LOG_DLL_ENTRY;
@@ -779,7 +779,7 @@ VOID WINAPI CreateDepthStencilState(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyDepthStencilState(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HDEPTHSTENCILSTATE hDepthstencilstate )
+    D3D10DDI_HDEPTHSTENCILSTATE hDepthStencilState )
 {
     LOG_DLL_ENTRY;
 }
@@ -797,7 +797,7 @@ SIZE_T WINAPI CalcPrivateRasterizerStateSize(
 VOID WINAPI CreateRasterizerState(
     D3D10DDI_HDEVICE hDevice,
     const D3D11_1_DDI_RASTERIZER_DESC* pRasterizerDesc,
-    D3D10DDI_HRASTERIZERSTATE hRasterizerstate,
+    D3D10DDI_HRASTERIZERSTATE hRTRasterizerState,
     D3D10DDI_HRTRASTERIZERSTATE hRtrasterizerstate )
 {
     LOG_DLL_ENTRY;
@@ -806,7 +806,7 @@ VOID WINAPI CreateRasterizerState(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyRasterizerState(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRASTERIZERSTATE hRasterizerstate )
+    D3D10DDI_HRASTERIZERSTATE hRasterizerState )
 {
     LOG_DLL_ENTRY;
 }
@@ -815,7 +815,7 @@ VOID WINAPI DestroyRasterizerState(
 SIZE_T WINAPI CalcPrivateShaderSize(
     D3D10DDI_HDEVICE hDevice,
     const UINT* pShaderCode,
-    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pIOSignatures )
+    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -827,7 +827,7 @@ VOID WINAPI CreateVertexShader(
     const UINT* pShaderCode,
     D3D10DDI_HSHADER hShader,
     D3D10DDI_HRTSHADER hRtshader,
-    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pIOSignatures )
+    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
 }
@@ -838,7 +838,7 @@ VOID WINAPI CreateGeometryShader(
     const UINT* pShaderCode,
     D3D10DDI_HSHADER hShader,
     D3D10DDI_HRTSHADER hRtshader,
-    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pIOSignatures )
+    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
 }
@@ -849,7 +849,7 @@ VOID WINAPI CreatePixelShader(
     const UINT* pShaderCode,
     D3D10DDI_HSHADER hShader,
     D3D10DDI_HRTSHADER hRtshader,
-    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pIOSignatures )
+    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
 }
@@ -857,8 +857,8 @@ VOID WINAPI CreatePixelShader(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateGeometryShaderWithStreamOutput(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEGEOMETRYSHADERWITHSTREAMOUTPUT* pCreategeometryshaderwithstreamoutput,
-    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pIOSignatures )
+    const D3D11DDIARG_CREATEGEOMETRYSHADERWITHSTREAMOUTPUT* pOutput,
+    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -867,10 +867,10 @@ SIZE_T WINAPI CalcPrivateGeometryShaderWithStreamOutput(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateGeometryShaderWithStreamOutput(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEGEOMETRYSHADERWITHSTREAMOUTPUT* pCreategeometryshaderwithstreamoutput,
+    const D3D11DDIARG_CREATEGEOMETRYSHADERWITHSTREAMOUTPUT* pOutput,
     D3D10DDI_HSHADER hShader,
-    D3D10DDI_HRTSHADER hRtshader,
-    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pIOSignatures )
+    D3D10DDI_HRTSHADER hRTShader,
+    const D3D11_1DDIARG_STAGE_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
 }
@@ -897,7 +897,7 @@ VOID WINAPI CreateSampler(
     D3D10DDI_HDEVICE hDevice,
     const D3D10_DDI_SAMPLER_DESC* pSamplerDesc,
     D3D10DDI_HSAMPLER hSampler,
-    D3D10DDI_HRTSAMPLER hRtsampler )
+    D3D10DDI_HRTSAMPLER hRTSampler )
 {
     LOG_DLL_ENTRY;
 }
@@ -913,7 +913,7 @@ VOID WINAPI DestroySampler(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateQuerySize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATEQUERY* pCreatequery )
+    const D3D10DDIARG_CREATEQUERY* pCreateQuery )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -922,8 +922,8 @@ SIZE_T WINAPI CalcPrivateQuerySize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateQuery(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATEQUERY* pCreatequery,
-    D3D10DDI_HQUERY hQuery,
+    const D3D10DDIARG_CREATEQUERY* pCreateQuery,
+    D3D10DDI_HQUERY hRTQuery,
     D3D10DDI_HRTQUERY hRtquery )
 {
     LOG_DLL_ENTRY;
@@ -941,7 +941,7 @@ VOID WINAPI DestroyQuery(
 VOID WINAPI CheckFormatSupport(
     D3D10DDI_HDEVICE hDevice,
     DXGI_FORMAT format,
-    UINT* arg )
+    UINT* pFormatCaps )
 {
     LOG_DLL_ENTRY;
 }
@@ -949,9 +949,9 @@ VOID WINAPI CheckFormatSupport(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CheckMultisampleQualityLevels(
     D3D10DDI_HDEVICE hDevice,
-    DXGI_FORMAT format,
-    UINT arg1,
-    UINT* arg2 )
+    DXGI_FORMAT Format,
+    UINT SampleCount,
+    UINT* pNumQualityLevels )
 {
     LOG_DLL_ENTRY;
 }
@@ -967,14 +967,14 @@ VOID WINAPI CheckCounterInfo(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CheckCounter(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_QUERY query,
+    D3D10DDI_QUERY Query,
     D3D10DDI_COUNTER_TYPE* pCounterType,
-    UINT* arg1,
-    LPSTR arg2,
+    UINT* pDescription,
+    LPSTR pActiveCounters,
     UINT* pNameLength,
-    LPSTR arg3,
+    LPSTR pName,
     UINT* pUnitsLength,
-    LPSTR arg4,
+    LPSTR pUnits,
     UINT* pDescriptionLength )
 {
     LOG_DLL_ENTRY;
@@ -990,8 +990,8 @@ VOID WINAPI DestroyDevice(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI SetTextFilterSize(
     D3D10DDI_HDEVICE hDevice,
-    UINT arg1,
-    UINT arg2 )
+    UINT Width,
+    UINT Height )
 {
     LOG_DLL_ENTRY;
 }
@@ -999,8 +999,8 @@ VOID WINAPI SetTextFilterSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceConvert(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource1,
-    D3D10DDI_HRESOURCE hResource2 )
+    D3D10DDI_HRESOURCE hDstResource,
+    D3D10DDI_HRESOURCE hSrcResource )
 {
     LOG_DLL_ENTRY;
 }
@@ -1008,14 +1008,14 @@ VOID WINAPI ResourceConvert(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceConvertRegion(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource1,
-    UINT arg1,
-    UINT arg2,
-    UINT arg3,
-    UINT arg4,
-    D3D10DDI_HRESOURCE hResource2,
-    UINT arg5,
-    const D3D10_DDI_BOX* pBox,
+    D3D10DDI_HRESOURCE hDstResource,
+    UINT DstSubresource,
+    UINT DstX,
+    UINT DstY,
+    UINT DstZ,
+    D3D10DDI_HRESOURCE hSrcResource,
+    UINT SrcSubresource,
+    const D3D10_DDI_BOX* pSrcBox,
     UINT CopyFlags )
 {
     LOG_DLL_ENTRY;
@@ -1024,8 +1024,8 @@ VOID WINAPI ResourceConvertRegion(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawIndexedInstancedIndirect(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    D3D10DDI_HRESOURCE hBufferForArgs,
+    UINT AlignedByteOffsetForArgs )
 {
     LOG_DLL_ENTRY;
 }
@@ -1033,8 +1033,8 @@ VOID WINAPI DrawIndexedInstancedIndirect(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawInstancedIndirect(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    D3D10DDI_HRESOURCE hBufferForArgs,
+    UINT AlignedByteOffsetForArgs )
 {
     LOG_DLL_ENTRY;
 }
@@ -1042,7 +1042,7 @@ VOID WINAPI DrawInstancedIndirect(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CommandListExecute(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HCOMMANDLIST hCommandlist )
+    D3D11DDI_HCOMMANDLIST hCommandList )
 {
     LOG_DLL_ENTRY;
 }
@@ -1052,7 +1052,7 @@ VOID WINAPI HsSetShaderResources(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumViews,
-    const D3D10DDI_HSHADERRESOURCEVIEW* hShaderresourceview )
+    const D3D10DDI_HSHADERRESOURCEVIEW* phShaderResourceViews )
 {
     LOG_DLL_ENTRY;
 }
@@ -1069,8 +1069,8 @@ VOID WINAPI HsSetShader(
 VOID WINAPI HsSetSamplers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
-    UINT NumSamplers,
-    const D3D10DDI_HSAMPLER* hSampler )
+    UINT Offset,
+    const D3D10DDI_HSAMPLER* NumSamplers )
 {
     LOG_DLL_ENTRY;
 }
@@ -1080,7 +1080,7 @@ VOID WINAPI HsSetConstantBuffers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumBuffers,
-    const D3D10DDI_HRESOURCE* hResource,
+    const D3D10DDI_HRESOURCE* phBuffers,
     const UINT* pFirstConstant,
     const UINT* pNumConstants )
 {
@@ -1092,7 +1092,7 @@ VOID WINAPI DsSetShaderResources(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumViews,
-    const D3D10DDI_HSHADERRESOURCEVIEW* hShaderresourceview )
+    const D3D10DDI_HSHADERRESOURCEVIEW* phShaderResourceViews )
 {
     LOG_DLL_ENTRY;
 }
@@ -1109,8 +1109,8 @@ VOID WINAPI DsSetShader(
 VOID WINAPI DsSetSamplers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
-    UINT NumSamplers,
-    const D3D10DDI_HSAMPLER* hSampler )
+    UINT Offset,
+    const D3D10DDI_HSAMPLER* NumSamplers )
 {
     LOG_DLL_ENTRY;
 }
@@ -1120,7 +1120,7 @@ VOID WINAPI DsSetConstantBuffers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumBuffers,
-    const D3D10DDI_HRESOURCE* hResource,
+    const D3D10DDI_HRESOURCE* phBuffers,
     const UINT* pFirstConstant,
     const UINT* pNumConstants )
 {
@@ -1133,7 +1133,7 @@ VOID WINAPI CreateHullShader(
     const UINT* pShaderCode,
     D3D10DDI_HSHADER hShader,
     D3D10DDI_HRTSHADER hRtshader,
-    const D3D11_1DDIARG_TESSELLATION_IO_SIGNATURES* pIOSignatures )
+    const D3D11_1DDIARG_TESSELLATION_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
 }
@@ -1143,8 +1143,8 @@ VOID WINAPI CreateDomainShader(
     D3D10DDI_HDEVICE hDevice,
     const UINT* pShaderCode,
     D3D10DDI_HSHADER hShader,
-    D3D10DDI_HRTSHADER hRtshader,
-    const D3D11_1DDIARG_TESSELLATION_IO_SIGNATURES* pIOSignatures )
+    D3D10DDI_HRTSHADER hRTShader,
+    const D3D11_1DDIARG_TESSELLATION_IO_SIGNATURES* pSignatures )
 {
     LOG_DLL_ENTRY;
 }
@@ -1153,7 +1153,7 @@ VOID WINAPI CreateDomainShader(
 VOID WINAPI CheckDeferredContextHandleSizes(
     D3D10DDI_HDEVICE hDevice,
     UINT* pHSizes,
-    D3D11DDI_HANDLESIZE* hAndlesize )
+    D3D11DDI_HANDLESIZE* pHandleSize )
 {
     LOG_DLL_ENTRY;
 }
@@ -1161,8 +1161,8 @@ VOID WINAPI CheckDeferredContextHandleSizes(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcDeferredContextHandleSize(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HANDLETYPE hAndletype,
-    void* arg )
+    D3D11DDI_HANDLETYPE HandleType,
+    void* pICObject )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -1171,7 +1171,7 @@ SIZE_T WINAPI CalcDeferredContextHandleSize(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateDeferredContextSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CALCPRIVATEDEFERREDCONTEXTSIZE* pCalcprivatedeferredcontextsize )
+    const D3D11DDIARG_CALCPRIVATEDEFERREDCONTEXTSIZE* pCalcPrivateDeferredContextSize )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -1180,7 +1180,7 @@ SIZE_T WINAPI CalcPrivateDeferredContextSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateDeferredContext(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreatedeferredcontext )
+    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreateDeferredContext )
 {
     LOG_DLL_ENTRY;
 }
@@ -1195,7 +1195,7 @@ VOID WINAPI AbandonCommandList(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateCommandListSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATECOMMANDLIST* pCreatecommandlist )
+    const D3D11DDIARG_CREATECOMMANDLIST* pCreateCommandList )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -1205,7 +1205,7 @@ SIZE_T WINAPI CalcPrivateCommandListSize(
 VOID WINAPI CreateCommandList(
     D3D10DDI_HDEVICE hDevice,
     const D3D11DDIARG_CREATECOMMANDLIST* pCreatecommandlist,
-    D3D11DDI_HCOMMANDLIST hCommandlist,
+    D3D11DDI_HCOMMANDLIST hRTCommandList,
     D3D11DDI_HRTCOMMANDLIST hRtcommandlist )
 {
     LOG_DLL_ENTRY;
@@ -1214,7 +1214,7 @@ VOID WINAPI CreateCommandList(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyCommandList(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HCOMMANDLIST hCommandlist )
+    D3D11DDI_HCOMMANDLIST hCommandList )
 {
     LOG_DLL_ENTRY;
 }
@@ -1234,8 +1234,8 @@ VOID WINAPI PsSetShaderWithIfaces(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HSHADER hShader,
     UINT NumClassInstances,
-    const UINT* arg,
-    const D3D11DDIARG_POINTERDATA* pPointerdata )
+    const UINT* pPointerData,
+    const D3D11DDIARG_POINTERDATA* pIfaces )
 {
     LOG_DLL_ENTRY;
 }
@@ -1245,8 +1245,8 @@ VOID WINAPI VsSetShaderWithIfaces(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HSHADER hShader,
     UINT NumClassInstances,
-    const UINT* arg,
-    const D3D11DDIARG_POINTERDATA* pPointerdata )
+    const UINT* pPointerData,
+    const D3D11DDIARG_POINTERDATA* pIfaces )
 {
     LOG_DLL_ENTRY;
 }
@@ -1256,8 +1256,8 @@ VOID WINAPI GsSetShaderWithIfaces(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HSHADER hShader,
     UINT NumClassInstances,
-    const UINT* arg,
-    const D3D11DDIARG_POINTERDATA* pPointerdata )
+    const UINT* pPointerData,
+    const D3D11DDIARG_POINTERDATA* pIfaces )
 {
     LOG_DLL_ENTRY;
 }
@@ -1267,8 +1267,8 @@ VOID WINAPI HsSetShaderWithIfaces(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HSHADER hShader,
     UINT NumClassInstances,
-    const UINT* arg,
-    const D3D11DDIARG_POINTERDATA* pPointerdata )
+    const UINT* pPointerData,
+    const D3D11DDIARG_POINTERDATA* pIfaces )
 {
     LOG_DLL_ENTRY;
 }
@@ -1278,8 +1278,8 @@ VOID WINAPI DsSetShaderWithIfaces(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HSHADER hShader,
     UINT NumClassInstances,
-    const UINT* arg,
-    const D3D11DDIARG_POINTERDATA* pPointerdata )
+    const UINT* pPointerData,
+    const D3D11DDIARG_POINTERDATA* pIfaces )
 {
     LOG_DLL_ENTRY;
 }
@@ -1289,8 +1289,8 @@ VOID WINAPI CsSetShaderWithIfaces(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HSHADER hShader,
     UINT NumClassInstances,
-    const UINT* arg,
-    const D3D11DDIARG_POINTERDATA* pPointerdata )
+    const UINT* pPointerData,
+    const D3D11DDIARG_POINTERDATA* pIfaces )
 {
     LOG_DLL_ENTRY;
 }
@@ -1318,7 +1318,7 @@ VOID WINAPI CsSetShaderResources(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumViews,
-    const D3D10DDI_HSHADERRESOURCEVIEW* hShaderresourceview )
+    const D3D10DDI_HSHADERRESOURCEVIEW* phShaderResourceViews )
 {
     LOG_DLL_ENTRY;
 }
@@ -1327,8 +1327,8 @@ VOID WINAPI CsSetShaderResources(
 VOID WINAPI CsSetSamplers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
-    UINT NumSamplers,
-    const D3D10DDI_HSAMPLER* hSampler )
+    UINT Offset,
+    const D3D10DDI_HSAMPLER* NumSamplers )
 {
     LOG_DLL_ENTRY;
 }
@@ -1338,7 +1338,7 @@ VOID WINAPI CsSetConstantBuffers(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumBuffers,
-    const D3D10DDI_HRESOURCE* hResource,
+    const D3D10DDI_HRESOURCE* phBuffers,
     const UINT* pFirstConstant,
     const UINT* pNumConstants )
 {
@@ -1348,7 +1348,7 @@ VOID WINAPI CsSetConstantBuffers(
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcPrivateUnorderedAccessViewSize(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEUNORDEREDACCESSVIEW* pCreateunorderedaccessview )
+    const D3D11DDIARG_CREATEUNORDEREDACCESSVIEW* pCreateUnorderedAccessView )
 {
     LOG_DLL_ENTRY;
     return 0;
@@ -1357,8 +1357,8 @@ SIZE_T WINAPI CalcPrivateUnorderedAccessViewSize(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateUnorderedAccessView(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEUNORDEREDACCESSVIEW* pCreateunorderedaccessview,
-    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedaccessview,
+    const D3D11DDIARG_CREATEUNORDEREDACCESSVIEW* pCreateUnorderedAccessView,
+    D3D11DDI_HUNORDEREDACCESSVIEW hRTUnorderedAccessView,
     D3D11DDI_HRTUNORDEREDACCESSVIEW hRtunorderedaccessview )
 {
     LOG_DLL_ENTRY;
@@ -1367,7 +1367,7 @@ VOID WINAPI CreateUnorderedAccessView(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyUnorderedAccessView(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedaccessview )
+    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedAccessView )
 {
     LOG_DLL_ENTRY;
 }
@@ -1375,8 +1375,8 @@ VOID WINAPI DestroyUnorderedAccessView(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ClearUnorderedAccessViewUint(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedaccessview,
-    const UINT arg[4] )
+    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedAccessView,
+    const UINT UINT[4] )
 {
     LOG_DLL_ENTRY;
 }
@@ -1384,8 +1384,8 @@ VOID WINAPI ClearUnorderedAccessViewUint(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ClearUnorderedAccessViewFloat(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedaccessview,
-    const FLOAT arg[4] )
+    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedAccessView,
+    const FLOAT FLOAT[4] )
 {
     LOG_DLL_ENTRY;
 }
@@ -1395,8 +1395,8 @@ VOID WINAPI CsSetUnorderedAccessViews(
     D3D10DDI_HDEVICE hDevice,
     UINT StartSlot,
     UINT NumViews,
-    const D3D11DDI_HUNORDEREDACCESSVIEW* hUnorderedaccessview,
-    const UINT* arg )
+    const D3D11DDI_HUNORDEREDACCESSVIEW* pUAVInitialCounts,
+    const UINT* phUnorderedAccessView )
 {
     LOG_DLL_ENTRY;
 }
@@ -1404,9 +1404,9 @@ VOID WINAPI CsSetUnorderedAccessViews(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI Dispatch(
     D3D10DDI_HDEVICE hDevice,
-    UINT arg1,
-    UINT arg2,
-    UINT arg3 )
+    UINT ThreadGroupCountX,
+    UINT ThreadGroupCountY,
+    UINT ThreadGroupCountZ )
 {
     LOG_DLL_ENTRY;
 }
@@ -1414,8 +1414,8 @@ VOID WINAPI Dispatch(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DispatchIndirect(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT arg )
+    D3D10DDI_HRESOURCE hBufferForArgs,
+    UINT AlignedByteOffsetForArgs )
 {
     LOG_DLL_ENTRY;
 }
@@ -1424,7 +1424,7 @@ VOID WINAPI DispatchIndirect(
 VOID WINAPI SetResourceMinLOD(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    FLOAT arg )
+    FLOAT MinLOD )
 {
     LOG_DLL_ENTRY;
 }
@@ -1432,9 +1432,9 @@ VOID WINAPI SetResourceMinLOD(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CopyStructureCount(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT arg,
-    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedaccessview )
+    D3D10DDI_HRESOURCE hDstBuffer,
+    UINT DstAlignedByteOffset,
+    D3D11DDI_HUNORDEREDACCESSVIEW hSrcView )
 {
     LOG_DLL_ENTRY;
 }
@@ -1442,7 +1442,7 @@ VOID WINAPI CopyStructureCount(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI RecycleCommandList(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HCOMMANDLIST hCommandlist )
+    D3D11DDI_HCOMMANDLIST hCommandList )
 {
     LOG_DLL_ENTRY;
 }
@@ -1450,8 +1450,8 @@ VOID WINAPI RecycleCommandList(
 ////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI RecycleCreateCommandList(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATECOMMANDLIST* pCreatecommandlist,
-    D3D11DDI_HCOMMANDLIST hCommandlist,
+    const D3D11DDIARG_CREATECOMMANDLIST* pCreateCommandList,
+    D3D11DDI_HCOMMANDLIST hRTCommandList,
     D3D11DDI_HRTCOMMANDLIST hRtcommandlist )
 {
     LOG_DLL_ENTRY;
@@ -1461,7 +1461,7 @@ HRESULT WINAPI RecycleCreateCommandList(
 ////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI RecycleCreateDeferredContext(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreatedeferredcontext )
+    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreateDeferredContext )
 {
     LOG_DLL_ENTRY;
     return E_FAIL;
@@ -1470,7 +1470,7 @@ HRESULT WINAPI RecycleCreateDeferredContext(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI RecycleDestroyCommandList(
     D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HCOMMANDLIST hCommandlist )
+    D3D11DDI_HCOMMANDLIST hCommandList )
 {
     LOG_DLL_ENTRY;
 }
@@ -1480,7 +1480,7 @@ VOID WINAPI Discard(
     D3D10DDI_HDEVICE hDevice,
     D3D11DDI_HANDLETYPE HandleType,
     void* hResourceOrView,
-    const D3D10_DDI_RECT* pRect,
+    const D3D10_DDI_RECT* pRects,
     UINT NumRects )
 {
     LOG_DLL_ENTRY;
@@ -1500,10 +1500,10 @@ VOID WINAPI AssignDebugBinary(
 VOID WINAPI DynamicConstantBufferMapNoOverwrite(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
-    UINT arg1,
-    D3D10_DDI_MAP map,
-    UINT arg2,
-    D3D10DDI_MAPPED_SUBRESOURCE* pSubresource )
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
 {
     LOG_DLL_ENTRY;
 }

@@ -8,7 +8,7 @@ def parse(path):
 
     re_filename = re.compile("nc-.*\.md")
     re_typedef = re.compile("#{1} (\w*).*")
-    re_argname_section = re.compile("### -param (\w*)$")
+    re_argname_section = re.compile("### -param (\w*).*")
     re_argname_in = re.compile("\*(\w*)\*.*")
     rg_arg = re.compile("Arg\d*")
 

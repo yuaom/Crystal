@@ -9,9 +9,7 @@ import clang.cindex
 from clang.cindex import CursorKind
 from clang.cindex import TypeKind
 
-arg_name_replacement_map = {
-    "DefaultConstantBufferUpdateSubresourceUP": ["DstSubresource"]
-}
+argument_names = {}
 
 
 class ParseContext:
@@ -71,7 +69,7 @@ class DDIEntrypoint:
         self.params = params
 
 
-def get_parameter_name(function_name, type_string, suggested):
+def get_parameter_name(type_string, suggested):
     if(suggested != ''):
         return suggested
 
@@ -141,9 +139,10 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
 
             # Generate parameter list
             params = []
-            arg_num = 0
+            arg_num = -1
             for typedef_parm_cursor in type_cursor.get_children():
                 if(typedef_parm_cursor.kind == CursorKind.PARM_DECL):
+                    arg_num = arg_num + 1
                     param_type = ""
                     param_name = ""
                     param_suffix = ""
@@ -151,15 +150,20 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
                     # Reconstruct constant array
                     if(typedef_parm_cursor.type.kind == TypeKind.CONSTANTARRAY):
                         param_type = typedef_parm_cursor.type.element_type.spelling
-                        param_name = get_parameter_name(
-                            param_type,
-                            typedef_parm_cursor.spelling)
+                        param_name = argument_names[child.type.spelling][arg_num]
                         param_suffix = "[%d]" % typedef_parm_cursor.type.element_count
                     else:
                         param_type = typedef_parm_cursor.type.spelling
                         param_type = param_type.replace(" *", "*")
-                        param_name = get_parameter_name(
-                            param_type, typedef_parm_cursor.spelling)
+
+                        pfnName = child.type.spelling
+                        if pfnName in argument_names.keys():
+                            param_name = argument_names[pfnName][arg_num]
+
+                        if param_name == "" or re.match("[Aa]rg\d*", param_name) != None:
+                            param_name = get_parameter_name(
+                                param_type,
+                                typedef_parm_cursor.spelling)
 
                     params.append([param_type, param_name, param_suffix])
 
@@ -334,6 +338,13 @@ def main():
         print("")
 
     if(success):
+        csvlines = []
+        with open("argnames.csv") as f:
+            csvlines = f.readlines()
+        for line in csvlines:
+            parts = line.strip().split(',')
+            argument_names[parts[0]] = parts[1:]
+
         for context in contexts:
             print("Parsing %s..." % context.filename)
 

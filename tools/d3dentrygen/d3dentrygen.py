@@ -9,6 +9,10 @@ import clang.cindex
 from clang.cindex import CursorKind
 from clang.cindex import TypeKind
 
+arg_name_replacement_map = {
+    "DefaultConstantBufferUpdateSubresourceUP": ["DstSubresource"]
+}
+
 
 class ParseContext:
     def __init__(self, input_file, output_directory, output_filemap, table, template_name):
@@ -67,7 +71,7 @@ class DDIEntrypoint:
         self.params = params
 
 
-def get_parameter_name(type_string, suggested):
+def get_parameter_name(function_name, type_string, suggested):
     if(suggested != ''):
         return suggested
 
@@ -294,20 +298,20 @@ def main():
     args = parser.parse_args()
 
     filemap = {
-        "[V|H|D|G|P|C]sSetConstantBuffers$": "umd_ddi_cbv.cpp",
-        "[V|H|D|G|P|C]sSetShaderResources$": "umd_ddi_srv.cpp",
-        "[V|H|D|G|P|C]sSetShader[WithIfaces]*": "umd_ddi_shader.cpp",
-        "[V|H|D|G|P|C]sSetSamplers$": "umd_ddi_samplers.cpp",
-        "[V|H|D|G|P|C]sSetUnorderedAccessViews$": "umd_ddi_uav.cpp",
-        "Draw.*": "umd_ddi_draw.cpp",
-        "Dispatch.*": "umd_ddi_dispatch.cpp",
-        "Dynamic.*": "umd_ddi_dynamic.cpp",
-        "Ia.*": "umd_ddi_input.cpp",
-        ".*WriteHazard$": "umd_ddi_hazard.cpp",
-        "SetPredication|Query.*": "umd_ddi_query.cpp",
-        ".*Resource$": "umd_ddi_resource.cpp",
-        ".*CommandList$": "umd_ddi_commandlist.cpp",
-        "Clear.*": "umd_ddi_clear.cpp"
+        # "[V|H|D|G|P|C]sSetConstantBuffers$": "umd_ddi_cbv.cpp",
+        # "[V|H|D|G|P|C]sSetShaderResources$": "umd_ddi_srv.cpp",
+        # "[V|H|D|G|P|C]sSetShader[WithIfaces]*": "umd_ddi_shader.cpp",
+        # "[V|H|D|G|P|C]sSetSamplers$": "umd_ddi_samplers.cpp",
+        # "[V|H|D|G|P|C]sSetUnorderedAccessViews$": "umd_ddi_uav.cpp",
+        # "Draw.*": "umd_ddi_draw.cpp",
+        # "Dispatch.*": "umd_ddi_dispatch.cpp",
+        # "Dynamic.*": "umd_ddi_dynamic.cpp",
+        # "Ia.*": "umd_ddi_input.cpp",
+        # ".*WriteHazard$": "umd_ddi_hazard.cpp",
+        # "SetPredication|Query.*": "umd_ddi_query.cpp",
+        # ".*Resource$": "umd_ddi_resource.cpp",
+        # ".*CommandList$": "umd_ddi_commandlist.cpp",
+        # "Clear.*": "umd_ddi_clear.cpp"
     }
 
     contexts = [

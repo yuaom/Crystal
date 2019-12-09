@@ -1,9 +1,10 @@
 import argparse
 import os
 import re
+import sys
 
 
-def parse(path):
+def parse(args, path):
     success = True
 
     re_filename = re.compile("nc-.*\.md")
@@ -17,7 +18,7 @@ def parse(path):
     md_files = [os.path.join(path, file) for file in os.listdir(
         path) if re_filename.match(file) != None]
     for md in md_files:
-        print("Parsing %s..." % md)
+        print("Parsing %s..." % os.path.basename(md))
         lines = []
         try:
             with open(md) as f:
@@ -75,7 +76,10 @@ def parse(path):
             ddilist[-1].append(argname)
             backup = ""
 
-    with open("argnames.csv", "w+") as f:
+    out_file = os.path.join(args.output, "argnames.csv")
+    if(not os.path.exists(args.output)):
+        os.makedirs(args.output)
+    with open(out_file, "w+") as f:
         for ddi in ddilist:
             f.write(','.join(ddi))
             f.write('\n')
@@ -88,6 +92,8 @@ def main():
         description='Parses Microsoft\'s windows-driver-docs-ddi github repository for DDI argument names.')
     parser.add_argument('--path', metavar='PATH',
                         required=True, help='Cloned or downloaded respository path.')
+    parser.add_argument('--output', metavar='PATH', default=os.path.join(sys.path[0], 'output'), required=False,
+                        help='Define output path. Default scriptdir\\output')
     args = parser.parse_args()
 
     sub_directories = [
@@ -96,7 +102,7 @@ def main():
 
     success = True
     for subdir in sub_directories:
-        success = parse(subdir)
+        success = parse(args, subdir)
         if not success:
             break
 

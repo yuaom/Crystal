@@ -48,7 +48,7 @@ class ParseContext:
             try:
                 output_full = os.path.join(self.output_directory, output_file)
 
-                print("  Generating %d entries into %s..." %
+                print("    Generating %d entries into %s..." %
                       (len(self.entrypoints[output_file]), output_full))
 
                 render = template.render(
@@ -62,7 +62,7 @@ class ParseContext:
         # Output umd_ddi.cpp
         try:
             output_full = os.path.join(self.output_directory, "umd_ddi.cpp")
-            print("  Generating %s..." % output_full)
+            print("    Generating %s..." % output_full)
             template = Template(filename=self.template.filltable_cpp)
             render = template.render(
                 table_name=self.table,
@@ -74,7 +74,7 @@ class ParseContext:
         # Output umd_ddi.h
         try:
             output_full = os.path.join(self.output_directory, "umd_ddi.h")
-            print("  Generating %s..." % output_full)
+            print("    Generating %s..." % output_full)
             template = Template(filename=self.template.filltable_h)
             render = template.render(
                 table_name=self.table,
@@ -160,9 +160,6 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
     print("  Found DDI Table '%s'..." % cursor.spelling)
     for child in cursor.get_children():
         try:
-            if(args.debug):
-                print("    %s (%s)" % (child.spelling, child.type.spelling))
-
             function_name = child.spelling[3:]
 
             type_cursor = pfnCursors[child.type.spelling]
@@ -301,6 +298,16 @@ def configure_environment(args, contexts):
                 headers_found = False
                 break
 
+    # Look for arg names
+    print("  Looking for argument naming hint file %s... " %
+          args.argnames, end='')
+    if(os.path.exists(args.argnames)):
+        print("found!")
+    else:
+        print("not found!")
+        print("  Warning: could not find argnames file %s." % args.argnames)
+        print("  Warning: Script will use fallback naming mechanism.")
+
     return wdk_found and headers_found
 
 
@@ -321,7 +328,7 @@ def clean_output(contexts):
                     delete_count = delete_count + 1
                 except:
                     print("\n  Warning: unable to delete %s." % ddi_file)
-        print(" %d files deleted." % delete_count)
+        print(" finished! %d files deleted." % delete_count)
 
 
 def configure_clang():
@@ -351,9 +358,10 @@ def main():
         description='Parse D3D11/12 DDI header files to produce stubbed entry-points.')
     parser.add_argument('--wdk', metavar='PATH',
                         required=True, help='Define WDK path')
-    parser.add_argument('--output', metavar='PATH', default=os.path.join(os.getcwd(), 'output'), required=False,
-                        help='Define output path. Default cwd\\output')
-    parser.add_argument('--debug', default=False, action="store_true")
+    parser.add_argument('--output', metavar='PATH', default=os.path.join(sys.path[0], 'output'), required=False,
+                        help='Define output path. Default scriptdir\\output.')
+    parser.add_argument('--argnames', metavar='PATH', default=os.path.join(sys.path[0], 'output', 'argnames.csv'), required=False,
+                        help='Argument name CSV file to use as name hints. Output from namegen.py. Default scriptdir\\output.')
     args = parser.parse_args()
 
     filemap = {
@@ -464,25 +472,27 @@ def main():
         success = configure_clang()
 
     if(success):
-        print("")
-        print("Cleaning old output...")
+        print("\nCleaning old output...")
         clean_output(contexts)
 
-    if(not success):
-        print("Check failed!")
-    else:
-        print("")
+    if(success):
+        try:
+            print("\nLoading argument hints... ", end='')
+            csvlines = []
+            with open(args.argnames) as f:
+                csvlines = f.readlines()
+            for line in csvlines:
+                parts = line.strip().split(',')
+                argument_names[parts[0]] = parts[1:]
+            print('finished!')
+        except Exception as e:
+            print('error!')
+            print(e)
+            success = False
 
     if(success):
-        csvlines = []
-        with open("argnames.csv") as f:
-            csvlines = f.readlines()
-        for line in csvlines:
-            parts = line.strip().split(',')
-            argument_names[parts[0]] = parts[1:]
-
         for context in contexts:
-            print("Parsing %s..." % context.filename)
+            print("\nParsing %s..." % context.filename)
 
             success = parse_header(args, context)
 

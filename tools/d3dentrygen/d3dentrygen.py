@@ -23,7 +23,7 @@ class ParseContext:
 
     def add_entrypoint(self, entry):
         # Find matching output file
-        output_file = "umd_ddi.cpp"
+        output_file = ""
         for entry_expression, filename in self.output_filemap.items():
             if(re.match(entry_expression, entry.name) != None):
                 output_file = filename
@@ -52,7 +52,7 @@ class ParseContext:
                 if(not os.path.exists(output_directory)):
                     os.makedirs(output_directory)
 
-                with open(output_full, "w") as file:
+                with open(output_full, "a+") as file:
                     print(render, file=file)
             except Exception as e:
                 print(e)
@@ -269,6 +269,20 @@ def configure_environment(args, contexts):
     return wdk_found and headers_found
 
 
+def clean_output(contexts):
+    delete_count = 0
+    for parse_context in contexts:
+        for _, outfile in parse_context.output_filemap.items():
+            full_path = os.path.join(parse_context.output_directory, outfile)
+            if(os.path.exists(full_path)):
+                try:
+                    os.remove(full_path)
+                    delete_count = delete_count + 1
+                except:
+                    print("  Warning: unable to delete %s." % outfile)
+    print("  %d files deleted." % delete_count)
+
+
 def configure_clang():
     configured = False
     tools_dir = os.path.sep.join(sys.path[0].split(os.path.sep)[:-1])
@@ -302,20 +316,93 @@ def main():
     args = parser.parse_args()
 
     filemap = {
-        # "[V|H|D|G|P|C]sSetConstantBuffers$": "umd_ddi_cbv.cpp",
-        # "[V|H|D|G|P|C]sSetShaderResources$": "umd_ddi_srv.cpp",
-        # "[V|H|D|G|P|C]sSetShader[WithIfaces]*": "umd_ddi_shader.cpp",
-        # "[V|H|D|G|P|C]sSetSamplers$": "umd_ddi_samplers.cpp",
-        # "[V|H|D|G|P|C]sSetUnorderedAccessViews$": "umd_ddi_uav.cpp",
-        # "Draw.*": "umd_ddi_draw.cpp",
-        # "Dispatch.*": "umd_ddi_dispatch.cpp",
-        # "Dynamic.*": "umd_ddi_dynamic.cpp",
-        # "Ia.*": "umd_ddi_input.cpp",
-        # ".*WriteHazard$": "umd_ddi_hazard.cpp",
-        # "SetPredication|Query.*": "umd_ddi_query.cpp",
-        # ".*Resource$": "umd_ddi_resource.cpp",
-        # ".*CommandList$": "umd_ddi_commandlist.cpp",
-        # "Clear.*": "umd_ddi_clear.cpp"
+        # CalcSizes
+        "CalcPrivate.*": "umd_ddi_calcprivate.cpp",
+
+        # SO
+        "SoSetTargets": "umd_ddi_streamout.cpp",
+
+        # OM
+        ".*BlendState": "umd_ddi_blend.cpp",
+        ".*DepthStencilState": "umd_ddi_depthstencil.cpp",
+        ".*RasterizerState": "umd_ddi_raster.cpp",
+        "SetViewports": "umd_ddi_viewports.cpp",
+        "SetScissorRects": "umd_ddi_scissor.cpp",
+
+        # Render
+        "Draw.*": "umd_ddi_draw.cpp",
+        "Dispatch.*": "umd_ddi_dispatch.cpp",
+
+        # Views
+        "[V|H|D|G|P|C]sSetConstantBuffers$": "umd_ddi_cbv.cpp",
+        "[V|H|D|G|P|C]sSetShaderResources$": "umd_ddi_srv.cpp",
+        ".*ShaderResourceView": "umd_ddi_srv.cpp",
+        "[V|H|D|G|P|C]sSetUnorderedAccessViews$": "umd_ddi_uav.cpp",
+        ".*UnorderedAccessView": "umd_ddi_uav.cpp",
+        ".*DepthStencilView": "umd_ddi_dsv.cpp",
+        "SetRenderTargets": "umd_ddi_rtv.cpp",
+        ".*RenderTargetView": "umd_ddi_rtv.cpp",
+
+        # Samplers
+        "[V|H|D|G|P|C]sSetSamplers$": "umd_ddi_samplers.cpp",
+        ".*Sampler": "umd_ddi_samplers.cpp",
+
+        # Shader
+        "[V|H|D|G|P|C]sSetShader[WithIfaces]*": "umd_ddi_shader.cpp",
+        ".*Shader": "umd_ddi_shader.cpp",
+        "AssignDebugBinary": "umd_ddi_shader.cpp",
+
+        # Resource
+        ".*Resource$": "umd_ddi_resource.cpp",
+        "SetResourceMinLOD": "umd_ddi_resource.cpp",
+        "Discard": "umd_ddi_resource.cpp",
+
+        # Map/Update
+        ".*Update.*": "umd_ddi_update.cpp",
+        ".*Map$": "umd_ddi_map.cpp",
+        ".*Unmap$": "umd_ddi_map.cpp",
+
+        # Queries
+        "SetPredication|Query.*": "umd_ddi_query.cpp",
+        ".*Query": "umd_ddi_query.cpp",
+
+        # Counters
+        ".*Counter.*": "umd_ddi_counters.cpp",
+
+        # IA
+        "Ia.*": "umd_ddi_input.cpp",
+        ".*ElementLayout": "umd_ddi_input.cpp",
+
+        # Resource Op
+        "Clear.*": "umd_ddi_clear.cpp",
+        ".*Resolve.*": "umd_ddi_resolve.cpp",
+        ".*Copy.*": "umd_ddi_copy.cpp",
+        "GenMips": "umd_ddi_genmips.cpp",
+        "ResourceConvert.*": "umd_ddi_convert.cpp",
+
+        # Dynamic
+        "Dynamic.*": "umd_ddi_dynamic.cpp",
+
+        # General Device
+        ".*Device": "umd_ddi_device.cpp",
+        "Flush": "umd_ddi_device.cpp",
+        "ResourceIsStagingBusy": "umd_ddi_device.cpp",
+        "RelocateDeviceFuncs": "umd_ddi_device.cpp",
+        ".*WriteHazard": "umd_ddi_device.cpp",
+        "CheckFormatSupport": "umd_ddi_device.cpp",
+        "CheckMultisampleQualityLevels": "umd_ddi_device.cpp",
+        "SetTextFilterSize": "umd_ddi_device.cpp",
+        "CheckDirectFlipSupport": "umd_ddi_device.cpp",
+
+        # Command list
+        "CommandList.*": "umd_ddi_commandlist.cpp",
+        ".*CommandList$": "umd_ddi_commandlist.cpp",
+
+        # Deferred Contexts
+        ".*DeferredContext.*": "umd_ddi_deferredcontext.cpp",
+
+        # put last so everything not caught above falls into this object file
+        ".*": "umd_ddi.cpp"
     }
 
     contexts = [
@@ -331,6 +418,11 @@ def main():
         success = configure_environment(args, contexts)
     if(success):
         success = configure_clang()
+
+    if(success):
+        print("")
+        print("Cleaning old output...")
+        clean_output(contexts)
 
     if(not success):
         print("Check failed!")

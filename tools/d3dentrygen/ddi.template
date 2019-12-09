@@ -2,7 +2,9 @@
 
 namespace Crystal
 {
-namespace Autogen
+namespace UMD
+{
+namespace DDI
 {
 
 % for entry in entries:
@@ -34,5 +36,6 @@ void FillDdiTable( ${table_name}* pTable )
     % endfor
 }
 
-} // namespace Autogen
+} // namespace DDI
+} // namespace UMD
 } // namespace Crystal

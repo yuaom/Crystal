@@ -21,7 +21,8 @@ def parse(path):
         lines = []
         try:
             with open(md) as f:
-                lines = f.readlines()
+                lines = [line.strip()
+                         for line in f.readlines() if line.strip() != ""]
         except UnicodeDecodeError as e:
             print("Error: %s" % str(e))
             success = False
@@ -62,8 +63,11 @@ def parse(path):
             match = re_argname_in.match(line)
             if(match != None):
                 argname = match.group(1)
-                ddilist[-1].append(argname)
-                backup = ""
+                if(backup != ''):
+                    ddilist[-1].append(argname)
+                    backup = ""
+                else:
+                    ddilist[-1][-1] = argname
                 continue
 
         # resolve backup from previous section

@@ -15,6 +15,7 @@ VOID WINAPI ResourceConvert(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceConvertRegion(
     D3D10DDI_HDEVICE hDevice,

@@ -8,15 +8,6 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI SetBlendState(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HBLENDSTATE hState,
-    const FLOAT pBlendFactor[4],
-    UINT SampleMask )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateBlendState(
     D3D10DDI_HDEVICE hDevice,
     const D3D11_1_DDI_BLEND_DESC* pBlendDesc,
@@ -25,10 +16,21 @@ VOID WINAPI CreateBlendState(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyBlendState(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HBLENDSTATE hBlendState )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI SetBlendState(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HBLENDSTATE hState,
+    const FLOAT pBlendFactor[4],
+    UINT SampleMask )
 {
     LOG_DLL_ENTRY;
 }

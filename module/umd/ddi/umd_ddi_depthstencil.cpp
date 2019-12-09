@@ -8,14 +8,6 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI SetDepthStencilState(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HDEPTHSTENCILSTATE hState,
-    UINT StencilRef )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateDepthStencilState(
     D3D10DDI_HDEVICE hDevice,
     const D3D10_DDI_DEPTH_STENCIL_DESC* pDepthStencilDesc,
@@ -24,10 +16,20 @@ VOID WINAPI CreateDepthStencilState(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyDepthStencilState(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HDEPTHSTENCILSTATE hDepthStencilState )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI SetDepthStencilState(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HDEPTHSTENCILSTATE hState,
+    UINT StencilRef )
 {
     LOG_DLL_ENTRY;
 }

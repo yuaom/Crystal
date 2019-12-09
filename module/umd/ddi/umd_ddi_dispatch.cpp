@@ -16,6 +16,7 @@ VOID WINAPI Dispatch(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DispatchIndirect(
     D3D10DDI_HDEVICE hDevice,

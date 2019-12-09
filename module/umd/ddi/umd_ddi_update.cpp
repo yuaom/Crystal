@@ -20,6 +20,7 @@ VOID WINAPI DefaultConstantBufferUpdateSubresourceUP(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceUpdateSubresourceUP(
     D3D10DDI_HDEVICE hDevice,

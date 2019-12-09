@@ -8,6 +8,44 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI ClearDepthStencilView(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HDEPTHSTENCILVIEW hDepthStencilView,
+    UINT Stencil,
+    FLOAT Depth,
+    UINT8 Flags )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI ClearRenderTargetView(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRENDERTARGETVIEW pColorRGBA,
+    FLOAT hRenderTargetView[4] )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI ClearUnorderedAccessViewFloat(
+    D3D10DDI_HDEVICE hDevice,
+    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedAccessView,
+    const FLOAT FLOAT[4] )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI ClearUnorderedAccessViewUint(
+    D3D10DDI_HDEVICE hDevice,
+    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedAccessView,
+    const UINT UINT[4] )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ClearView(
     D3D10DDI_HDEVICE hDevice,
     D3D11DDI_HANDLETYPE viewType,

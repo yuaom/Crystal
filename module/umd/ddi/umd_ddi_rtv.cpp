@@ -8,6 +8,24 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI CreateRenderTargetView(
+    D3D10DDI_HDEVICE hDevice,
+    const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreateRenderTargetView,
+    D3D10DDI_HRENDERTARGETVIEW hRenderTargetView,
+    D3D10DDI_HRTRENDERTARGETVIEW hRTRenderTargetView )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI DestroyRenderTargetView(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRENDERTARGETVIEW hRenderTargetView )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI SetRenderTargets(
     D3D10DDI_HDEVICE hDevice,
     const D3D10DDI_HRENDERTARGETVIEW* phRenderTargetView,
@@ -20,30 +38,6 @@ VOID WINAPI SetRenderTargets(
     UINT NumUAVs,
     UINT UAVRangeStart,
     UINT UAVRangeSize )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI ClearRenderTargetView(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRENDERTARGETVIEW pColorRGBA,
-    FLOAT hRenderTargetView[4] )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI CreateRenderTargetView(
-    D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreateRenderTargetView,
-    D3D10DDI_HRENDERTARGETVIEW hRenderTargetView,
-    D3D10DDI_HRTRENDERTARGETVIEW hRTRenderTargetView )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DestroyRenderTargetView(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRENDERTARGETVIEW hRenderTargetView )
 {
     LOG_DLL_ENTRY;
 }

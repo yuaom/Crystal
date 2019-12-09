@@ -8,14 +8,6 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DynamicIABufferUnmap(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT Subresource )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DynamicConstantBufferUnmap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
@@ -23,6 +15,16 @@ VOID WINAPI DynamicConstantBufferUnmap(
 {
     LOG_DLL_ENTRY;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI DynamicIABufferUnmap(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hResource,
+    UINT Subresource )
+{
+    LOG_DLL_ENTRY;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DynamicResourceUnmap(
     D3D10DDI_HDEVICE hDevice,
@@ -31,25 +33,7 @@ VOID WINAPI DynamicResourceUnmap(
 {
     LOG_DLL_ENTRY;
 }
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI StagingResourceMap(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT Subresource,
-    D3D10_DDI_MAP DDIMap,
-    UINT Flags,
-    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI StagingResourceUnmap(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    UINT Subresource )
-{
-    LOG_DLL_ENTRY;
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceMap(
     D3D10DDI_HDEVICE hDevice,
@@ -61,8 +45,30 @@ VOID WINAPI ResourceMap(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ResourceUnmap(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hResource,
+    UINT Subresource )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI StagingResourceMap(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hResource,
+    UINT Subresource,
+    D3D10_DDI_MAP DDIMap,
+    UINT Flags,
+    D3D10DDI_MAPPED_SUBRESOURCE* pMappedSubResource )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI StagingResourceUnmap(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource,
     UINT Subresource )

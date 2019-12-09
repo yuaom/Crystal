@@ -3,6 +3,7 @@ import os
 import argparse
 import re
 from mako.template import Template
+import filemap
 
 # Clang Imports
 import clang.cindex
@@ -43,6 +44,9 @@ class ParseContext:
             self.entrypoints[output_file].append(entry)
 
     def write_template(self):
+        for entry_list in self.entrypoints.values():
+            entry_list = entry_list.sort()
+
         for output_file in self.entrypoints.keys():
             template = Template(filename=self.template.ddi_cpp)
             try:
@@ -102,6 +106,57 @@ class DDIEntrypoint:
         self.return_type = return_type
         self.name = name
         self.params = params
+        self.priority = -1
+        self.update_priority()
+
+    def update_priority(self):
+        # Create/Destroy/Opens always first
+        if(self.name.find("Create") != -1):
+            if("Vertex" in self.name):
+                self.priority = 0
+            elif("Hull" in self.name):
+                self.priority = 1
+            elif("Domain" in self.name):
+                self.priority = 2
+            elif("Geometry" in self.name):
+                self.priority = 3
+            elif("Pixel" in self.name):
+                self.priority = 4
+            elif("Pixel" in self.name):
+                self.priority = 5
+            else:
+                self.priority = 6
+        elif(self.name.find("Destroy") != -1):
+            self.priority = 7
+        elif(self.name.find("Open") != -1):
+            self.priority = 8
+
+        # I prefer pipeline order of shader related entry-points
+        elif(self.name.find("Vs") != -1 or self.name.find("VertexShader") != -1):
+            self.priority = 10
+        elif(self.name.find("Hs") != -1 or self.name.find("HullShader") != -1):
+            self.priority = 11
+        elif(self.name.find("Ds") != -1 or self.name.find("DomainShader") != -1):
+            self.priority = 12
+        elif(self.name.find("Gs") != -1 or self.name.find("GeometryShader") != -1):
+            self.priority = 13
+        elif(self.name.find("Ps") != -1 or self.name.find("PixelShader") != -1):
+            self.priority = 14
+        elif(self.name.find("Cs") != -1 or self.name.find("ComputeShader") != -1):
+            self.priority = 15
+
+        # Everything else I don't care, so sort by name
+        else:
+            self.priority = 200
+
+    def __lt__(self, rh):
+        if(self.priority == rh.priority):
+            return self.name < rh.name
+        else:
+            return self.priority < rh.priority
+
+    def __str__(self):
+        return self.name
 
 
 def get_parameter_name(type_string, suggested):
@@ -364,97 +419,10 @@ def main():
                         help='Argument name CSV file to use as name hints. Output from namegen.py. Default scriptdir\\output.')
     args = parser.parse_args()
 
-    filemap = {
-        # CalcSizes
-        "CalcPrivate.*": "umd_ddi_calcprivate.cpp",
-
-        # SO
-        "SoSetTargets": "umd_ddi_streamout.cpp",
-
-        # OM
-        ".*BlendState": "umd_ddi_blend.cpp",
-        ".*DepthStencilState": "umd_ddi_depthstencil.cpp",
-        ".*RasterizerState": "umd_ddi_raster.cpp",
-        "SetViewports": "umd_ddi_viewports.cpp",
-        "SetScissorRects": "umd_ddi_scissor.cpp",
-
-        # Render
-        "Draw.*": "umd_ddi_draw.cpp",
-        "Dispatch.*": "umd_ddi_dispatch.cpp",
-
-        # Views
-        "[V|H|D|G|P|C]sSetConstantBuffers$": "umd_ddi_cbv.cpp",
-        "[V|H|D|G|P|C]sSetShaderResources$": "umd_ddi_srv.cpp",
-        ".*ShaderResourceView": "umd_ddi_srv.cpp",
-        "[V|H|D|G|P|C]sSetUnorderedAccessViews$": "umd_ddi_uav.cpp",
-        ".*UnorderedAccessView": "umd_ddi_uav.cpp",
-        ".*DepthStencilView": "umd_ddi_dsv.cpp",
-        "SetRenderTargets": "umd_ddi_rtv.cpp",
-        ".*RenderTargetView": "umd_ddi_rtv.cpp",
-
-        # Samplers
-        "[V|H|D|G|P|C]sSetSamplers$": "umd_ddi_samplers.cpp",
-        ".*Sampler": "umd_ddi_samplers.cpp",
-
-        # Shader
-        "[V|H|D|G|P|C]sSetShader[WithIfaces]*": "umd_ddi_shader.cpp",
-        ".*Shader": "umd_ddi_shader.cpp",
-        "AssignDebugBinary": "umd_ddi_shader.cpp",
-
-        # Resource
-        ".*Resource$": "umd_ddi_resource.cpp",
-        "SetResourceMinLOD": "umd_ddi_resource.cpp",
-        "Discard": "umd_ddi_resource.cpp",
-
-        # Map/Update
-        ".*Update.*": "umd_ddi_update.cpp",
-        ".*Map$": "umd_ddi_map.cpp",
-        ".*Unmap$": "umd_ddi_map.cpp",
-
-        # Queries
-        "SetPredication|Query.*": "umd_ddi_query.cpp",
-        ".*Query": "umd_ddi_query.cpp",
-
-        # Counters
-        ".*Counter.*": "umd_ddi_counters.cpp",
-
-        # IA
-        "Ia.*": "umd_ddi_input.cpp",
-        ".*ElementLayout": "umd_ddi_input.cpp",
-
-        # Resource Op
-        "Clear.*": "umd_ddi_clear.cpp",
-        ".*Resolve.*": "umd_ddi_resolve.cpp",
-        ".*Copy.*": "umd_ddi_copy.cpp",
-        "GenMips": "umd_ddi_genmips.cpp",
-        "ResourceConvert.*": "umd_ddi_convert.cpp",
-
-        # Dynamic
-        "Dynamic.*": "umd_ddi_dynamic.cpp",
-
-        # General Device
-        ".*Device": "umd_ddi_device.cpp",
-        "Flush": "umd_ddi_device.cpp",
-        "ResourceIsStagingBusy": "umd_ddi_device.cpp",
-        "RelocateDeviceFuncs": "umd_ddi_device.cpp",
-        ".*WriteHazard": "umd_ddi_device.cpp",
-        "CheckFormatSupport": "umd_ddi_device.cpp",
-        "CheckMultisampleQualityLevels": "umd_ddi_device.cpp",
-        "SetTextFilterSize": "umd_ddi_device.cpp",
-        "CheckDirectFlipSupport": "umd_ddi_device.cpp",
-
-        # Command list
-        "CommandList.*": "umd_ddi_commandlist.cpp",
-        ".*CommandList$": "umd_ddi_commandlist.cpp",
-
-        # Deferred Contexts
-        ".*DeferredContext.*": "umd_ddi_deferredcontext.cpp",
-    }
-
     contexts = [
         ParseContext(os.path.join(args.wdk, 'um', 'd3d10umddi.h'),
                      args.output,
-                     filemap,
+                     filemap.filemap,
                      'D3D11_1DDI_DEVICEFUNCS',
                      Templates(
                          os.path.join(

@@ -8,19 +8,6 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI CommandListExecute(
-    D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HCOMMANDLIST hCommandList )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI AbandonCommandList(
-    D3D10DDI_HDEVICE hDevice )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateCommandList(
     D3D10DDI_HDEVICE hDevice,
     const D3D11DDIARG_CREATECOMMANDLIST* pCreateCommandList,
@@ -29,20 +16,7 @@ VOID WINAPI CreateCommandList(
 {
     LOG_DLL_ENTRY;
 }
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DestroyCommandList(
-    D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HCOMMANDLIST hCommandList )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI RecycleCommandList(
-    D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HCOMMANDLIST hCommandList )
-{
-    LOG_DLL_ENTRY;
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI RecycleCreateCommandList(
     D3D10DDI_HDEVICE hDevice,
@@ -53,8 +27,40 @@ HRESULT WINAPI RecycleCreateCommandList(
     LOG_DLL_ENTRY;
     return E_FAIL;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI DestroyCommandList(
+    D3D10DDI_HDEVICE hDevice,
+    D3D11DDI_HCOMMANDLIST hCommandList )
+{
+    LOG_DLL_ENTRY;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI RecycleDestroyCommandList(
+    D3D10DDI_HDEVICE hDevice,
+    D3D11DDI_HCOMMANDLIST hCommandList )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI AbandonCommandList(
+    D3D10DDI_HDEVICE hDevice )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI CommandListExecute(
+    D3D10DDI_HDEVICE hDevice,
+    D3D11DDI_HCOMMANDLIST hCommandList )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI RecycleCommandList(
     D3D10DDI_HDEVICE hDevice,
     D3D11DDI_HCOMMANDLIST hCommandList )
 {

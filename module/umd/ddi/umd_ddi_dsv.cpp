@@ -8,16 +8,6 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI ClearDepthStencilView(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HDEPTHSTENCILVIEW hDepthStencilView,
-    UINT Stencil,
-    FLOAT Depth,
-    UINT8 Flags )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateDepthStencilView(
     D3D10DDI_HDEVICE hDevice,
     const D3D11DDIARG_CREATEDEPTHSTENCILVIEW* pCreateDepthStencilView,
@@ -26,6 +16,7 @@ VOID WINAPI CreateDepthStencilView(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyDepthStencilView(
     D3D10DDI_HDEVICE hDevice,

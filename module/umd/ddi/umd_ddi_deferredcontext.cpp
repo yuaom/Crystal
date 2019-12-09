@@ -8,13 +8,22 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI CheckDeferredContextHandleSizes(
+VOID WINAPI CreateDeferredContext(
     D3D10DDI_HDEVICE hDevice,
-    UINT* pHSizes,
-    D3D11DDI_HANDLESIZE* pHandleSize )
+    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreateDeferredContext )
 {
     LOG_DLL_ENTRY;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+HRESULT WINAPI RecycleCreateDeferredContext(
+    D3D10DDI_HDEVICE hDevice,
+    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreateDeferredContext )
+{
+    LOG_DLL_ENTRY;
+    return E_FAIL;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 SIZE_T WINAPI CalcDeferredContextHandleSize(
     D3D10DDI_HDEVICE hDevice,
@@ -24,20 +33,14 @@ SIZE_T WINAPI CalcDeferredContextHandleSize(
     LOG_DLL_ENTRY;
     return 0;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI CreateDeferredContext(
+VOID WINAPI CheckDeferredContextHandleSizes(
     D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreateDeferredContext )
+    UINT* pHSizes,
+    D3D11DDI_HANDLESIZE* pHandleSize )
 {
     LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-HRESULT WINAPI RecycleCreateDeferredContext(
-    D3D10DDI_HDEVICE hDevice,
-    const D3D11DDIARG_CREATEDEFERREDCONTEXT* pCreateDeferredContext )
-{
-    LOG_DLL_ENTRY;
-    return E_FAIL;
 }
 
 } // namespace DDI

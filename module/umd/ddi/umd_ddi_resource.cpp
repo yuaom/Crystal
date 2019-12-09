@@ -16,6 +16,15 @@ VOID WINAPI CreateResource(
 {
     LOG_DLL_ENTRY;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI DestroyResource(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hResource )
+{
+    LOG_DLL_ENTRY;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI OpenResource(
     D3D10DDI_HDEVICE hDevice,
@@ -25,21 +34,7 @@ VOID WINAPI OpenResource(
 {
     LOG_DLL_ENTRY;
 }
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DestroyResource(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI SetResourceMinLOD(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource,
-    FLOAT MinLOD )
-{
-    LOG_DLL_ENTRY;
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI Discard(
     D3D10DDI_HDEVICE hDevice,
@@ -47,6 +42,15 @@ VOID WINAPI Discard(
     void* hResourceOrView,
     const D3D10_DDI_RECT* pRects,
     UINT NumRects )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI SetResourceMinLOD(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hResource,
+    FLOAT MinLOD )
 {
     LOG_DLL_ENTRY;
 }

@@ -16,6 +16,7 @@ VOID WINAPI CreateUnorderedAccessView(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyUnorderedAccessView(
     D3D10DDI_HDEVICE hDevice,
@@ -23,22 +24,7 @@ VOID WINAPI DestroyUnorderedAccessView(
 {
     LOG_DLL_ENTRY;
 }
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI ClearUnorderedAccessViewUint(
-    D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedAccessView,
-    const UINT UINT[4] )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI ClearUnorderedAccessViewFloat(
-    D3D10DDI_HDEVICE hDevice,
-    D3D11DDI_HUNORDEREDACCESSVIEW hUnorderedAccessView,
-    const FLOAT FLOAT[4] )
-{
-    LOG_DLL_ENTRY;
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CsSetUnorderedAccessViews(
     D3D10DDI_HDEVICE hDevice,

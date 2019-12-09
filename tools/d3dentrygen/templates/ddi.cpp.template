@@ -27,8 +27,8 @@ ${entry.return_type} WINAPI ${entry.name}(
     return E_FAIL;
     % endif
 }
-% endfor
 
+% endfor
 } // namespace DDI
 } // namespace UMD
 } // namespace Crystal

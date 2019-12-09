@@ -8,35 +8,23 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI ResourceReadAfterWriteHazard(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource )
+VOID WINAPI DestroyDevice(
+    D3D10DDI_HDEVICE hDevice )
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
-BOOL WINAPI Flush(
+VOID WINAPI CheckDirectFlipSupport(
     D3D10DDI_HDEVICE hDevice,
-    UINT FlushFlags )
-{
-    LOG_DLL_ENTRY;
-    return FALSE;
-}
-////////////////////////////////////////////////////////////////////////////////
-BOOL WINAPI ResourceIsStagingBusy(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource )
-{
-    LOG_DLL_ENTRY;
-    return FALSE;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI RelocateDeviceFuncs(
-    D3D10DDI_HDEVICE hDevice,
-    struct D3D11_1DDI_DEVICEFUNCS* pDeviceFunctions )
+    D3D10DDI_HRESOURCE hResource1,
+    D3D10DDI_HRESOURCE hResource2,
+    UINT CheckDirectFlipFlags,
+    BOOL* pSupported )
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CheckFormatSupport(
     D3D10DDI_HDEVICE hDevice,
@@ -45,6 +33,7 @@ VOID WINAPI CheckFormatSupport(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CheckMultisampleQualityLevels(
     D3D10DDI_HDEVICE hDevice,
@@ -54,27 +43,46 @@ VOID WINAPI CheckMultisampleQualityLevels(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DestroyDevice(
-    D3D10DDI_HDEVICE hDevice )
+BOOL WINAPI Flush(
+    D3D10DDI_HDEVICE hDevice,
+    UINT FlushFlags )
+{
+    LOG_DLL_ENTRY;
+    return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI RelocateDeviceFuncs(
+    D3D10DDI_HDEVICE hDevice,
+    struct D3D11_1DDI_DEVICEFUNCS* pDeviceFunctions )
 {
     LOG_DLL_ENTRY;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+BOOL WINAPI ResourceIsStagingBusy(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hResource )
+{
+    LOG_DLL_ENTRY;
+    return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI ResourceReadAfterWriteHazard(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hResource )
+{
+    LOG_DLL_ENTRY;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI SetTextFilterSize(
     D3D10DDI_HDEVICE hDevice,
     UINT Width,
     UINT Height )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI CheckDirectFlipSupport(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hResource1,
-    D3D10DDI_HRESOURCE hResource2,
-    UINT CheckDirectFlipFlags,
-    BOOL* pSupported )
 {
     LOG_DLL_ENTRY;
 }

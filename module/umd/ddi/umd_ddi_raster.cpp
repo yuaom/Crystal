@@ -8,13 +8,6 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI SetRasterizerState(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRASTERIZERSTATE hRasterizerState )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI CreateRasterizerState(
     D3D10DDI_HDEVICE hDevice,
     const D3D11_1_DDI_RASTERIZER_DESC* pRasterizerDesc,
@@ -23,8 +16,17 @@ VOID WINAPI CreateRasterizerState(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DestroyRasterizerState(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRASTERIZERSTATE hRasterizerState )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI SetRasterizerState(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRASTERIZERSTATE hRasterizerState )
 {

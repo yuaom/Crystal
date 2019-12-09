@@ -8,12 +8,23 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI QueryEnd(
+VOID WINAPI CreateQuery(
+    D3D10DDI_HDEVICE hDevice,
+    const D3D10DDIARG_CREATEQUERY* pCreateQuery,
+    D3D10DDI_HQUERY hQuery,
+    D3D10DDI_HRTQUERY hRTQuery )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI DestroyQuery(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HQUERY hQuery )
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI QueryBegin(
     D3D10DDI_HDEVICE hDevice,
@@ -21,14 +32,15 @@ VOID WINAPI QueryBegin(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI SetPredication(
+VOID WINAPI QueryEnd(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HQUERY hQuery,
-    BOOL PredicateValue )
+    D3D10DDI_HQUERY hQuery )
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI QueryGetData(
     D3D10DDI_HDEVICE hDevice,
@@ -39,19 +51,12 @@ VOID WINAPI QueryGetData(
 {
     LOG_DLL_ENTRY;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI CreateQuery(
+VOID WINAPI SetPredication(
     D3D10DDI_HDEVICE hDevice,
-    const D3D10DDIARG_CREATEQUERY* pCreateQuery,
     D3D10DDI_HQUERY hQuery,
-    D3D10DDI_HRTQUERY hRTQuery )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DestroyQuery(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HQUERY hQuery )
+    BOOL PredicateValue )
 {
     LOG_DLL_ENTRY;
 }

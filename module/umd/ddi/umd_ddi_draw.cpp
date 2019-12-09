@@ -8,6 +8,22 @@ namespace DDI
 {
 
 ////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI Draw(
+    D3D10DDI_HDEVICE hDevice,
+    UINT VertexCount,
+    UINT StartVertexLocation )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI DrawAuto(
+    D3D10DDI_HDEVICE hDevice )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawIndexed(
     D3D10DDI_HDEVICE hDevice,
     UINT StartIndexLocation,
@@ -16,14 +32,7 @@ VOID WINAPI DrawIndexed(
 {
     LOG_DLL_ENTRY;
 }
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI Draw(
-    D3D10DDI_HDEVICE hDevice,
-    UINT VertexCount,
-    UINT StartVertexLocation )
-{
-    LOG_DLL_ENTRY;
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawIndexedInstanced(
     D3D10DDI_HDEVICE hDevice,
@@ -35,6 +44,16 @@ VOID WINAPI DrawIndexedInstanced(
 {
     LOG_DLL_ENTRY;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI DrawIndexedInstancedIndirect(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hBufferForArgs,
+    UINT AlignedByteOffsetForArgs )
+{
+    LOG_DLL_ENTRY;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawInstanced(
     D3D10DDI_HDEVICE hDevice,
@@ -45,20 +64,7 @@ VOID WINAPI DrawInstanced(
 {
     LOG_DLL_ENTRY;
 }
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DrawAuto(
-    D3D10DDI_HDEVICE hDevice )
-{
-    LOG_DLL_ENTRY;
-}
-////////////////////////////////////////////////////////////////////////////////
-VOID WINAPI DrawIndexedInstancedIndirect(
-    D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRESOURCE hBufferForArgs,
-    UINT AlignedByteOffsetForArgs )
-{
-    LOG_DLL_ENTRY;
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI DrawInstancedIndirect(
     D3D10DDI_HDEVICE hDevice,

@@ -56,3 +56,8 @@ Then install additional build tools:
 * Under "Compilers > build tools > and runtimes" find your MSVC version (ex. v14.23)
 * Select the "spectre-mitigated libs" nearby that matches your MSVC version
 * Click Modify
+
+# Related Projects
+
+* Microsoft [graphics-drivers-samples](https://github.com/microsoft/graphics-driver-samples)
+* SalviaRenderer [github](https://github.com/wuye9036/SalviaRenderer)

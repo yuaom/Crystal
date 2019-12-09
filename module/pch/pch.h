@@ -16,12 +16,12 @@
 #include <ntstatus.h>
 #pragma warning( pop )
 
-#define KILOBYTE	1024
-#define MEGABYTE	1024 * KILOBYTE
+#define KILOBYTE    1024
+#define MEGABYTE    1024 * KILOBYTE
 
 namespace Utilities
 {
-	bool GetEnvironmentVariable( const std::wstring& name, std::wstring& out );
+    bool GetEnvironmentVariable( const std::wstring& name, std::wstring& out );
 }
 
 #include "dllcontext.h"

@@ -5,102 +5,102 @@
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* )
 {
-	LOG_DLL_ENTRY;
-	return STATUS_SUCCESS;
+    LOG_DLL_ENTRY;
+    return STATUS_SUCCESS;
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
-	D3DKMT_OPENADAPTERFROMGDIDISPLAYNAME* pOpenAdapterFromGdiDisplayName )
+    D3DKMT_OPENADAPTERFROMGDIDISPLAYNAME* pOpenAdapterFromGdiDisplayName )
 {
-	LOG_DLL_ENTRY;
+    LOG_DLL_ENTRY;
 
-	auto& pDisplays = Crystal::DllContext::get()->getDisplays();
+    auto& pDisplays = Crystal::DllContext::get()->getDisplays();
 
-	Crystal::Displays::find_result_itr_t display;
-	if( pDisplays->FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
-	{
-		auto& pKmdAdapterManger = Crystal::DllContext::get()->getKmdAdapterManager();
+    Crystal::Displays::find_result_itr_t display;
+    if( pDisplays->FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
+    {
+        auto& pKmdAdapterManger = Crystal::DllContext::get()->getKmdAdapterManager();
 
-		auto& pAdapter = pKmdAdapterManger->CreateAdapter();
+        auto& pAdapter = pKmdAdapterManger->CreateAdapter();
 
-		pOpenAdapterFromGdiDisplayName->hAdapter				= pAdapter->GetHandle();
-		pOpenAdapterFromGdiDisplayName->VidPnSourceId			= display->GetVidPinSourceId();
-		pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart		= 0;
-		pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart	= pAdapter->GetHandle();
-	}
+        pOpenAdapterFromGdiDisplayName->hAdapter                = pAdapter->GetHandle();
+        pOpenAdapterFromGdiDisplayName->VidPnSourceId            = display->GetVidPinSourceId();
+        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart        = 0;
+        pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart    = pAdapter->GetHandle();
+    }
 
-	return STATUS_SUCCESS;
+    return STATUS_SUCCESS;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromDeviceName( 
-	D3DKMT_OPENADAPTERFROMDEVICENAME* pOpenAdapterFromDeviceName )
+    D3DKMT_OPENADAPTERFROMDEVICENAME* pOpenAdapterFromDeviceName )
 {
-	LOG_DLL_ENTRY;
-	return STATUS_SUCCESS;
+    LOG_DLL_ENTRY;
+    return STATUS_SUCCESS;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo( 
-	CONST D3DKMT_QUERYADAPTERINFO* adapterInfo )
+    CONST D3DKMT_QUERYADAPTERINFO* adapterInfo )
 {
-	LOG_DLL_ENTRY;
+    LOG_DLL_ENTRY;
 
-	NTSTATUS result = STATUS_SUCCESS;
+    NTSTATUS result = STATUS_SUCCESS;
 
-	auto& pDLLContext = Crystal::DllContext::get();
+    auto& pDLLContext = Crystal::DllContext::get();
 
-	switch (adapterInfo->Type)
-	{
-	case KMTQAITYPE_UMDRIVERNAME:
-	{
-		D3DKMT_UMDFILENAMEINFO* pFileNameInfo = reinterpret_cast<D3DKMT_UMDFILENAMEINFO*>(adapterInfo->pPrivateDriverData);
+    switch (adapterInfo->Type)
+    {
+    case KMTQAITYPE_UMDRIVERNAME:
+    {
+        D3DKMT_UMDFILENAMEINFO* pFileNameInfo = reinterpret_cast<D3DKMT_UMDFILENAMEINFO*>(adapterInfo->pPrivateDriverData);
 
-		if (pFileNameInfo->Version == KMTUMDVERSION_DX10 ||
-			pFileNameInfo->Version == KMTUMDVERSION_DX11)
-		{
-			DWORD dw = GetModuleFileNameW(
-				pDLLContext->GetModuleHandle(),
-				pFileNameInfo->UmdFileName,
-				_countof( pFileNameInfo->UmdFileName ) );
+        if (pFileNameInfo->Version == KMTUMDVERSION_DX10 ||
+            pFileNameInfo->Version == KMTUMDVERSION_DX11)
+        {
+            DWORD dw = GetModuleFileNameW(
+                pDLLContext->GetModuleHandle(),
+                pFileNameInfo->UmdFileName,
+                _countof( pFileNameInfo->UmdFileName ) );
 
-			if( dw == 0 )
-			{
-				result = STATUS_INVALID_PARAMETER;
-			}
-		}
-		else
-		{
-			result = STATUS_INVALID_PARAMETER;
-		}
-	}
-	break;
-	case KMTQAITYPE_CHECKDRIVERUPDATESTATUS:
-	{
-		BOOL* pUpdateStatus = reinterpret_cast<BOOL*>(adapterInfo->pPrivateDriverData);
-		*pUpdateStatus = FALSE;
-	}
-	break;
-	case KMTQAITYPE_GETSEGMENTSIZE:
-	{
-		MEMORYSTATUSEX mem_status;
-		mem_status.dwLength = sizeof( mem_status );
-		GlobalMemoryStatusEx( &mem_status );
+            if( dw == 0 )
+            {
+                result = STATUS_INVALID_PARAMETER;
+            }
+        }
+        else
+        {
+            result = STATUS_INVALID_PARAMETER;
+        }
+    }
+    break;
+    case KMTQAITYPE_CHECKDRIVERUPDATESTATUS:
+    {
+        BOOL* pUpdateStatus = reinterpret_cast<BOOL*>(adapterInfo->pPrivateDriverData);
+        *pUpdateStatus = FALSE;
+    }
+    break;
+    case KMTQAITYPE_GETSEGMENTSIZE:
+    {
+        MEMORYSTATUSEX mem_status;
+        mem_status.dwLength = sizeof( mem_status );
+        GlobalMemoryStatusEx( &mem_status );
 
-		D3DKMT_SEGMENTSIZEINFO* psi = reinterpret_cast<D3DKMT_SEGMENTSIZEINFO*>( adapterInfo->pPrivateDriverData );
-		psi->DedicatedVideoMemorySize	= 0;
-		psi->DedicatedSystemMemorySize	= 0;
-		psi->SharedSystemMemorySize		= std::max<uint64_t>( mem_status.ullTotalPhys / 2, 64 * MEGABYTE );
-	}
-	break;
-	default:
-		result = STATUS_INVALID_PARAMETER;
-		break;
-	};
+        D3DKMT_SEGMENTSIZEINFO* psi = reinterpret_cast<D3DKMT_SEGMENTSIZEINFO*>( adapterInfo->pPrivateDriverData );
+        psi->DedicatedVideoMemorySize    = 0;
+        psi->DedicatedSystemMemorySize    = 0;
+        psi->SharedSystemMemorySize        = std::max<uint64_t>( mem_status.ullTotalPhys / 2, 64 * MEGABYTE );
+    }
+    break;
+    default:
+        result = STATUS_INVALID_PARAMETER;
+        break;
+    };
 
-	return result;
+    return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -27,14 +27,7 @@ ${entry.return_type} WINAPI ${entry.name}(
     return E_FAIL;
     % endif
 }
-
 % endfor
-void FillDdiTable( ${table_name}* pTable )
-{
-    % for entry in entries:
-    pTable->pfn${entry.name} = ${entry.name};
-    % endfor
-}
 
 } // namespace DDI
 } // namespace UMD

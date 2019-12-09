@@ -12,11 +12,18 @@ from clang.cindex import TypeKind
 argument_names = {}
 
 
+class Templates:
+    def __init__(self, ddi_cpp, filltable_h, filltable_cpp):
+        self.ddi_cpp = ddi_cpp
+        self.filltable_h = filltable_h
+        self.filltable_cpp = filltable_cpp
+
+
 class ParseContext:
-    def __init__(self, input_file, output_directory, output_filemap, table, template_name):
+    def __init__(self, input_file, output_directory, output_filemap, table, template):
         self.filename = input_file
         self.table = table
-        self.template = template_name
+        self.template = template
         self.entrypoints = {}
         self.output_directory = output_directory
         self.output_filemap = output_filemap
@@ -37,25 +44,53 @@ class ParseContext:
 
     def write_template(self):
         for output_file in self.entrypoints.keys():
-            template = Template(filename=self.template)
+            template = Template(filename=self.template.ddi_cpp)
             try:
                 output_full = os.path.join(self.output_directory, output_file)
 
-                print("Generating %d entries into %s..." %
+                print("  Generating %d entries into %s..." %
                       (len(self.entrypoints[output_file]), output_full))
 
                 render = template.render(
                     table_name=self.table,
                     entries=self.entrypoints[output_file])
+                ParseContext.write_template_render_to_file(render, output_full)
 
-                output_directory = os.path.dirname(output_full)
-                if(not os.path.exists(output_directory)):
-                    os.makedirs(output_directory)
-
-                with open(output_full, "a+") as file:
-                    print(render, file=file)
             except Exception as e:
                 print(e)
+
+        # Output umd_ddi.cpp
+        try:
+            output_full = os.path.join(self.output_directory, "umd_ddi.cpp")
+            print("  Generating %s..." % output_full)
+            template = Template(filename=self.template.filltable_cpp)
+            render = template.render(
+                table_name=self.table,
+                entry_lists=self.entrypoints.values())
+            ParseContext.write_template_render_to_file(render, output_full)
+        except Exception as e:
+            print(e)
+
+        # Output umd_ddi.h
+        try:
+            output_full = os.path.join(self.output_directory, "umd_ddi.h")
+            print("  Generating %s..." % output_full)
+            template = Template(filename=self.template.filltable_h)
+            render = template.render(
+                table_name=self.table,
+                entry_lists=self.entrypoints.values())
+            ParseContext.write_template_render_to_file(render, output_full)
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    def write_template_render_to_file(str, filename):
+        output_directory = os.path.dirname(filename)
+        if(not os.path.exists(output_directory)):
+            os.makedirs(output_directory)
+
+        with open(filename, "a+") as file:
+            print(str, file=file)
 
 
 class ParseException(Exception):
@@ -272,15 +307,21 @@ def configure_environment(args, contexts):
 def clean_output(contexts):
     delete_count = 0
     for parse_context in contexts:
-        for _, outfile in parse_context.output_filemap.items():
-            full_path = os.path.join(parse_context.output_directory, outfile)
+        print("  %s..." % parse_context.table, end="")
+        ddi_files = ['umd_ddi.h', 'umd_ddi.cpp']
+
+        for outfile in parse_context.output_filemap.values():
+            ddi_files.append(outfile)
+
+        for ddi_file in ddi_files:
+            full_path = os.path.join(parse_context.output_directory, ddi_file)
             if(os.path.exists(full_path)):
                 try:
                     os.remove(full_path)
                     delete_count = delete_count + 1
                 except:
-                    print("  Warning: unable to delete %s." % outfile)
-    print("  %d files deleted." % delete_count)
+                    print("\n  Warning: unable to delete %s." % ddi_file)
+        print(" %d files deleted." % delete_count)
 
 
 def configure_clang():
@@ -400,9 +441,6 @@ def main():
 
         # Deferred Contexts
         ".*DeferredContext.*": "umd_ddi_deferredcontext.cpp",
-
-        # put last so everything not caught above falls into this object file
-        ".*": "umd_ddi.cpp"
     }
 
     contexts = [
@@ -410,7 +448,13 @@ def main():
                      args.output,
                      filemap,
                      'D3D11_1DDI_DEVICEFUNCS',
-                     os.path.join(sys.path[0], 'ddi.template'))
+                     Templates(
+                         os.path.join(
+                             sys.path[0], 'templates\\ddi.cpp.template'),
+                         os.path.join(
+                             sys.path[0], 'templates\\filltable.h.template'),
+                         os.path.join(
+                             sys.path[0], 'templates\\filltable.cpp.template')))
     ]
 
     print("Checking environment...")

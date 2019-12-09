@@ -1,0 +1,28 @@
+
+namespace Crystal
+{
+namespace UMD
+{
+namespace DDI
+{
+
+#pragma region DDI Entry-points
+% for entry_list in entry_lists:
+% for entry in entry_list:
+${entry.return_type} WINAPI ${entry.name}(\
+% for i in range(len(entry.params)):
+ ${entry.params[i][0]}${entry.params[i][2]}\
+% if i < len(entry.params)-1:
+,\
+%endif
+% endfor
+ );
+% endfor
+% endfor
+#pragma endregion
+
+void FillDdiTable( ${table_name}* pTable );
+
+} // namespace DDI
+} // namespace UMD
+} // namespace Crystal

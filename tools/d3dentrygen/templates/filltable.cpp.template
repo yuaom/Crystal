@@ -1,0 +1,22 @@
+#include "pch.h"
+#include "umd_ddi.h"
+
+namespace Crystal
+{
+namespace UMD
+{
+namespace DDI
+{
+    
+void FillDdiTable( ${table_name}* pTable )
+{
+    % for entry_list in entry_lists:
+    % for entry in entry_list:
+    pTable->pfn${entry.name} = ${entry.name};
+    % endfor
+    % endfor
+}
+
+} // namespace DDI
+} // namespace UMD
+} // namespace Crystal

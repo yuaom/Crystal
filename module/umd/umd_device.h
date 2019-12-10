@@ -30,7 +30,8 @@ namespace Crystal
 
             ~Device();
 
-            D3D10DDI_HRTDEVICE    m_RuntimeHandle;
+            D3D10DDI_HRTDEVICE      m_RuntimeHandle;
+            D3DDDI_DEVICECALLBACKS  m_KmCallbacks;
 
             Adapter* m_pAdapter;
         };

@@ -51,6 +51,12 @@ namespace Crystal
             pFunc = reinterpret_cast<uint64_t*>( pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 );
             for( uint64_t i = 0; i < cnt; i++, pFunc++ )*pFunc = ( 2ULL << 32 ) | ( i + 1 );
 
+            memcpy_s( 
+                &m_KmCallbacks, 
+                sizeof( D3DDDI_DEVICECALLBACKS ), 
+                pCreateDevice->pKTCallbacks, 
+                sizeof( D3DDDI_DEVICECALLBACKS ) );
+
             DDI::FillDdiTable( pCreateDevice->p11_1DeviceFuncs );            
         }
 

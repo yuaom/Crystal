@@ -28,11 +28,8 @@ int main()
     ID3D11Device* pDevice = nullptr;
     ID3D11DeviceContext* pContext = nullptr;
 
-    std::array<D3D_FEATURE_LEVEL, 4> featureLevels = {
-        D3D_FEATURE_LEVEL_11_1,
-        D3D_FEATURE_LEVEL_11_0,
-        D3D_FEATURE_LEVEL_10_1,
-        D3D_FEATURE_LEVEL_10_0
+    std::array<D3D_FEATURE_LEVEL, 1> featureLevels = {
+        D3D_FEATURE_LEVEL_11_1
     };
 
     std::vector<std::wstring> args;

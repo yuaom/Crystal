@@ -16,7 +16,13 @@ namespace Crystal
 
             static void Destroy();
 
+            static Device* FromHandle( D3D10DDI_HDEVICE handle );
+
             static uint32_t    CalculateSize( const D3D10DDIARG_CALCPRIVATEDEVICESIZE* pCalcSize );
+
+            void GetFormatSupport( DXGI_FORMAT format, UINT* pOut );
+
+            void GetMultisampleSupport( DXGI_FORMAT format, UINT sampleCount, UINT* pNumQualityLevels );
 
         private:
 

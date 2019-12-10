@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "umd_device.h"
 
 namespace Crystal
 {
@@ -32,6 +33,10 @@ VOID WINAPI CheckFormatSupport(
     UINT* pFormatCaps )
 {
     LOG_DLL_ENTRY;
+
+    Device* pDevice = Device::FromHandle( hDevice );
+
+    pDevice->GetFormatSupport( Format, pFormatCaps );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +47,10 @@ VOID WINAPI CheckMultisampleQualityLevels(
     UINT* pNumQualityLevels )
 {
     LOG_DLL_ENTRY;
+
+    Device* pDevice = Device::FromHandle( hDevice );
+
+    pDevice->GetMultisampleSupport( Format, SampleCount, pNumQualityLevels );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

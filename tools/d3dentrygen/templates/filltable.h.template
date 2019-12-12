@@ -1,4 +1,5 @@
 
+#pragma region ${table_name}
 namespace Crystal
 {
 namespace UMD
@@ -26,3 +27,4 @@ void FillDdiTable( ${table_name}* pTable );
 } // namespace DDI
 } // namespace UMD
 } // namespace Crystal
+#pragma endregion

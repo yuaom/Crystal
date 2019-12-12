@@ -176,6 +176,19 @@ def get_parameter_name(type_string, suggested):
     if(result != None):
         return 'p' + result.group('name').lower().capitalize()
 
+    # Match/Convert DXGI types
+    result = re.match("DXGI(1_6_1)?_DDI_ARG_(?P<name>.*)\*", type_string)
+    if(result != None):
+        name = result.group('name').lower().capitalize()
+        j = len(name)
+        i = 0
+        while i < j:
+            if(name[i] == '_'):
+                name = name[:i] + name[i+1:].capitalize()
+                j = len(name)
+            i = i + 1
+        return 'p' + name
+
     # Primitive types second
     primitive_types = ['UINT', 'DWORD', 'void*',
                        'INT', 'FLOAT', 'BOOL', 'LPSTR']
@@ -217,18 +230,43 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
         try:
             function_name = child.spelling[3:]
 
-            type_cursor = pfnCursors[child.type.spelling]
-            type_typedef_spelling = type_cursor.underlying_typedef_type.spelling
+            if('Reserved' in function_name):
+                continue
 
-            if(type_cursor.underlying_typedef_type.kind != TypeKind.POINTER):
-                raise ParseException(
-                    "%s expected to be a pointer type!" % child.type.spelling)
+            type_cursor = None
+            return_type = 'VOID'
+
+            # if the child is a typedef, look up the typedef cursor
+            # and make sure the typedef is a pointer type
+            if(child.type.kind == TypeKind.TYPEDEF):
+                type_cursor = pfnCursors[child.type.spelling]
+
+                if(type_cursor.underlying_typedef_type.kind != TypeKind.POINTER):
+                    raise ParseException(
+                        "%s expected to be a pointer type!" % child.type.spelling)
+
+                # get the return type
+                for return_type_child in type_cursor.get_children():
+                    if (return_type_child.kind == CursorKind.TYPE_REF):
+                        return_type = return_type_child.spelling
+                        break
+
+            # if the type is a pointer, then use the child type cursor directly
+            elif(child.type.kind == TypeKind.POINTER):
+                type_cursor = child
+            else:
+                raise ParseException("Unsupported child type.")
 
             # Generate parameter list
             params = []
             arg_num = -1
             for typedef_parm_cursor in type_cursor.get_children():
-                if(typedef_parm_cursor.kind == CursorKind.PARM_DECL):
+                # the first child might be the return type for function pointers
+                if(typedef_parm_cursor.kind == CursorKind.TYPE_REF):
+                    return_type = typedef_parm_cursor.spelling
+                # otherwise the children for typedefs will omit the return type
+                # and immediately start iterating over function arguments
+                elif(typedef_parm_cursor.kind == CursorKind.PARM_DECL):
                     arg_num = arg_num + 1
                     param_type = ""
                     param_name = ""
@@ -273,14 +311,6 @@ def parse_ddi_table(args, context, cursor, pfnCursors):
                     if count >= 1:
                         param[1] = param[1] + str(count)
                         duplicates[key] = count - 1
-
-            # Get return type
-            return_type = "VOID"
-            if(child.type.kind == TypeKind.TYPEDEF):
-                for return_type_child in type_cursor.get_children():
-                    if (return_type_child.kind == CursorKind.TYPE_REF):
-                        return_type = return_type_child.spelling
-                        break
 
             # Append entrypoint
             context.add_entrypoint(DDIEntrypoint(
@@ -422,8 +452,19 @@ def main():
     contexts = [
         ParseContext(os.path.join(args.wdk, 'um', 'd3d10umddi.h'),
                      args.output,
-                     filemap.filemap,
+                     filemap.filemap["D3D11_1DDI_DEVICEFUNCS"],
                      'D3D11_1DDI_DEVICEFUNCS',
+                     Templates(
+                         os.path.join(
+                             sys.path[0], 'templates\\ddi.cpp.template'),
+                         os.path.join(
+                             sys.path[0], 'templates\\filltable.h.template'),
+                         os.path.join(
+                             sys.path[0], 'templates\\filltable.cpp.template'))),
+        ParseContext(os.path.join(args.wdk, 'um', 'dxgiddi.h'),
+                     args.output,
+                     filemap.filemap["DXGI1_6_1_DDI_BASE_FUNCTIONS"],
+                     'DXGI1_6_1_DDI_BASE_FUNCTIONS',
                      Templates(
                          os.path.join(
                              sys.path[0], 'templates\\ddi.cpp.template'),

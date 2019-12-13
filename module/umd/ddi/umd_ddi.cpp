@@ -170,3 +170,40 @@ void FillDdiTable( D3D11_1DDI_DEVICEFUNCS* pTable )
 } // namespace DDI
 } // namespace UMD
 } // namespace Crystal
+#include "pch.h"
+#include "umd_ddi.h"
+
+namespace Crystal
+{
+namespace UMD
+{
+namespace DDI
+{
+    
+void FillDdiTable( DXGI1_6_1_DDI_BASE_FUNCTIONS* pTable )
+{
+    pTable->pfnCheckPresentDurationSupport = CheckPresentDurationSupport;
+    pTable->pfnPresent = Present;
+    pTable->pfnPresent1 = Present1;
+    pTable->pfnPresentMultiplaneOverlay = PresentMultiplaneOverlay;
+    pTable->pfnPresentMultiplaneOverlay1 = PresentMultiplaneOverlay1;
+    pTable->pfnSetDisplayMode = SetDisplayMode;
+    pTable->pfnCheckMultiplaneOverlayColorSpaceSupport = CheckMultiplaneOverlayColorSpaceSupport;
+    pTable->pfnGetGammaCaps = GetGammaCaps;
+    pTable->pfnGetMultiplaneOverlayCaps = GetMultiplaneOverlayCaps;
+    pTable->pfnGetMultiplaneOverlayGroupCaps = GetMultiplaneOverlayGroupCaps;
+    pTable->pfnOfferResources1 = OfferResources1;
+    pTable->pfnQueryResourceResidency = QueryResourceResidency;
+    pTable->pfnReclaimResources = ReclaimResources;
+    pTable->pfnReclaimResources1 = ReclaimResources1;
+    pTable->pfnResolveSharedResource = ResolveSharedResource;
+    pTable->pfnRotateResourceIdentities = RotateResourceIdentities;
+    pTable->pfnSetResourcePriority = SetResourcePriority;
+    pTable->pfnTrimResidencySet = TrimResidencySet;
+    pTable->pfnBlt = Blt;
+    pTable->pfnBlt1 = Blt1;
+}
+
+} // namespace DDI
+} // namespace UMD
+} // namespace Crystal

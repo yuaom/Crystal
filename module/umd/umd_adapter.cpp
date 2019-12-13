@@ -42,17 +42,14 @@ namespace Crystal
                 sizeof( D3DDDI_ADAPTERCALLBACKS ) );
 
             m_SupportedVersions = {
-                D3D11_1_DDI_SUPPORTED,
-                D3D11_0_DDI_SUPPORTED,
-                D3D10_0_DDI_SUPPORTED,
-                D3D10_1_DDI_SUPPORTED
+                D3DWDDM1_3_DDI_SUPPORTED
             };
 
             pOpenAdapter->pAdapterFuncs_2->pfnCalcPrivateDeviceSize = UMD::CalcPrivateDeviceSize;
-            pOpenAdapter->pAdapterFuncs_2->pfnCreateDevice            = UMD::CreateDevice;
-            pOpenAdapter->pAdapterFuncs_2->pfnCloseAdapter            = UMD::CloseAdapter;
-            pOpenAdapter->pAdapterFuncs_2->pfnGetCaps                = UMD::GetCaps;
-            pOpenAdapter->pAdapterFuncs_2->pfnGetSupportedVersions    = UMD::GetSupportedVersions;
+            pOpenAdapter->pAdapterFuncs_2->pfnCreateDevice          = UMD::CreateDevice;
+            pOpenAdapter->pAdapterFuncs_2->pfnCloseAdapter          = UMD::CloseAdapter;
+            pOpenAdapter->pAdapterFuncs_2->pfnGetCaps               = UMD::GetCaps;
+            pOpenAdapter->pAdapterFuncs_2->pfnGetSupportedVersions  = UMD::GetSupportedVersions;
         }
 
         ////////////////////////////////////////////////////////////////////////////////

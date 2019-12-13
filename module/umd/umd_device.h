@@ -14,7 +14,7 @@ namespace Crystal
         public:
             static void Create( D3D10DDIARG_CREATEDEVICE* pCreateDevice, Adapter* pAdapter );
 
-            static void Destroy();
+            static void Destroy( Device* pDevice );
 
             static Device* FromHandle( D3D10DDI_HDEVICE handle );
 
@@ -31,7 +31,8 @@ namespace Crystal
             ~Device();
 
             D3D10DDI_HRTDEVICE      m_RuntimeHandle;
-            D3DDDI_DEVICECALLBACKS  m_KmCallbacks;
+
+            const D3DDDI_DEVICECALLBACKS*   m_pKTCallbacks;
 
             Adapter* m_pAdapter;
         };

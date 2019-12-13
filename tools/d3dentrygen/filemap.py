@@ -9,7 +9,7 @@ filemap = {
         ".*Resource.*": "umd_ddi_dxgi_resource.cpp",
         "TrimResidencySet": "umd_ddi_dxgi_resource.cpp",
     },
-    "D3D11_1DDI_DEVICEFUNCS":
+    "D3DWDDM1_3DDI_DEVICEFUNCS":
     {
         # CalcSizes
         "CalcPrivate.*": "umd_ddi_calcprivate.cpp",
@@ -59,6 +59,10 @@ filemap = {
         "SetResourceMinLOD": "umd_ddi_resource.cpp",
         "Discard": "umd_ddi_resource.cpp",
 
+        # Tiled Resources
+        "TiledResource.*": "umd_ddi_tr.cpp",
+        "ResizeTilePool": "umd_ddi_tr.cpp",
+
         # Map/Update
         ".*Update.*": "umd_ddi_update.cpp",
         ".*Map$": "umd_ddi_map.cpp",
@@ -88,6 +92,8 @@ filemap = {
         "CheckMultisampleQualityLevels": "umd_ddi_device.cpp",
         "SetTextFilterSize": "umd_ddi_device.cpp",
         "CheckDirectFlipSupport": "umd_ddi_device.cpp",
+        "GetMipPacking": "umd_ddi_device.cpp",
+        "SetMarker": "umd_ddi_device.cpp",
 
         # Command list
         "CommandList.*": "umd_ddi_commandlist.cpp",

@@ -452,8 +452,8 @@ def main():
     contexts = [
         ParseContext(os.path.join(args.wdk, 'um', 'd3d10umddi.h'),
                      args.output,
-                     filemap.filemap["D3D11_1DDI_DEVICEFUNCS"],
-                     'D3D11_1DDI_DEVICEFUNCS',
+                     filemap.filemap["D3DWDDM1_3DDI_DEVICEFUNCS"],
+                     'D3DWDDM1_3DDI_DEVICEFUNCS',
                      Templates(
                          os.path.join(
                              sys.path[0], 'templates\\ddi.cpp.template'),

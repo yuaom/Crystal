@@ -13,15 +13,15 @@ namespace Crystal
             D3D10DDIARG_CREATEDEVICE* pCreateDevice,
             Adapter* pAdapter )
         {
-            new( reinterpret_cast<void*>( pCreateDevice->hDrvDevice.pDrvPrivate ) ) Device( 
+            new( pCreateDevice->hDrvDevice.pDrvPrivate ) Device( 
                 pCreateDevice, 
                 pAdapter );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Device::Destroy()
+        void Device::Destroy( Device* pDevice )
         {
-
+            ZeroMemory( pDevice, sizeof( Device ) );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -42,22 +42,26 @@ namespace Crystal
             Adapter* pAdapter ) :
             m_RuntimeHandle( pCreateDevice->hRTDevice ),
             m_pAdapter( pAdapter )
-        {
-            uint32_t cnt = sizeof( *pCreateDevice->pWDDM2_6DeviceFuncs ) / sizeof( void* );
-            uint64_t* pFunc = reinterpret_cast<uint64_t*>( pCreateDevice->pWDDM2_6DeviceFuncs );
-            for( uint64_t i = 0; i < cnt; i++, pFunc++ )*pFunc = ( 1ULL << 32 ) | ( i + 1 );
+        {            
+            m_pKTCallbacks = pCreateDevice->pKTCallbacks;
 
-            cnt = sizeof( *pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 ) / sizeof( void* );
-            pFunc = reinterpret_cast<uint64_t*>( pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 );
-            for( uint64_t i = 0; i < cnt; i++, pFunc++ )*pFunc = ( 2ULL << 32 ) | ( i + 1 );
-
-            memcpy_s( 
-                &m_KmCallbacks, 
-                sizeof( D3DDDI_DEVICECALLBACKS ), 
-                pCreateDevice->pKTCallbacks, 
-                sizeof( D3DDDI_DEVICECALLBACKS ) );
-
-            DDI::FillDdiTable( pCreateDevice->p11_1DeviceFuncs );            
+            switch( pCreateDevice->Interface )
+            {
+            case D3DWDDM1_3_DDI_INTERFACE_VERSION:
+                DDI::FillDdiTable( pCreateDevice->pWDDM1_3DeviceFuncs );
+                break;
+            case D3D11_1_DDI_INTERFACE_VERSION:
+            case D3D10_1_DDI_INTERFACE_VERSION:
+            case D3D11_0_DDI_INTERFACE_VERSION:
+            case D3DWDDM2_0_DDI_INTERFACE_VERSION:
+            case D3DWDDM2_1_DDI_INTERFACE_VERSION:
+            case D3DWDDM2_2_DDI_INTERFACE_VERSION:
+            case D3DWDDM2_6_DDI_INTERFACE_VERSION:
+            default:
+                assert( 0 );
+            }
+            
+            DDI::FillDdiTable( pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

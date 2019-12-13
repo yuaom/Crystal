@@ -8,10 +8,12 @@ namespace UMD
 namespace DDI
 {
     
-void FillDdiTable( D3D11_1DDI_DEVICEFUNCS* pTable )
+void FillDdiTable( D3DWDDM1_3DDI_DEVICEFUNCS* pTable )
 {
     pTable->pfnDefaultConstantBufferUpdateSubresourceUP = DefaultConstantBufferUpdateSubresourceUP;
     pTable->pfnResourceUpdateSubresourceUP = ResourceUpdateSubresourceUP;
+    pTable->pfnUpdateTileMappings = UpdateTileMappings;
+    pTable->pfnUpdateTiles = UpdateTiles;
     pTable->pfnVsSetConstantBuffers = VsSetConstantBuffers;
     pTable->pfnHsSetConstantBuffers = HsSetConstantBuffers;
     pTable->pfnDsSetConstantBuffers = DsSetConstantBuffers;
@@ -89,9 +91,12 @@ void FillDdiTable( D3D11_1DDI_DEVICEFUNCS* pTable )
     pTable->pfnCheckFormatSupport = CheckFormatSupport;
     pTable->pfnCheckMultisampleQualityLevels = CheckMultisampleQualityLevels;
     pTable->pfnFlush = Flush;
+    pTable->pfnGetMipPacking = GetMipPacking;
     pTable->pfnRelocateDeviceFuncs = RelocateDeviceFuncs;
     pTable->pfnResourceIsStagingBusy = ResourceIsStagingBusy;
     pTable->pfnResourceReadAfterWriteHazard = ResourceReadAfterWriteHazard;
+    pTable->pfnSetMarker = SetMarker;
+    pTable->pfnSetMarkerMode = SetMarkerMode;
     pTable->pfnSetTextFilterSize = SetTextFilterSize;
     pTable->pfnCreateBlendState = CreateBlendState;
     pTable->pfnDestroyBlendState = DestroyBlendState;
@@ -109,6 +114,8 @@ void FillDdiTable( D3D11_1DDI_DEVICEFUNCS* pTable )
     pTable->pfnQueryGetData = QueryGetData;
     pTable->pfnSetPredication = SetPredication;
     pTable->pfnCopyStructureCount = CopyStructureCount;
+    pTable->pfnCopyTileMappings = CopyTileMappings;
+    pTable->pfnCopyTiles = CopyTiles;
     pTable->pfnResourceCopy = ResourceCopy;
     pTable->pfnResourceCopyRegion = ResourceCopyRegion;
     pTable->pfnSoSetTargets = SoSetTargets;
@@ -165,6 +172,8 @@ void FillDdiTable( D3D11_1DDI_DEVICEFUNCS* pTable )
     pTable->pfnCsSetUnorderedAccessViews = CsSetUnorderedAccessViews;
     pTable->pfnDispatch = Dispatch;
     pTable->pfnDispatchIndirect = DispatchIndirect;
+    pTable->pfnResizeTilePool = ResizeTilePool;
+    pTable->pfnTiledResourceBarrier = TiledResourceBarrier;
 }
 
 } // namespace DDI

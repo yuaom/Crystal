@@ -3,11 +3,10 @@
 #include "kmd_adapter.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* )
+EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDevice )
 {
     LOG_DLL_ENTRY;
     return STATUS_SUCCESS;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +26,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 
         pOpenAdapterFromGdiDisplayName->hAdapter                = pAdapter->GetHandle();
         pOpenAdapterFromGdiDisplayName->VidPnSourceId            = display->GetVidPinSourceId();
-        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart        = 0;
+        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart        = 0x20;
         pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart    = pAdapter->GetHandle();
     }
 

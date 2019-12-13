@@ -44,6 +44,7 @@ VOID WINAPI CheckMultisampleQualityLevels(
     D3D10DDI_HDEVICE hDevice,
     DXGI_FORMAT Format,
     UINT SampleCount,
+    UINT Flags,
     UINT* pNumQualityLevels )
 {
     LOG_DLL_ENTRY;
@@ -63,9 +64,19 @@ BOOL WINAPI Flush(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI GetMipPacking(
+    D3D10DDI_HDEVICE hDevice,
+    D3D10DDI_HRESOURCE hTiledResource,
+    UINT* pNumPackedMips,
+    UINT* pNumTilesForPackedMips )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI RelocateDeviceFuncs(
     D3D10DDI_HDEVICE hDevice,
-    struct D3D11_1DDI_DEVICEFUNCS* pDeviceFunctions )
+    struct D3DWDDM1_3DDI_DEVICEFUNCS* DeviceFuncs )
 {
     LOG_DLL_ENTRY;
 }
@@ -83,6 +94,22 @@ BOOL WINAPI ResourceIsStagingBusy(
 VOID WINAPI ResourceReadAfterWriteHazard(
     D3D10DDI_HDEVICE hDevice,
     D3D10DDI_HRESOURCE hResource )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI SetMarker(
+    D3D10DDI_HDEVICE hDevice )
+{
+    LOG_DLL_ENTRY;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+VOID WINAPI SetMarkerMode(
+    D3D10DDI_HDEVICE hDevice,
+    D3DWDDM1_3DDI_MARKER_TYPE Type,
+    UINT Flags )
 {
     LOG_DLL_ENTRY;
 }

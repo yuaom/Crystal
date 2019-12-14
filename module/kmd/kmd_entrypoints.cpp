@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "kmd_entrypoints.h"
 #include "kmd_adapter.h"
+#include "kmd_device.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDevice )
 {
     LOG_DLL_ENTRY;
+
     return STATUS_SUCCESS;
 }
 
@@ -15,18 +17,18 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 {
     LOG_DLL_ENTRY;
 
-    auto& pDisplays = Crystal::DllContext::get()->getDisplays();
+    auto& pDisplays = Crystal::Displays::get();
 
     Crystal::Displays::find_result_itr_t display;
     if( pDisplays->FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
     {
-        auto& pKmdAdapterManger = Crystal::DllContext::get()->getKmdAdapterManager();
+        auto& pKmdAdapterManger = Crystal::KMD::KmdAdapterManager::get();
 
         auto& pAdapter = pKmdAdapterManger->CreateAdapter();
 
         pOpenAdapterFromGdiDisplayName->hAdapter                = pAdapter->GetHandle();
-        pOpenAdapterFromGdiDisplayName->VidPnSourceId            = display->GetVidPinSourceId();
-        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart        = 0x20;
+        pOpenAdapterFromGdiDisplayName->VidPnSourceId           = display->GetVidPinSourceId();
+        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart     = 0x20;
         pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart    = pAdapter->GetHandle();
     }
 
@@ -49,8 +51,6 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
 
     NTSTATUS result = STATUS_SUCCESS;
 
-    auto& pDLLContext = Crystal::DllContext::get();
-
     switch (adapterInfo->Type)
     {
     case KMTQAITYPE_UMDRIVERNAME:
@@ -61,7 +61,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
             pFileNameInfo->Version == KMTUMDVERSION_DX11)
         {
             DWORD dw = GetModuleFileNameW(
-                pDLLContext->GetModuleHandle(),
+                NULL,
                 pFileNameInfo->UmdFileName,
                 _countof( pFileNameInfo->UmdFileName ) );
 

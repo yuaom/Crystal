@@ -52,9 +52,33 @@ namespace Crystal
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    std::unique_ptr<DebugVariables> DebugVariables::m_pVars = nullptr;
+
+    ////////////////////////////////////////////////////////////////////////////////
     DebugVariables::DebugVariables() :
         EnableLog( L"EnableLog", Entry::TYPE_UINT )
     {
 
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    void DebugVariables::OnDllProcessAttach()
+    {
+        if( m_pVars == nullptr )
+        {
+            m_pVars = std::make_unique<DebugVariables>();
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    void DebugVariables::OnDllProcessDetach()
+    {
+        m_pVars.release();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    std::unique_ptr<DebugVariables>& DebugVariables::get()
+    {
+        return m_pVars;
     }
 }

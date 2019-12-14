@@ -10,6 +10,8 @@ BOOL WINAPI DllMain(
     switch( reason )
     {
     case DLL_PROCESS_ATTACH:
+        g_hInstance = instance;
+
         // Load instrumentation and logging
         Crystal::DebugVariables::OnDllProcessAttach();
         Crystal::Log::OnDllProcessAttach();
@@ -37,6 +39,8 @@ BOOL WINAPI DllMain(
 
         Crystal::Log::OnDllProcessDetach();
         Crystal::DebugVariables::OnDllProcessDetach();
+
+        g_hInstance = NULL;
         break;
     }
 

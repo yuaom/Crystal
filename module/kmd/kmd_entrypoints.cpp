@@ -61,7 +61,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
             pFileNameInfo->Version == KMTUMDVERSION_DX11)
         {
             DWORD dw = GetModuleFileNameW(
-                NULL,
+                g_hInstance,
                 pFileNameInfo->UmdFileName,
                 _countof( pFileNameInfo->UmdFileName ) );
 

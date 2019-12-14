@@ -26,6 +26,8 @@ namespace Utilities
     bool GetEnvironmentVariable( const std::wstring& name, std::wstring& out );
 }
 
+extern HINSTANCE    g_hInstance;
+
 #include "log.h"
 #include "debugvars.h"
 #include "display.h"

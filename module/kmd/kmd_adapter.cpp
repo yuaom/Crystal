@@ -10,7 +10,7 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         KmdAdapter::KmdAdapter() :
-            m_Handle( KmtHandleManager::get()->Allocate( this ) )
+            m_Handle( KmtHandleManager::Allocate( this ) )
         {
         }
 

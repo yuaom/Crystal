@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "kmd_handles.h"
 
+// KmtHandleManager relies on pointer truncation
+#pragma warning( push )
+#pragma warning( disable : 4311 )
+
 namespace Crystal
 {
     namespace KMD
@@ -31,9 +35,10 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         KmtHandleManager::KmtHandleManager() :
-            m_pHandleAllocation( nullptr )
+            m_pHandleAllocation( nullptr ),
+            m_SizeUsed( 0 )
         {
-            void* desiredUpperbound = reinterpret_cast<void*>( 0x1000000000UL );
+            void* desiredUpperbound = reinterpret_cast<void*>( 0x100000000UL );
 
             // default is 512k handles, ~4MB, reserved, not committed
             uint32_t kmtHandleCount     = 512 * 1024;
@@ -58,19 +63,27 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         D3DKMT_HANDLE KmtHandleManager::Allocate( void* pObj )
         {
-            if( reinterpret_cast<size_t>( m_pHandleAllocation ) % PAGE_SIZE == 0 )
+            auto& pManager = get();
+
+            if( pManager->m_SizeUsed % PAGE_SIZE == 0 )
             {
                 void* pResultAddress = VirtualAlloc( 
-                    m_pHandleAllocation, 
+                    pManager->m_pHandleAllocation,
                     PAGE_SIZE, 
                     MEM_COMMIT, 
                     PAGE_READWRITE );
-                assert( pResultAddress == m_pHandleAllocation );
+                assert( pResultAddress == pManager->m_pHandleAllocation );
             }
 
-            HANDLE* pHandle = new( m_pHandleAllocation ) HANDLE( pObj );
-            m_pHandleAllocation++;
-            return pHandle->m_KmtHandle;
+            HANDLE* pHandle = new( pManager->m_pHandleAllocation ) HANDLE( pObj );
+
+            pManager->m_pHandleAllocation++;
+            pManager->m_SizeUsed += sizeof( HANDLE );
+
+            D3DKMT_HANDLE handle = reinterpret_cast<D3DKMT_HANDLE>( pHandle );
+            return handle;
         }
     }
 }
+
+#pragma warning( pop )

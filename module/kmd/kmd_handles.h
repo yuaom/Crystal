@@ -11,16 +11,15 @@ namespace Crystal
 
             static void OnDllProcessDetach();
 
-            static std::unique_ptr<KmtHandleManager>& get();
-
             KmtHandleManager();
 
             ~KmtHandleManager();
 
-            D3DKMT_HANDLE Allocate( void* pObj );
-            void Free( D3DKMT_HANDLE kmtHandle );
+            static D3DKMT_HANDLE Allocate( void* pObj );
 
         private:
+
+            static std::unique_ptr<KmtHandleManager>& get();
 
             static std::unique_ptr<KmtHandleManager> m_pHandles;
 
@@ -37,7 +36,8 @@ namespace Crystal
                 void* m_KmdObject;
             };
 
-            HANDLE* m_pHandleAllocation;
+            HANDLE*     m_pHandleAllocation;
+            uint32_t    m_SizeUsed;
         };
     }
 }

@@ -28,8 +28,8 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 
         pOpenAdapterFromGdiDisplayName->hAdapter                = pAdapter->GetHandle();
         pOpenAdapterFromGdiDisplayName->VidPnSourceId           = display->GetVidPinSourceId();
-        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart     = 0x20;
-        pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart    = pAdapter->GetHandle();
+        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart     = 0x0;
+        pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart    = 0x0;
     }
 
     return STATUS_SUCCESS;

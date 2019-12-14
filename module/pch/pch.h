@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <stack>
 
 #include <Windows.h>
 #include <d3d10umddi.h>

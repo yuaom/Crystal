@@ -65,23 +65,46 @@ namespace Crystal
         {
             auto& pManager = get();
 
-            if( pManager->m_SizeUsed % PAGE_SIZE == 0 )
+            D3DKMT_HANDLE handle = 0;
+
+            if( pManager->m_FreeList.size() == 0 )
             {
-                void* pResultAddress = VirtualAlloc( 
-                    pManager->m_pHandleAllocation,
-                    PAGE_SIZE, 
-                    MEM_COMMIT, 
-                    PAGE_READWRITE );
-                assert( pResultAddress == pManager->m_pHandleAllocation );
+                if( pManager->m_SizeUsed % PAGE_SIZE == 0 )
+                {
+                    void* pResultAddress = VirtualAlloc(
+                        pManager->m_pHandleAllocation,
+                        PAGE_SIZE,
+                        MEM_COMMIT,
+                        PAGE_READWRITE );
+                    assert( pResultAddress == pManager->m_pHandleAllocation );
+                }
+
+                HANDLE* pHandle = new( pManager->m_pHandleAllocation ) HANDLE( pObj );
+
+                pManager->m_pHandleAllocation++;
+                pManager->m_SizeUsed += sizeof( HANDLE );
+
+                handle = reinterpret_cast<D3DKMT_HANDLE>( pHandle );
+            }
+            else
+            {
+                handle = pManager->m_FreeList.top();
+                pManager->m_FreeList.pop();
             }
 
-            HANDLE* pHandle = new( pManager->m_pHandleAllocation ) HANDLE( pObj );
-
-            pManager->m_pHandleAllocation++;
-            pManager->m_SizeUsed += sizeof( HANDLE );
-
-            D3DKMT_HANDLE handle = reinterpret_cast<D3DKMT_HANDLE>( pHandle );
             return handle;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void KmtHandleManager::Free( D3DKMT_HANDLE kmtHandle )
+        {
+            auto& pManager = get();
+
+            HANDLE* handle = pManager->m_pHandleAllocation;
+            handle->m_KmtHandle = kmtHandle;
+            handle->m_KmdObject = nullptr;
+
+            pManager->m_FreeList.push( kmtHandle );
         }
     }
 }

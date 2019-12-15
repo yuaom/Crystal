@@ -51,7 +51,7 @@ VOID WINAPI CheckMultisampleQualityLevels(
     UINT Flags,
     UINT* pNumQualityLevels )
 {
-    LOG_DLL_ENTRY;
+    // LOG_DLL_ENTRY;
 
     Device* pDevice = Device::FromHandle( hDevice );
 

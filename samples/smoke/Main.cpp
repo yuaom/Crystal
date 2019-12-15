@@ -41,7 +41,7 @@ int main()
 {
     HRESULT hr = S_OK;
 
-    bool useSoftware = false;
+    bool useSoftware = true;
     
     UINT flags = D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_SINGLETHREADED;
     D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_1;

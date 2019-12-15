@@ -27,8 +27,8 @@ HRESULT WINAPI Present(
 HRESULT WINAPI Present1(
     DXGI1_6_1_DDI_ARG_PRESENT* pPresent )
 {
-    LOG_DLL_ENTRY;
-    return E_FAIL;
+     // LOG_DLL_ENTRY;
+    return S_OK;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

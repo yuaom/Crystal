@@ -54,5 +54,8 @@ int main()
         &featureLevel,
         &pContext );
 
+    if( pContext ) pContext->Release();
+    if( pDevice ) pDevice->Release();
+
     return 0;
 }

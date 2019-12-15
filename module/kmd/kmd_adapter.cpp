@@ -9,8 +9,9 @@ namespace Crystal
 #pragma region KmdAdapter
 
         ////////////////////////////////////////////////////////////////////////////////
-        KmdAdapter::KmdAdapter() :
-            m_Handle( KmtHandleManager::Allocate( this ) )
+        KmdAdapter::KmdAdapter( const LUID& luid ) :
+            m_Handle( KmtHandleManager::Allocate( this ) ),
+            m_LUID( luid )
         {
         }
 
@@ -25,6 +26,12 @@ namespace Crystal
         D3DKMT_HANDLE KmdAdapter::GetHandle()
         {
             return m_Handle;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        const LUID& KmdAdapter::GetLUID()
+        {
+            return m_LUID;
         }
 
 #pragma endregion
@@ -62,18 +69,6 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         KmdAdapterManager::~KmdAdapterManager()
         {
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        D3DKMT_HANDLE KmdAdapterManager::ListIndexToKmtHandle( uint32_t i )
-        {
-            return static_cast<D3DKMT_HANDLE>( i + 1 );
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        uint32_t KmdAdapterManager::KmtHandleToListIndex( D3DKMT_HANDLE handle )
-        {
-            return static_cast<uint32_t>( handle ) - 1;
         }
     }
 #pragma endregion

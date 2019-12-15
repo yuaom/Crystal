@@ -17,6 +17,7 @@ namespace Crystal
             static void Destroy( Device* pDevice );
 
             static Device* FromHandle( D3D10DDI_HDEVICE handle );
+            static Device* FromHandle( DXGI_DDI_HDEVICE handle );
 
             static uint32_t    CalculateSize( const D3D10DDIARG_CALCPRIVATEDEVICESIZE* pCalcSize );
 
@@ -24,15 +25,22 @@ namespace Crystal
 
             void GetMultisampleSupport( DXGI_FORMAT format, UINT sampleCount, UINT* pNumQualityLevels );
 
-        private:
+            const D3DDDI_DEVICECALLBACKS*                   m_pKTCallbacks;
+            const D3DWDDM2_6DDI_CORELAYER_DEVICECALLBACKS*  m_pCoreLayerCallbacks;
+            const DXGI_DDI_BASE_CALLBACKS*                  m_pDXGICallbacks;
+
+        //private:
 
             Device( D3D10DDIARG_CREATEDEVICE* pCreateDevice, Adapter* pAdapter );
 
             ~Device();
 
-            D3D10DDI_HRTDEVICE      m_RuntimeHandle;
+            void CreateContexts();
 
-            const D3DDDI_DEVICECALLBACKS*   m_pKTCallbacks;
+            D3D10DDI_HRTDEVICE      m_hRTDevice;
+            D3D10DDI_HRTCORELAYER   m_hRTCoreLayer;
+
+            HANDLE                  m_ContextHandle;
 
             Adapter* m_pAdapter;
         };

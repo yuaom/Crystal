@@ -8,15 +8,17 @@ namespace Crystal
         class KmdAdapter
         {
         public:
-            KmdAdapter();
+            KmdAdapter( const LUID& luid );
 
             ~KmdAdapter();
 
             D3DKMT_HANDLE   GetHandle();
+            const LUID&     GetLUID();
 
         private:
 
             D3DKMT_HANDLE   m_Handle;
+            LUID            m_LUID;
         };
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -40,9 +42,6 @@ namespace Crystal
 
             static std::unique_ptr<KmdAdapterManager> m_pAdapters;
 
-            static D3DKMT_HANDLE ListIndexToKmtHandle( uint32_t i );
-            static uint32_t KmtHandleToListIndex( D3DKMT_HANDLE handle );
-
             std::vector<KmdAdapter*>    m_Adapters;
         };
 
@@ -50,7 +49,10 @@ namespace Crystal
         template< typename... ParamsT >
         KmdAdapter* KmdAdapterManager::CreateAdapter( ParamsT&&... p )
         {
-            m_Adapters.emplace_back( new KmdAdapter( std::forward<ParamsT>( p )... ) );
+            LUID luid = { 0 };
+            luid.LowPart = static_cast<DWORD>( m_Adapters.size() );
+
+            m_Adapters.emplace_back( new KmdAdapter( luid, std::forward<ParamsT>( p )... ) );
 
             return m_Adapters.back();
         }

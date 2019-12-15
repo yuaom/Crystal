@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "umd_device.h"
 
 namespace Crystal
 {
@@ -27,7 +28,17 @@ HRESULT WINAPI Present(
 HRESULT WINAPI Present1(
     DXGI1_6_1_DDI_ARG_PRESENT* pPresent )
 {
-     // LOG_DLL_ENTRY;
+    LOG_DLL_ENTRY;
+    Device* pDevice = Device::FromHandle( pPresent->hDevice );
+
+    DXGIDDICB_PRESENT present = { 0 };
+    present.hContext        = pDevice->m_ContextHandle;
+    present.pDXGIContext    = pPresent->pDXGIContext;
+
+    pDevice->m_pDXGICallbacks->pfnPresentCb(
+        pDevice->m_hRTDevice.handle, 
+        &present );
+
     return S_OK;
 }
 

@@ -49,3 +49,4 @@ EXPORTS
 	D3DKMTWaitForSynchronizationObject
 	D3DKMTWaitForSynchronizationObject2
 	D3DKMTWaitForVerticalBlankEvent
+	D3DKMTCreateContextVirtual

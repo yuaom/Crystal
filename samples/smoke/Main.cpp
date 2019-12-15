@@ -100,11 +100,11 @@ int main()
         NULL );
 
     DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
-    swapChainDesc.BufferCount = 2;
+    swapChainDesc.BufferCount       = 2;
     swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapChainDesc.BufferDesc.Height = windowRect.bottom - windowRect.top;
     swapChainDesc.BufferDesc.Width  = windowRect.right - windowRect.left;
-    swapChainDesc.BufferUsage       = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_BACK_BUFFER;
+    swapChainDesc.BufferUsage       = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapChainDesc.OutputWindow      = hwnd;
     swapChainDesc.SampleDesc.Count  = 1;
     swapChainDesc.SwapEffect        = DXGI_SWAP_EFFECT_FLIP_DISCARD;

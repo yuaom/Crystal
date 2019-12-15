@@ -51,7 +51,7 @@ HRESULT WINAPI ResolveSharedResource(
 HRESULT WINAPI RotateResourceIdentities(
     DXGI_DDI_ARG_ROTATE_RESOURCE_IDENTITIES* pRotateResourceIdentities )
 {
-    // LOG_DLL_ENTRY;
+    LOG_DLL_ENTRY;
     return S_OK;
 }
 

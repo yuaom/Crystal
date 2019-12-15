@@ -40,10 +40,9 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 
         Crystal::KMD::KmdAdapter* pAdapter = pKmdAdapterManger->CreateAdapter();
 
-        pOpenAdapterFromGdiDisplayName->hAdapter                = pAdapter->GetHandle();
-        pOpenAdapterFromGdiDisplayName->VidPnSourceId           = display->GetVidPinSourceId();
-        pOpenAdapterFromGdiDisplayName->AdapterLuid.LowPart     = 0x0;
-        pOpenAdapterFromGdiDisplayName->AdapterLuid.HighPart    = 0x0;
+        pOpenAdapterFromGdiDisplayName->hAdapter        = pAdapter->GetHandle();
+        pOpenAdapterFromGdiDisplayName->AdapterLuid     = pAdapter->GetLUID();
+        pOpenAdapterFromGdiDisplayName->VidPnSourceId   = display->GetVidPinSourceId();
     }
 
     return STATUS_SUCCESS;
@@ -144,6 +143,41 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTGetDeviceState( D3DKMT_GETDEVICESTATE* pDeviceS
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTCreateContextVirtual( D3DKMT_CREATECONTEXTVIRTUAL* pCreateContextVirtual )
+{
+    LOG_DLL_ENTRY;
+    return STATUS_SUCCESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
+{
+    LOG_DLL_ENTRY;
+
+    if( pPresent->Flags.Blt )
+    {
+        RECT rc = { 0 };
+        GetClientRect( pPresent->hWindow, &rc );
+
+        // Fake ClearRenderTargetView ( doesn't work )
+        HDC dc = ::GetDC( pPresent->hWindow );
+        HDC mdc = ::CreateCompatibleDC( dc );
+        HBITMAP hBmp = ::CreateCompatibleBitmap( dc, rc.right - rc.left, rc.bottom - rc.top );
+        ::SelectObject( mdc, hBmp );
+
+        COLORREF color = RGB( 53, 94, 184 );
+        BOOL result = ::FloodFill( mdc, 0, 0, color );
+        assert( result != 0 );
+
+        ::DeleteObject( hBmp );
+        ::DeleteDC( mdc );
+        ::ReleaseDC( pPresent->hWindow, dc );
+    }
+    
+    return STATUS_SUCCESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTAcquireKeyedMutex( _Inout_ D3DKMT_ACQUIREKEYEDMUTEX* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTCloseAdapter( _In_ CONST D3DKMT_CLOSEADAPTER* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTConfigureSharedResource( _In_ CONST D3DKMT_CONFIGURESHAREDRESOURCE* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
@@ -168,7 +202,6 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenKeyedMutex( _Inout_ D3DKMT_OPENKEYEDMUTEX* 
 EXTERN_C NTSTATUS APIENTRY D3DKMTOpenResource( _Inout_ D3DKMT_OPENRESOURCE* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTOpenResource2( _Inout_ D3DKMT_OPENRESOURCE* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTOpenSynchronizationObject( _Inout_ D3DKMT_OPENSYNCHRONIZATIONOBJECT* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
-EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( _Inout_ D3DKMT_PRESENT* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAllocationResidency( _In_ CONST D3DKMT_QUERYALLOCATIONRESIDENCY* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTQueryResourceInfo( _Inout_ D3DKMT_QUERYRESOURCEINFO* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTReleaseKeyedMutex( _Inout_ D3DKMT_RELEASEKEYEDMUTEX* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }

@@ -13,9 +13,11 @@ namespace Crystal
             D3D10DDIARG_CREATEDEVICE* pCreateDevice,
             Adapter* pAdapter )
         {
-            new( pCreateDevice->hDrvDevice.pDrvPrivate ) Device( 
+            Device* pDevice = new( pCreateDevice->hDrvDevice.pDrvPrivate ) Device( 
                 pCreateDevice, 
                 pAdapter );
+
+            pDevice->CreateContexts();
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +33,12 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        Device* Device::FromHandle( DXGI_DDI_HDEVICE handle )
+        {
+            return reinterpret_cast<Device*>( handle );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         uint32_t Device::CalculateSize( const D3D10DDIARG_CALCPRIVATEDEVICESIZE* pCalcSize )
         {
             return sizeof( Device );
@@ -40,10 +48,15 @@ namespace Crystal
         Device::Device( 
             D3D10DDIARG_CREATEDEVICE* pCreateDevice,
             Adapter* pAdapter ) :
-            m_RuntimeHandle( pCreateDevice->hRTDevice ),
-            m_pAdapter( pAdapter )
+            m_hRTDevice( pCreateDevice->hRTDevice ),
+            m_hRTCoreLayer( pCreateDevice->hRTCoreLayer ),
+            m_pAdapter( pAdapter ),
+            m_pCoreLayerCallbacks( nullptr ),
+            m_pDXGICallbacks( nullptr )
         {            
-            m_pKTCallbacks = pCreateDevice->pKTCallbacks;
+            m_pKTCallbacks          = pCreateDevice->pKTCallbacks;
+            m_pCoreLayerCallbacks   = pCreateDevice->pWDDM2_6UMCallbacks;
+            m_pDXGICallbacks        = pCreateDevice->DXGIBaseDDI.pDXGIBaseCallbacks;
 
             switch( pCreateDevice->Interface )
             {
@@ -95,6 +108,29 @@ namespace Crystal
             if( pNumQualityLevels )
             {
                 *pNumQualityLevels = 0;
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void Device::CreateContexts()
+        {
+            HRESULT hr = S_OK;
+
+            D3DDDI_CREATECONTEXTFLAGS flags = { 0 };
+            flags.DisableGpuTimeout = TRUE;
+
+            D3DDDICB_CREATECONTEXT cb = { 0 };
+            cb.NodeOrdinal      = 0;
+            cb.EngineAffinity   = 0;
+            cb.Flags.Value      = flags.Value;
+
+            hr = m_pKTCallbacks->pfnCreateContextCb(
+                m_hRTDevice.handle,
+                &cb );
+
+            if( SUCCEEDED( hr ) )
+            {
+                m_ContextHandle = cb.hContext;
             }
         }
 

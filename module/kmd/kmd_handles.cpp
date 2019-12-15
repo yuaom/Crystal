@@ -10,32 +10,36 @@ namespace Crystal
     namespace KMD
     {
         ////////////////////////////////////////////////////////////////////////////////
-        std::unique_ptr<KmtHandleManager>    KmtHandleManager::m_pHandles = nullptr;
+        KmtHandleManager*   KmtHandleManager::m_pHandles = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
         void KmtHandleManager::OnDllProcessAttach()
         {
             if( m_pHandles == nullptr )
             {
-                m_pHandles = std::make_unique<KmtHandleManager>();
+                m_pHandles = new KmtHandleManager();
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         void KmtHandleManager::OnDllProcessDetach()
         {
-            m_pHandles.release();
+            if( m_pHandles )
+            {
+                delete m_pHandles;
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        std::unique_ptr<KmtHandleManager>& KmtHandleManager::get()
+        KmtHandleManager* KmtHandleManager::get()
         {
             return m_pHandles;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         KmtHandleManager::KmtHandleManager() :
-            m_pHandleAllocation( nullptr ),
+            m_Base( 0 ),
+            m_pCurrent( nullptr ),
             m_SizeUsed( 0 )
         {
             void* desiredUpperbound = reinterpret_cast<void*>( 0x100000000UL );
@@ -51,7 +55,8 @@ namespace Crystal
                 PAGE_READWRITE );
             assert( desiredUpperbound == pResultAddress );
 
-            m_pHandleAllocation = reinterpret_cast<HANDLE*>( pResultAddress );
+            m_Base      = reinterpret_cast<size_t>( pResultAddress );
+            m_pCurrent  = reinterpret_cast<HANDLE*>( pResultAddress );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +68,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         D3DKMT_HANDLE KmtHandleManager::Allocate( void* pObj )
         {
-            auto& pManager = get();
+            KmtHandleManager* pManager = get();
 
             D3DKMT_HANDLE handle = 0;
 
@@ -72,16 +77,16 @@ namespace Crystal
                 if( pManager->m_SizeUsed % PAGE_SIZE == 0 )
                 {
                     void* pResultAddress = VirtualAlloc(
-                        pManager->m_pHandleAllocation,
+                        pManager->m_pCurrent,
                         PAGE_SIZE,
                         MEM_COMMIT,
                         PAGE_READWRITE );
-                    assert( pResultAddress == pManager->m_pHandleAllocation );
+                    assert( pResultAddress == pManager->m_pCurrent );
                 }
 
-                HANDLE* pHandle = new( pManager->m_pHandleAllocation ) HANDLE( pObj );
+                HANDLE* pHandle = new( pManager->m_pCurrent ) HANDLE( pObj );
 
-                pManager->m_pHandleAllocation++;
+                pManager->m_pCurrent++;
                 pManager->m_SizeUsed += sizeof( HANDLE );
 
                 handle = reinterpret_cast<D3DKMT_HANDLE>( pHandle );
@@ -98,10 +103,9 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void KmtHandleManager::Free( D3DKMT_HANDLE kmtHandle )
         {
-            auto& pManager = get();
+            KmtHandleManager* pManager = get();
 
-            HANDLE* handle = pManager->m_pHandleAllocation;
-            handle->m_KmtHandle = kmtHandle;
+            HANDLE* handle = reinterpret_cast<HANDLE*>( pManager->m_Base + kmtHandle );
             handle->m_KmdObject = nullptr;
 
             pManager->m_FreeList.push( kmtHandle );

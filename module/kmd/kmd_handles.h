@@ -4,6 +4,7 @@ namespace Crystal
 {
     namespace KMD
     {
+        ////////////////////////////////////////////////////////////////////////////////
         class KmtHandleManager
         {
         public:
@@ -19,11 +20,14 @@ namespace Crystal
 
             static void Free( D3DKMT_HANDLE kmtHandle );
 
+            template< typename T >
+            static T* To( D3DKMT_HANDLE kmtHandle );
+
         private:
 
-            static std::unique_ptr<KmtHandleManager>& get();
+            static KmtHandleManager* get();
 
-            static std::unique_ptr<KmtHandleManager> m_pHandles;
+            static KmtHandleManager* m_pHandles;
 
             union HANDLE
             {
@@ -38,9 +42,19 @@ namespace Crystal
                 void* m_KmdObject;
             };
 
-            HANDLE*                     m_pHandleAllocation;
+            size_t                      m_Base;
+            HANDLE*                     m_pCurrent;
             uint32_t                    m_SizeUsed;
             std::stack<D3DKMT_HANDLE>   m_FreeList;
         };
+
+        ////////////////////////////////////////////////////////////////////////////////
+        template< typename T >
+        static T* KmtHandleManager::To( D3DKMT_HANDLE kmtHandle )
+        {
+            const KmtHandleManager* mgr = get();
+            HANDLE* handle = reinterpret_cast<HANDLE*>( mgr->m_Base + kmtHandle );
+            return reinterpret_cast<T*>( handle->m_KmdObject );
+        }
     }
 }

@@ -16,6 +16,16 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDev
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyDevice( CONST D3DKMT_DESTROYDEVICE* pKTDestroyDevice )
+{
+    LOG_DLL_ENTRY;
+
+    Crystal::KMD::Device::Destroy( pKTDestroyDevice->hDevice );
+    
+    return STATUS_SUCCESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
     D3DKMT_OPENADAPTERFROMGDIDISPLAYNAME* pOpenAdapterFromGdiDisplayName )
 {
@@ -28,7 +38,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
     {
         auto& pKmdAdapterManger = Crystal::KMD::KmdAdapterManager::get();
 
-        auto& pAdapter = pKmdAdapterManger->CreateAdapter();
+        Crystal::KMD::KmdAdapter* pAdapter = pKmdAdapterManger->CreateAdapter();
 
         pOpenAdapterFromGdiDisplayName->hAdapter                = pAdapter->GetHandle();
         pOpenAdapterFromGdiDisplayName->VidPnSourceId           = display->GetVidPinSourceId();
@@ -118,7 +128,6 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateSynchronizationObject( _Inout_ D3DKMT_CRE
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateSynchronizationObject2( _Inout_ D3DKMT_CREATESYNCHRONIZATIONOBJECT2* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyAllocation( _In_ CONST D3DKMT_DESTROYALLOCATION* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyContext( _In_ CONST D3DKMT_DESTROYCONTEXT* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
-EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyDevice( _In_ CONST D3DKMT_DESTROYDEVICE* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyKeyedMutex( _In_ CONST D3DKMT_DESTROYKEYEDMUTEX* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTDestroySynchronizationObject( _In_ CONST D3DKMT_DESTROYSYNCHRONIZATIONOBJECT* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }
 EXTERN_C NTSTATUS APIENTRY D3DKMTEscape( _In_ CONST D3DKMT_ESCAPE* ){ LOG_DLL_ENTRY; return STATUS_SUCCESS; }

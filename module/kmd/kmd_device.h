@@ -7,6 +7,9 @@ namespace Crystal
         class Device
         {
         public:
+
+            static void Destroy( D3DKMT_HANDLE handle );
+
             Device( const D3DKMT_CREATEDEVICE* pKtCreateDevice );
 
             ~Device();

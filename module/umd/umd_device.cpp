@@ -76,15 +76,13 @@ namespace Crystal
             UINT* pOut )
         {
             // For simplicity, support almost all access types on all formats
-            *pOut = D3D10_DDI_FORMAT_SUPPORT_SHADER_SAMPLE |
+            *pOut = 
+                D3D10_DDI_FORMAT_SUPPORT_SHADER_SAMPLE |
                 D3D10_DDI_FORMAT_SUPPORT_RENDERTARGET |
                 D3D10_DDI_FORMAT_SUPPORT_BLENDABLE |
-                D3D10_DDI_FORMAT_SUPPORT_MULTISAMPLE_RENDERTARGET |
-                D3D10_DDI_FORMAT_SUPPORT_MULTISAMPLE_LOAD |
                 D3D11_1DDI_FORMAT_SUPPORT_VERTEX_BUFFER |
                 D3D11_1DDI_FORMAT_SUPPORT_UAV_WRITES |
                 D3D11_1DDI_FORMAT_SUPPORT_BUFFER |
-                D3D11_1DDI_FORMAT_SUPPORT_OUTPUT_MERGER_LOGIC_OP |
                 D3D11_1DDI_FORMAT_SUPPORT_SHADER_GATHER;
         }
 
@@ -94,15 +92,10 @@ namespace Crystal
             UINT sampleCount, 
             UINT* pNumQualityLevels )
         {
-            // Return support for 1x, 2x, 4x, 16x
-            if ( sampleCount == 1 || 
-                 sampleCount == 2 || 
-                 sampleCount == 4 || 
-                 sampleCount == 16 )
+            if( pNumQualityLevels )
             {
-                *pNumQualityLevels = 1;
+                *pNumQualityLevels = 0;
             }
-            else *pNumQualityLevels = 0;
         }
 
 #pragma endregion

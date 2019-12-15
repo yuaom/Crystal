@@ -27,6 +27,7 @@ namespace Crystal
             template<>                    HRESULT GetCaps( D3D11_1DDI_D3D11_OPTIONS_DATA* pD3D11Options ) const;
             template<>                    HRESULT GetCaps( D3DDDICAPS_ARCHITECTURE_INFO* pArchInfo ) const;
             template<>                    HRESULT GetCaps( D3DDDICAPS_SHADER_MIN_PRECISION_SUPPORT* pShaderMin ) const;
+            template<>                    HRESULT GetCaps( D3DWDDM1_3DDI_MARKER_TYPE* pMarkerSupport ) const;
 
         private:
             Adapter( D3D10DDIARG_OPENADAPTER* pOpenAdapter );
@@ -106,6 +107,14 @@ namespace Crystal
             pShaderMin->VertexShaderMinPrecision    = D3DDDICAPS_SHADER_MIN_PRECISION_10_BIT;
             pShaderMin->PixelShaderMinPrecision        = D3DDDICAPS_SHADER_MIN_PRECISION_10_BIT;
 
+            return S_OK;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        template<>
+        HRESULT Adapter::GetCaps( D3DWDDM1_3DDI_MARKER_TYPE* pMarkerSupport ) const
+        {
+            *pMarkerSupport = D3DWDDM1_3DDI_MARKER_TYPE_PROFILE;
             return S_OK;
         }
 

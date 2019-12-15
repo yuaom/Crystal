@@ -102,10 +102,16 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
         mem_status.dwLength = sizeof( mem_status );
         GlobalMemoryStatusEx( &mem_status );
 
-        D3DKMT_SEGMENTSIZEINFO* psi = reinterpret_cast<D3DKMT_SEGMENTSIZEINFO*>( adapterInfo->pPrivateDriverData );
-        psi->DedicatedVideoMemorySize    = 0;
-        psi->DedicatedSystemMemorySize    = 0;
-        psi->SharedSystemMemorySize        = std::max<uint64_t>( mem_status.ullTotalPhys / 2, 64 * MEGABYTE );
+        D3DKMT_SEGMENTSIZEINFO* psi     = reinterpret_cast<D3DKMT_SEGMENTSIZEINFO*>( adapterInfo->pPrivateDriverData );
+        psi->DedicatedVideoMemorySize   = 0;
+        psi->DedicatedSystemMemorySize  = 0;
+        psi->SharedSystemMemorySize     = std::max<uint64_t>( mem_status.ullTotalPhys / 2, 64 * MEGABYTE );
+    }
+    break;
+    case KMTQAITYPE_PHYSICALADAPTERCOUNT:
+    {
+        UINT* count = reinterpret_cast<UINT*>( adapterInfo->pPrivateDriverData );
+        *count = 0;
     }
     break;
     default:

@@ -93,6 +93,13 @@ namespace Crystal
                 hr = pAdapter->GetCaps( pArchInfo );
             }
             break;
+            case D3DWDDM1_3DDICAPS_MARKER:
+            {
+                D3DWDDM1_3DDI_MARKER_TYPE* pMarkerSupport =
+                    static_cast<D3DWDDM1_3DDI_MARKER_TYPE*>( pCaps->pData );
+                hr = pAdapter->GetCaps( pMarkerSupport );
+            }
+            break;
             default:
                 hr = E_NOTIMPL;
                 break;

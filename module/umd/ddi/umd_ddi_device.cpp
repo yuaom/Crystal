@@ -13,6 +13,10 @@ VOID WINAPI DestroyDevice(
     D3D10DDI_HDEVICE hDevice )
 {
     LOG_DLL_ENTRY;
+
+    Device* pDevice = Device::FromHandle( hDevice );
+
+    Device::Destroy( pDevice );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

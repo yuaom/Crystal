@@ -117,7 +117,7 @@ namespace Crystal
 
             size_t size = Device::CalculateSize( pCalcPrivateDeviceSize );
 
-            return 0;
+            return size;
         }
 
         ////////////////////////////////////////////////////////////////////////////////

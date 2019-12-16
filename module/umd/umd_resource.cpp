@@ -46,7 +46,8 @@ namespace Crystal
             Device* pDevice, 
             D3D10DDI_HRTRESOURCE hRTResource ) :
             m_pDevice( pDevice ),
-            m_hRTResource( hRTResource )
+            m_hRTResource( hRTResource ),
+            m_Address( 0 )
         {
 
         }
@@ -62,8 +63,8 @@ namespace Crystal
         {
             D3DDDICB_ALLOCATE allocate = { 0 };
             allocate.hResource = m_hRTResource.handle;
-
-            m_pDevice->Allocate( allocate );
+            
+            std::tie( m_Address, m_KmtHandle ) = m_pDevice->Allocate( allocate );
         }
     }
 }

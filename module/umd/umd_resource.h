@@ -22,8 +22,11 @@ namespace Crystal
             void Allocate();
 
             D3D10DDI_HRTRESOURCE    m_hRTResource;
+            D3DKMT_HANDLE           m_KmtHandle;
 
             Device* m_pDevice;
+
+            uint64_t    m_Address;
         };
     }
 }

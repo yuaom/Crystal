@@ -12,6 +12,8 @@ namespace Crystal
         class Device
         {
         public:
+            using allocate_out = std::tuple<uint64_t, D3DKMT_HANDLE>;
+
             static void Create( D3D10DDIARG_CREATEDEVICE* pCreateDevice, Adapter* pAdapter );
 
             static void Destroy( Device* pDevice );
@@ -31,7 +33,7 @@ namespace Crystal
             void Present( DXGIDDICB_PRESENT& cb );
 
             // Memory Facades
-            void Allocate( D3DDDICB_ALLOCATE& cb );
+            allocate_out Allocate( D3DDDICB_ALLOCATE& cb );
 
         private:
 

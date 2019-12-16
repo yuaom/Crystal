@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <stack>
+#include <tuple>
 
 #include <Windows.h>
 #include <d3d10umddi.h>

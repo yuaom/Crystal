@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "umd_device.h"
 #include "umd_ddi.h"
+#include "kmd_privatedata.h"
 
 namespace Crystal
 {
@@ -157,12 +158,20 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Device::Allocate( D3DDDICB_ALLOCATE& cb )
+        Device::allocate_out Device::Allocate( D3DDDICB_ALLOCATE& cb )
         {
+            KMD::GMM_ALLOCATION_INFO gmmAllocationInfo = { 0 };
+            gmmAllocationInfo.SizeInBytes = 0x100;
+
+            KMD::D3DDDI_ALLOCATIONINFO_PRIVATE data = { 0 };
+            data.pAllocationInfo = &gmmAllocationInfo;
+
             D3DDDI_ALLOCATIONINFO allocInfo = { 0 };
 
-            cb.NumAllocations   = 1;
-            cb.pAllocationInfo  = &allocInfo;
+            cb.NumAllocations           = 1;
+            cb.pAllocationInfo          = &allocInfo;
+            cb.pPrivateDriverData       = &data;
+            cb.PrivateDriverDataSize    = sizeof( data );
 
             HRESULT hr = m_pKTCallbacks->pfnAllocateCb( 
                 m_hRTDevice.handle, 
@@ -172,6 +181,12 @@ namespace Crystal
             {
                 m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
             }
+            else
+            {
+                return std::make_tuple( gmmAllocationInfo.Address, cb.hKMResource );
+            }
+
+            return std::make_tuple( 0, 0 );
         }
 
 #pragma endregion

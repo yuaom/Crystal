@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "umd_resource.h"
 
 namespace Crystal
 {
@@ -15,6 +16,8 @@ VOID WINAPI CreateResource(
     D3D10DDI_HRTRESOURCE hRTResource )
 {
     LOG_DLL_ENTRY;
+
+    Resource::Create( hDevice, pCreateResource, hResource, hRTResource );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

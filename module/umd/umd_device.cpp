@@ -51,8 +51,10 @@ namespace Crystal
             m_hRTDevice( pCreateDevice->hRTDevice ),
             m_hRTCoreLayer( pCreateDevice->hRTCoreLayer ),
             m_pAdapter( pAdapter ),
+            m_pKTCallbacks( nullptr ),
             m_pCoreLayerCallbacks( nullptr ),
-            m_pDXGICallbacks( nullptr )
+            m_pDXGICallbacks( nullptr ),
+            m_ContextHandle( 0 )
         {            
             m_pKTCallbacks          = pCreateDevice->pKTCallbacks;
             m_pCoreLayerCallbacks   = pCreateDevice->pWDDM2_6UMCallbacks;
@@ -131,6 +133,44 @@ namespace Crystal
             if( SUCCEEDED( hr ) )
             {
                 m_ContextHandle = cb.hContext;
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        HANDLE Device::GetContextHandle() const
+        {
+            assert( m_ContextHandle != 0 );
+            return m_ContextHandle;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void Device::Present( DXGIDDICB_PRESENT& cb )
+        {
+            HRESULT hr = m_pDXGICallbacks->pfnPresentCb(
+                m_hRTDevice.handle,
+                &cb );
+
+            if( FAILED( hr ) )
+            {
+                m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void Device::Allocate( D3DDDICB_ALLOCATE& cb )
+        {
+            D3DDDI_ALLOCATIONINFO allocInfo = { 0 };
+
+            cb.NumAllocations   = 1;
+            cb.pAllocationInfo  = &allocInfo;
+
+            HRESULT hr = m_pKTCallbacks->pfnAllocateCb( 
+                m_hRTDevice.handle, 
+                &cb );
+
+            if( FAILED( hr ) )
+            {
+                m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
             }
         }
 

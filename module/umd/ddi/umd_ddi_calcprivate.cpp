@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "umd_resource.h"
 
 namespace Crystal
 {
@@ -113,7 +114,7 @@ SIZE_T WINAPI CalcPrivateResourceSize(
     const D3D11DDIARG_CREATERESOURCE* pCreateResource )
 {
     LOG_DLL_ENTRY;
-    return 0;
+    return Resource::CalculateSize( pCreateResource );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

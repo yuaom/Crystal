@@ -25,17 +25,25 @@ namespace Crystal
 
             void GetMultisampleSupport( DXGI_FORMAT format, UINT sampleCount, UINT* pNumQualityLevels );
 
-            const D3DDDI_DEVICECALLBACKS*                   m_pKTCallbacks;
-            const D3DWDDM2_6DDI_CORELAYER_DEVICECALLBACKS*  m_pCoreLayerCallbacks;
-            const DXGI_DDI_BASE_CALLBACKS*                  m_pDXGICallbacks;
+            HANDLE  GetContextHandle() const;
 
-        //private:
+            // DXGI Callback Facades
+            void Present( DXGIDDICB_PRESENT& cb );
+
+            // Memory Facades
+            void Allocate( D3DDDICB_ALLOCATE& cb );
+
+        private:
 
             Device( D3D10DDIARG_CREATEDEVICE* pCreateDevice, Adapter* pAdapter );
 
             ~Device();
 
             void CreateContexts();
+
+            const D3DDDI_DEVICECALLBACKS*                   m_pKTCallbacks;
+            const D3DWDDM2_6DDI_CORELAYER_DEVICECALLBACKS*  m_pCoreLayerCallbacks;
+            const DXGI_DDI_BASE_CALLBACKS*                  m_pDXGICallbacks;
 
             D3D10DDI_HRTDEVICE      m_hRTDevice;
             D3D10DDI_HRTCORELAYER   m_hRTCoreLayer;

@@ -32,12 +32,10 @@ HRESULT WINAPI Present1(
     Device* pDevice = Device::FromHandle( pPresent->hDevice );
 
     DXGIDDICB_PRESENT present = { 0 };
-    present.hContext        = pDevice->m_ContextHandle;
+    present.hContext        = pDevice->GetContextHandle();
     present.pDXGIContext    = pPresent->pDXGIContext;
 
-    pDevice->m_pDXGICallbacks->pfnPresentCb(
-        pDevice->m_hRTDevice.handle, 
-        &present );
+    pDevice->Present( present );
 
     return S_OK;
 }

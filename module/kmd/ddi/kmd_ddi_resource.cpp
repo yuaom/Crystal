@@ -10,11 +10,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateAllocation( D3DKMT_CREATEALLOCATION* pCre
     const Crystal::KMD::D3DDDI_ALLOCATIONINFO_PRIVATE* pPrivateData = 
         reinterpret_cast<const Crystal::KMD::D3DDDI_ALLOCATIONINFO_PRIVATE*>( pCreateAllocation->pPrivateDriverData );
 
-    Crystal::KMD::Resource* pResource = new Crystal::KMD::Resource();
-
-    pPrivateData->pAllocationInfo->Address = 0x0000008401000000;
-
-    pCreateAllocation->hResource = pResource->GetHandle();
+    Crystal::KMD::Resource::Create( pCreateAllocation );
 
     return STATUS_SUCCESS;
 }

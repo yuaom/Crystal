@@ -2,6 +2,7 @@
 #include "kmd_entrypoints.h"
 #include "kmd_adapter.h"
 #include "kmd_device.h"
+#include "kmd_context.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDevice )
@@ -156,22 +157,25 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
 
     if( pPresent->Flags.Blt )
     {
+        // Fake ClearRenderTargetView ( doesn't work )
         RECT rc = { 0 };
         GetClientRect( pPresent->hWindow, &rc );
 
-        // Fake ClearRenderTargetView ( doesn't work )
         HDC dc = ::GetDC( pPresent->hWindow );
-        HDC mdc = ::CreateCompatibleDC( dc );
-        HBITMAP hBmp = ::CreateCompatibleBitmap( dc, rc.right - rc.left, rc.bottom - rc.top );
-        ::SelectObject( mdc, hBmp );
+        HDC mdc = CreateCompatibleDC( dc );
+        HBITMAP hBmp = CreateCompatibleBitmap( dc, rc.right - rc.left, rc.bottom - rc.top );
+        SelectObject( mdc, hBmp );
 
         COLORREF color = RGB( 53, 94, 184 );
-        BOOL result = ::FloodFill( mdc, 0, 0, color );
+        HBRUSH brush = CreateSolidBrush( color );
+
+        int result = FillRect( dc, &rc, brush );
         assert( result != 0 );
 
-        ::DeleteObject( hBmp );
-        ::DeleteDC( mdc );
-        ::ReleaseDC( pPresent->hWindow, dc );
+        DeleteObject( brush );
+        DeleteObject( hBmp );
+        DeleteDC( mdc );
+        ReleaseDC( pPresent->hWindow, dc );
     }
     
     return STATUS_SUCCESS;
@@ -179,7 +183,10 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateContext( D3DKMT_CREATECONTEXT* pCreateContext ) {
-    LOG_DLL_ENTRY; 
+    LOG_DLL_ENTRY;
+
+    Crystal::KMD::Context::Create( pCreateContext );
+
     return STATUS_SUCCESS;
 }
 

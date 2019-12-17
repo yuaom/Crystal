@@ -56,5 +56,19 @@ namespace Crystal
             HANDLE* handle = reinterpret_cast<HANDLE*>( mgr->m_Base + kmtHandle );
             return reinterpret_cast<T*>( handle->m_KmdObject );
         }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        class KmtObject
+        {
+        public:
+            KmtObject();
+
+            ~KmtObject();
+
+            D3DKMT_HANDLE GetHandle() const;
+
+        private:
+            D3DKMT_HANDLE m_Handle;
+        };
     }
 }

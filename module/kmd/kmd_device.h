@@ -1,10 +1,12 @@
 #pragma once
+#include "kmd_handles.h"
 
 namespace Crystal
 {
     namespace KMD
     {
-        class Device
+        ////////////////////////////////////////////////////////////////////////////////
+        class Device : public KmtObject
         {
         public:
 
@@ -14,10 +16,7 @@ namespace Crystal
 
             ~Device();
 
-            D3DKMT_HANDLE    GetHandle();
-
         private:
-            D3DKMT_HANDLE               m_Handle;
             D3DKMT_CREATEDEVICEFLAGS    m_Flags;
         };
     }

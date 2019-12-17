@@ -10,12 +10,12 @@ namespace Crystal
 #pragma region Device
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Device::Create( 
+        void Device::Create(
             D3D10DDIARG_CREATEDEVICE* pCreateDevice,
             Adapter* pAdapter )
         {
-            Device* pDevice = new( pCreateDevice->hDrvDevice.pDrvPrivate ) Device( 
-                pCreateDevice, 
+            Device* pDevice = new( pCreateDevice->hDrvDevice.pDrvPrivate ) Device(
+                pCreateDevice,
                 pAdapter );
 
             pDevice->CreateContexts();
@@ -46,7 +46,7 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        Device::Device( 
+        Device::Device(
             D3D10DDIARG_CREATEDEVICE* pCreateDevice,
             Adapter* pAdapter ) :
             m_hRTDevice( pCreateDevice->hRTDevice ),
@@ -56,10 +56,10 @@ namespace Crystal
             m_pCoreLayerCallbacks( nullptr ),
             m_pDXGICallbacks( nullptr ),
             m_ContextHandle( 0 )
-        {            
-            m_pKTCallbacks          = pCreateDevice->pKTCallbacks;
-            m_pCoreLayerCallbacks   = pCreateDevice->pWDDM2_6UMCallbacks;
-            m_pDXGICallbacks        = pCreateDevice->DXGIBaseDDI.pDXGIBaseCallbacks;
+        {
+            m_pKTCallbacks = pCreateDevice->pKTCallbacks;
+            m_pCoreLayerCallbacks = pCreateDevice->pWDDM2_6UMCallbacks;
+            m_pDXGICallbacks = pCreateDevice->DXGIBaseDDI.pDXGIBaseCallbacks;
 
             switch( pCreateDevice->Interface )
             {
@@ -76,7 +76,7 @@ namespace Crystal
             default:
                 assert( 0 );
             }
-            
+
             DDI::FillDdiTable( pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 );
         }
 
@@ -87,12 +87,12 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Device::GetFormatSupport( 
-            DXGI_FORMAT format, 
+        void Device::GetFormatSupport(
+            DXGI_FORMAT format,
             UINT* pOut )
         {
             // For simplicity, support almost all access types on all formats
-            *pOut = 
+            *pOut =
                 D3D10_DDI_FORMAT_SUPPORT_SHADER_SAMPLE |
                 D3D10_DDI_FORMAT_SUPPORT_RENDERTARGET |
                 D3D10_DDI_FORMAT_SUPPORT_BLENDABLE |
@@ -103,9 +103,9 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Device::GetMultisampleSupport( 
-            DXGI_FORMAT format, 
-            UINT sampleCount, 
+        void Device::GetMultisampleSupport(
+            DXGI_FORMAT format,
+            UINT sampleCount,
             UINT* pNumQualityLevels )
         {
             if( pNumQualityLevels )
@@ -123,9 +123,9 @@ namespace Crystal
             flags.DisableGpuTimeout = TRUE;
 
             D3DDDICB_CREATECONTEXT cb = { 0 };
-            cb.NodeOrdinal      = 0;
-            cb.EngineAffinity   = 0;
-            cb.Flags.Value      = flags.Value;
+            cb.NodeOrdinal = 0;
+            cb.EngineAffinity = 0;
+            cb.Flags.Value = flags.Value;
 
             hr = m_pKTCallbacks->pfnCreateContextCb(
                 m_hRTDevice.handle,
@@ -158,7 +158,7 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        Device::allocate_out Device::Allocate( D3DDDICB_ALLOCATE& cb )
+        D3DKMT_HANDLE Device::Allocate( D3DDDICB_ALLOCATE& cb )
         {
             KMD::GMM_ALLOCATION_INFO gmmAllocationInfo = { 0 };
             gmmAllocationInfo.SizeInBytes = 0x100;
@@ -168,25 +168,37 @@ namespace Crystal
 
             D3DDDI_ALLOCATIONINFO allocInfo = { 0 };
 
-            cb.NumAllocations           = 1;
-            cb.pAllocationInfo          = &allocInfo;
-            cb.pPrivateDriverData       = &data;
-            cb.PrivateDriverDataSize    = sizeof( data );
+            cb.NumAllocations = 1;
+            cb.pAllocationInfo = &allocInfo;
+            cb.pPrivateDriverData = &data;
+            cb.PrivateDriverDataSize = sizeof( data );
 
-            HRESULT hr = m_pKTCallbacks->pfnAllocateCb( 
-                m_hRTDevice.handle, 
+            HRESULT hr = m_pKTCallbacks->pfnAllocateCb(
+                m_hRTDevice.handle,
+                &cb );
+
+            if( FAILED( hr ) )
+            {
+                m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
+                return 0;
+            }
+
+            return cb.hKMResource;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void Device::MapGpuVirtualAddress( D3DDDI_MAPGPUVIRTUALADDRESS& cb )
+        {
+            cb.hPagingQueue = NULL;
+
+            HRESULT hr = m_pKTCallbacks->pfnMapGpuVirtualAddressCb(
+                m_hRTDevice.handle,
                 &cb );
 
             if( FAILED( hr ) )
             {
                 m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
             }
-            else
-            {
-                return std::make_tuple( gmmAllocationInfo.Address, cb.hKMResource );
-            }
-
-            return std::make_tuple( 0, 0 );
         }
 
 #pragma endregion

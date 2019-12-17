@@ -19,7 +19,7 @@ namespace Crystal
                 pDevice,
                 hRTResource );
 
-            pResource->Allocate();
+            pResource->Allocate( pCreateResource );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -47,20 +47,14 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        D3DKMT_HANDLE Resource::GetHandle() const
-        {
-            return m_Handle;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
         Resource::Resource( 
             const D3D11DDIARG_CREATERESOURCE* pCreateResource, 
             Device* pDevice, 
             D3D10DDI_HRTRESOURCE hRTResource ) :
             m_pDevice( pDevice ),
             m_hRTResource( hRTResource ),
-            m_Address( 0 ),
-            m_Handle( 0 )
+            m_ResourceHandle( 0 ),
+            m_pAllocation( nullptr )
         {
 
         }
@@ -68,16 +62,40 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         Resource::~Resource()
         {
-
+            delete m_pAllocation;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Resource::Allocate()
+        Allocation* Resource::GetAllocation() const
         {
+            return m_pAllocation;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void Resource::Allocate( const D3D11DDIARG_CREATERESOURCE* pCreateResource )
+        {
+            // Create GMM allocation structure
+            KMD::GMM_ALLOCATION_INFO allocInfo;
+            ZeroMemory( &allocInfo, sizeof( allocInfo ) );
+            allocInfo.ArraySlices   = pCreateResource->ArraySize;
+            allocInfo.Format        = pCreateResource->Format;
+            allocInfo.IsInternal    = false;
+            allocInfo.MipLevels     = pCreateResource->MipLevels;
+
+            // Allocate the Resource
             D3DDDICB_ALLOCATE allocate = { 0 };
-            allocate.hResource = m_hRTResource.handle;
+            allocate.hResource      = m_hRTResource.handle;
+            allocate.NumAllocations = 1;
             
-            std::tie( m_Address, m_Handle ) = m_pDevice->Allocate( allocate );
+            m_ResourceHandle = m_pDevice->Allocate( allocate );
+
+            m_pAllocation = new Allocation( allocate.pAllocationInfo );
+
+            // Map the resource VA
+            D3DDDI_MAPGPUVIRTUALADDRESS map = { 0 };
+            map.hAllocation = m_pAllocation->GetHandle();
+            
+            m_pDevice->MapGpuVirtualAddress( map );
         }
     }
 }

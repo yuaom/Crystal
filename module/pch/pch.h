@@ -33,3 +33,5 @@ extern HINSTANCE    g_hInstance;
 #include "log.h"
 #include "debugvars.h"
 #include "display.h"
+
+#include "kmd_privatedata.h"

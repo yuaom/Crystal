@@ -13,6 +13,9 @@ namespace Crystal
             static void         Destroy( Resource* pResource );
             static uint32_t     CalculateSize( const D3D11DDIARG_CREATERESOURCE* pCalcSize );
             static Resource*    FromHandle( D3D10DDI_HRESOURCE handle );
+            static Resource*    FromHandle( DXGI_DDI_HRESOURCE handle );
+
+            D3DKMT_HANDLE   GetHandle() const;
 
         private:
 
@@ -22,7 +25,7 @@ namespace Crystal
             void Allocate();
 
             D3D10DDI_HRTRESOURCE    m_hRTResource;
-            D3DKMT_HANDLE           m_KmtHandle;
+            D3DKMT_HANDLE           m_Handle;
 
             Device* m_pDevice;
 

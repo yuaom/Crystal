@@ -99,11 +99,14 @@ int main()
         wc.hInstance,
         NULL );
 
+    RECT clientRect = { 0 };
+    GetClientRect( hwnd, &clientRect );
+
     DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
     swapChainDesc.BufferCount       = 2;
     swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    swapChainDesc.BufferDesc.Height = windowRect.bottom - windowRect.top;
-    swapChainDesc.BufferDesc.Width  = windowRect.right - windowRect.left;
+    swapChainDesc.BufferDesc.Height = clientRect.bottom - clientRect.top;
+    swapChainDesc.BufferDesc.Width  = clientRect.right - clientRect.left;
     swapChainDesc.BufferUsage       = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapChainDesc.OutputWindow      = hwnd;
     swapChainDesc.SampleDesc.Count  = 1;

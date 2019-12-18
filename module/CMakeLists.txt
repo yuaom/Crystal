@@ -1,4 +1,4 @@
-set( MODULE_HEADERS	dllmain.h )
+set( MODULE_HEADERS dllmain.h )
 set( MODULE_SOURCE dllmain.cpp )
 
 # Crystal DLL
@@ -12,6 +12,7 @@ set_property(TARGET Crystal PROPERTY CXX_STANDARD_REQUIRED ON)
 add_subdirectory(pch)
 add_subdirectory(umd)
 add_subdirectory(kmd)
+add_subdirectory(gmm)
 
 get_target_property( CRYSTAL_FILES Crystal SOURCES )
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${CRYSTAL_FILES} )

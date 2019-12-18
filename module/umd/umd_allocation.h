@@ -1,4 +1,5 @@
 #pragma once
+#include "gmm.h"
 
 namespace Crystal
 {
@@ -21,7 +22,7 @@ namespace Crystal
             bool                            m_IsPrimary;
             bool                            m_IsStereo;
             
-            KMD::GMM_ALLOCATION_INFO        m_Info;
+            GMM::ALLOCATION_INFO            m_Info;
 
             uint32_t    m_Size;
         };

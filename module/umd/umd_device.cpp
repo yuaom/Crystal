@@ -158,18 +158,14 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        D3DKMT_HANDLE Device::Allocate( D3DDDICB_ALLOCATE& cb )
+        D3DKMT_HANDLE Device::Allocate( 
+            D3DDDICB_ALLOCATE& cb, 
+            GMM::ALLOCATION_INFO* pAllocInfo )
         {
-            KMD::GMM_ALLOCATION_INFO gmmAllocationInfo = { 0 };
-            gmmAllocationInfo.SizeInBytes = 0x100;
-
             KMD::D3DDDI_ALLOCATIONINFO_PRIVATE data = { 0 };
-            data.pAllocationInfo = &gmmAllocationInfo;
+            data.pAllocationInfo = pAllocInfo;
 
-            D3DDDI_ALLOCATIONINFO allocInfo = { 0 };
-
-            cb.NumAllocations = 1;
-            cb.pAllocationInfo = &allocInfo;
+            // Update callback data with private data
             cb.pPrivateDriverData = &data;
             cb.PrivateDriverDataSize = sizeof( data );
 

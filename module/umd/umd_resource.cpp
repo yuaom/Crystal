@@ -75,19 +75,28 @@ namespace Crystal
         void Resource::Allocate( const D3D11DDIARG_CREATERESOURCE* pCreateResource )
         {
             // Create GMM allocation structure
-            KMD::GMM_ALLOCATION_INFO allocInfo;
-            ZeroMemory( &allocInfo, sizeof( allocInfo ) );
-            allocInfo.ArraySlices   = pCreateResource->ArraySize;
-            allocInfo.Format        = pCreateResource->Format;
-            allocInfo.IsInternal    = false;
-            allocInfo.MipLevels     = pCreateResource->MipLevels;
+            GMM::ALLOCATION_INFO gmmInfo;
+            ZeroMemory( &gmmInfo, sizeof( gmmInfo ) );
+            gmmInfo.ArraySlices     = pCreateResource->ArraySize;
+            gmmInfo.Format          = pCreateResource->Format;
+            gmmInfo.IsInternal      = false;
+            gmmInfo.MipLevels       = pCreateResource->MipLevels;
+            gmmInfo.Mip0TexelWidth  = pCreateResource->pMipInfoList[ 0 ].TexelWidth;
+            gmmInfo.Mip0TexelHeight = pCreateResource->pMipInfoList[ 0 ].TexelHeight;
+            gmmInfo.Mip0TexelDepth  = pCreateResource->pMipInfoList[ 0 ].TexelDepth;
+            gmmInfo.Dimension       = GMM::ConvertDDIResourceType( pCreateResource->ResourceDimension );
+
+            GMM::CreateAllocationInfo( &gmmInfo );
 
             // Allocate the Resource
+            D3DDDI_ALLOCATIONINFO allocInfo = { 0 };
+
             D3DDDICB_ALLOCATE allocate = { 0 };
-            allocate.hResource      = m_hRTResource.handle;
-            allocate.NumAllocations = 1;
-            
-            m_ResourceHandle = m_pDevice->Allocate( allocate );
+            allocate.hResource          = m_hRTResource.handle;
+            allocate.NumAllocations     = 1;
+            allocate.pAllocationInfo    = &allocInfo;
+
+            m_ResourceHandle = m_pDevice->Allocate( allocate, &gmmInfo );
 
             m_pAllocation = new Allocation( allocate.pAllocationInfo );
 

@@ -42,9 +42,9 @@ namespace Crystal
 }
 
 #if defined(_DEBUG)
-#define IS_DV_ENABLED( x )    Crystal::DebugVariables::get()->x.isSet()
-#define DV_VALUE( x )         Crystal::DebugVariables::get()->x.asUint32()
+#define IS_DV_ENABLED( x )  Crystal::DebugVariables::get()->x.isSet()
+#define DV_VALUE( x )       Crystal::DebugVariables::get()->x.asUint32()
 #else
-#define IS_DV_ENABLED( x )    false
-#define DV_VALUE_UINT( x )    0
+#define IS_DV_ENABLED( x )  false
+#define DV_VALUE( x )       0
 #endif

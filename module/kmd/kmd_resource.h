@@ -9,9 +9,8 @@ namespace Crystal
         {
         public:
 
-            static Resource* Create( D3DKMT_CREATEALLOCATION* pCreateResource );
-
-            static void Destroy( D3DKMT_HANDLE handle );
+            static Resource*    Create( D3DKMT_CREATEALLOCATION* pCreateResource );
+            static void         Destroy( D3DKMT_HANDLE handle );
 
             D3DKMT_HANDLE    GetHandle() const;
 

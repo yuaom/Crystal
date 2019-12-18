@@ -30,6 +30,14 @@ namespace Crystal
         void Resource::Destroy( D3DKMT_HANDLE handle )
         {
             Resource* pResource = KmtHandleManager::To<Resource>( handle );
+
+            for( auto& pAllocation : pResource->m_Allocations )
+            {
+                Allocation::Destroy( pAllocation );
+            }
+
+            pResource->m_Allocations.clear();
+
             delete pResource;
         }
 

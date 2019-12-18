@@ -13,26 +13,23 @@ namespace Crystal
         class Device
         {
         public:
-            static void Create( D3D10DDIARG_CREATEDEVICE* pCreateDevice, Adapter* pAdapter );
-
-            static void Destroy( Device* pDevice );
-
-            static Device* FromHandle( D3D10DDI_HDEVICE handle );
-            static Device* FromHandle( DXGI_DDI_HDEVICE handle );
-
-            static uint32_t    CalculateSize( const D3D10DDIARG_CALCPRIVATEDEVICESIZE* pCalcSize );
+            static void     Create( D3D10DDIARG_CREATEDEVICE* pCreateDevice, Adapter* pAdapter );
+            static void     Destroy( Device* pDevice );
+            static uint32_t CalculateSize( const D3D10DDIARG_CALCPRIVATEDEVICESIZE* pCalcSize );
+            static Device*  FromHandle( D3D10DDI_HDEVICE handle );
+            static Device*  FromHandle( DXGI_DDI_HDEVICE handle );
 
             void GetFormatSupport( DXGI_FORMAT format, UINT* pOut );
-
             void GetMultisampleSupport( DXGI_FORMAT format, UINT sampleCount, UINT* pNumQualityLevels );
 
             HANDLE  GetContextHandle() const;
 
-            // DXGI Callback Facades
+            // DXGI Callbacks
             void Present( DXGIDDICB_PRESENT& cb );
 
-            // Memory Facades
-            D3DKMT_HANDLE Allocate( D3DDDICB_ALLOCATE& cb );
+            // Memory Callbacks
+            D3DKMT_HANDLE   Allocate( D3DDDICB_ALLOCATE& cb );
+            void            Deallocate( D3DDDICB_DEALLOCATE& cb );
 
         private:
 

@@ -13,7 +13,7 @@ namespace Crystal
         {
             Allocation* pAllocation = new Allocation( pInfo );
 
-            pAllocation->Allocate( pInfo );
+            pAllocation->Allocate();
 
             // Populate DDI Return Arguments
             pInfo->hAllocation = pAllocation->GetHandle();
@@ -22,17 +22,21 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Allocation::Destroy( D3DKMT_HANDLE handle )
+        void Allocation::Destroy( Allocation* pAllocation )
         {
-            Allocation* pAllocation = KmtHandleManager::To<Allocation>( handle );
+            pAllocation->Deallocate();
+
             delete pAllocation;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         Allocation::Allocation( D3DDDI_ALLOCATIONINFO* pInfo ) :
-            m_Handle( KmtHandleManager::Allocate( this ) )
+            m_Handle( KmtHandleManager::Allocate( this ) ),
+            m_pAllocationInfo( nullptr )
         {
-
+            D3DDDI_ALLOCATIONINFO_PRIVATE* pPrivateData =
+                reinterpret_cast<D3DDDI_ALLOCATIONINFO_PRIVATE*>( pInfo->pPrivateDriverData );
+            m_pAllocationInfo = pPrivateData->pAllocationInfo;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -48,25 +52,45 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Allocation::Allocate( D3DDDI_ALLOCATIONINFO* pInfo )
+        void Allocation::Allocate()
         {
-            D3DDDI_ALLOCATIONINFO_PRIVATE* pPrivateData = 
-                reinterpret_cast<D3DDDI_ALLOCATIONINFO_PRIVATE*>( pInfo->pPrivateDriverData );
-            GMM::ALLOCATION_INFO* pAllocationInfo = pPrivateData->pAllocationInfo;
-
             void* cpuAddress = VirtualAlloc( 
                 0, 
-                pAllocationInfo->Size, 
+                m_pAllocationInfo->Size,
                 MEM_RESERVE | MEM_COMMIT, 
                 PAGE_READWRITE );
 
             if( cpuAddress != NULL )
             {
-                pAllocationInfo->Address = reinterpret_cast<size_t>( cpuAddress );
+                m_pAllocationInfo->Address = reinterpret_cast<size_t>( cpuAddress );
             }
             else
             {
                 assert( 0 );
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void Allocation::Deallocate()
+        {
+            if( m_pAllocationInfo->Address )
+            {
+                void* address = reinterpret_cast<void*>( m_pAllocationInfo->Address );
+
+                BOOL result = VirtualFree( 
+                    address,
+                    0, 
+                    MEM_RELEASE );
+
+                if( result )
+                {
+                    m_pAllocationInfo->Address = 0;
+                }
+                else
+                {
+                    assert( 0 );
+                }
+                
             }
         }
     }

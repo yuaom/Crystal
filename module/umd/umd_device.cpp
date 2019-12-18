@@ -173,6 +173,19 @@ namespace Crystal
             return cb.hKMResource;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////
+        void Device::Deallocate( D3DDDICB_DEALLOCATE& cb )
+        {
+            HRESULT hr = m_pKTCallbacks->pfnDeallocateCb( 
+                m_hRTDevice.handle, 
+                &cb );
+
+            if( FAILED( hr ) )
+            {
+                m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
+            }
+        }
+
 #pragma endregion
 #pragma region DDI Entrypoints
 

@@ -1,4 +1,6 @@
 #pragma once
+#include "gmm.h"
+#include "kmd_privatedata.h"
 
 namespace Crystal
 {
@@ -10,7 +12,7 @@ namespace Crystal
 
             static Allocation* Create( D3DDDI_ALLOCATIONINFO* pInfo );
 
-            static void Destroy( D3DKMT_HANDLE handle );
+            static void Destroy( Allocation* pAllocation );
 
             D3DKMT_HANDLE   GetHandle() const;
 
@@ -20,9 +22,11 @@ namespace Crystal
 
             ~Allocation( void );
 
-            void Allocate( D3DDDI_ALLOCATIONINFO* pInfo );
+            void Allocate();
+            void Deallocate();
 
-            D3DKMT_HANDLE   m_Handle;
+            D3DKMT_HANDLE           m_Handle;
+            GMM::ALLOCATION_INFO*   m_pAllocationInfo;
         };
     }
 }

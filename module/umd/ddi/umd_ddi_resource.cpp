@@ -26,6 +26,8 @@ VOID WINAPI DestroyResource(
     D3D10DDI_HRESOURCE hResource )
 {
     LOG_DLL_ENTRY;
+
+    Resource::Destroy( hResource );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -7,10 +7,17 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateAllocation( D3DKMT_CREATEALLOCATION* pCre
 {
     LOG_DLL_ENTRY;
 
-    const Crystal::KMD::D3DDDI_ALLOCATIONINFO_PRIVATE* pPrivateData = 
-        reinterpret_cast<const Crystal::KMD::D3DDDI_ALLOCATIONINFO_PRIVATE*>( pCreateAllocation->pPrivateDriverData );
-
     Crystal::KMD::Resource::Create( pCreateAllocation );
+
+    return STATUS_SUCCESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyAllocation( CONST D3DKMT_DESTROYALLOCATION* pDestroyAllocation )
+{
+    LOG_DLL_ENTRY;
+
+    Crystal::KMD::Resource::Destroy( pDestroyAllocation->hResource );
 
     return STATUS_SUCCESS;
 }

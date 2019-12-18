@@ -24,9 +24,15 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Resource::Destroy( Resource* pResource )
+        void Resource::Destroy( D3D10DDI_HRESOURCE hResource )
         {
+            Resource* pResource = Resource::FromHandle( hResource );
 
+            D3DDDICB_DEALLOCATE cb;
+            ZeroMemory( &cb, sizeof( D3DDDICB_DEALLOCATE ) );
+            cb.hResource = pResource->m_hRTResource.handle;
+
+            pResource->m_pDevice->Deallocate( cb );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

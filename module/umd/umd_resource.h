@@ -1,6 +1,6 @@
 #pragma once
 #include "umd_device.h"
-#include "umd_allocation.h"
+#include "gmm.h"
 
 namespace Crystal
 {
@@ -16,7 +16,7 @@ namespace Crystal
             static Resource*    FromHandle( D3D10DDI_HRESOURCE handle );
             static Resource*    FromHandle( DXGI_DDI_HRESOURCE handle );
 
-            Allocation* GetAllocation() const;
+            D3DKMT_HANDLE   GetAllocationHandle() const;
 
         private:
 
@@ -27,9 +27,9 @@ namespace Crystal
 
             D3D10DDI_HRTRESOURCE    m_hRTResource;
             D3DKMT_HANDLE           m_ResourceHandle;
-            Allocation*             m_pAllocation;
-
-            Device* m_pDevice;
+            D3DKMT_HANDLE           m_AllocationHandle;
+            GMM::ALLOCATION_INFO*   m_pAllocationInfo;
+            Device*                 m_pDevice;
         };
     }
 }

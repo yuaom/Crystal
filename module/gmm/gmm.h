@@ -34,7 +34,7 @@ namespace Crystal
             uint32_t            BitsPerPixel;
 
             // @map
-            uint64_t            Address;
+            size_t              Address;
         };
 
         void        CreateAllocationInfo( ALLOCATION_INFO* pInfo );

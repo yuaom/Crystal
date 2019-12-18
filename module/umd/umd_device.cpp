@@ -158,17 +158,8 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        D3DKMT_HANDLE Device::Allocate( 
-            D3DDDICB_ALLOCATE& cb, 
-            GMM::ALLOCATION_INFO* pAllocInfo )
+        D3DKMT_HANDLE Device::Allocate( D3DDDICB_ALLOCATE& cb )
         {
-            KMD::D3DDDI_ALLOCATIONINFO_PRIVATE data = { 0 };
-            data.pAllocationInfo = pAllocInfo;
-
-            // Update callback data with private data
-            cb.pPrivateDriverData = &data;
-            cb.PrivateDriverDataSize = sizeof( data );
-
             HRESULT hr = m_pKTCallbacks->pfnAllocateCb(
                 m_hRTDevice.handle,
                 &cb );
@@ -180,21 +171,6 @@ namespace Crystal
             }
 
             return cb.hKMResource;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        void Device::MapGpuVirtualAddress( D3DDDI_MAPGPUVIRTUALADDRESS& cb )
-        {
-            cb.hPagingQueue = NULL;
-
-            HRESULT hr = m_pKTCallbacks->pfnMapGpuVirtualAddressCb(
-                m_hRTDevice.handle,
-                &cb );
-
-            if( FAILED( hr ) )
-            {
-                m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
-            }
         }
 
 #pragma endregion

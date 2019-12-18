@@ -38,7 +38,7 @@ HRESULT WINAPI Present1(
     DXGIDDICB_PRESENT present = { 0 };
     present.hContext        = pDevice->GetContextHandle();
     present.pDXGIContext    = pPresent->pDXGIContext;
-    present.hSrcAllocation  = pResource->GetAllocation()->GetHandle();
+    present.hSrcAllocation  = pResource->GetAllocationHandle();
 
     pDevice->Present( present );
 

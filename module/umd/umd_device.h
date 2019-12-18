@@ -32,9 +32,7 @@ namespace Crystal
             void Present( DXGIDDICB_PRESENT& cb );
 
             // Memory Facades
-            D3DKMT_HANDLE Allocate( D3DDDICB_ALLOCATE& cb, GMM::ALLOCATION_INFO* pAllocInfo );
-
-            void MapGpuVirtualAddress( D3DDDI_MAPGPUVIRTUALADDRESS& cb );
+            D3DKMT_HANDLE Allocate( D3DDDICB_ALLOCATE& cb );
 
         private:
 

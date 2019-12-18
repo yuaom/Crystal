@@ -20,6 +20,8 @@ namespace Crystal
 
             ~Allocation( void );
 
+            void Allocate( D3DDDI_ALLOCATIONINFO* pInfo );
+
             D3DKMT_HANDLE   m_Handle;
         };
     }

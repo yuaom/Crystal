@@ -21,6 +21,8 @@ cmake -B ./build -DWDK="C:\Program Files (x86)\Windows Kits\10\Include\10.0.1836
 
 Optionally, you can update provided _build\_vs2019\_x64.cmd_. If you installed the WDK to a non-default path, you will need to open and update the WDK environment variable.
 
+See [Build Tips](build.md) for more information.
+
 # Use
 
 Compilation will output a 64bit Crystal.dll which can be loaded and supplied to one of the D3D11 device creation APIs. For example:
@@ -34,28 +36,15 @@ Compilation will output a 64bit Crystal.dll which can be loaded and supplied to 
     )
 ```
 
+See the Smoke sample for initialization.
+
 # Components
 
-TBD 
-
-# Samples
-
-TBD
-
-# Issues
-
-##  Spectre-mitigated libraries
-If you get a CMake error saying:
-```
-error MSB8040: Spectre-mitigated libraries are required for this project.
-```
-Then install additional build tools:
-* Start Visual Studio Installer 
-* Modify Visaul Studio
-* Click Individual Components
-* Under "Compilers > build tools > and runtimes" find your MSVC version (ex. v14.23)
-* Select the "spectre-mitigated libs" nearby that matches your MSVC version
-* Click Modify
+* module - UMD/KMD unified DLL
+* samples - simple proof-of-concept samples for debugging
+* tests - ULTs built on [googletest](https://github.com/google/googletest)
+* benchmarks - benchmarks built on [googlebench](https://github.com/google/benchmark)
+* tools - various python scripts, clang binaries, etc.
 
 # Related Projects
 

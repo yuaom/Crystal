@@ -20,6 +20,8 @@ namespace Crystal
             byte*   GetSpace( uint32_t size );
             bool    HasSpace( uint32_t size ) const;
 
+            constexpr uint32_t  SizeUsed() const;
+
         private:
             CommandBuffer( Device* pDevice );
 
@@ -36,5 +38,8 @@ namespace Crystal
             D3DKMT_HANDLE           m_AllocationHandle;
             GMM::ALLOCATION_INFO*   m_pAllocationInfo;
         };
+
+        ////////////////////////////////////////////////////////////////////////////////
+        constexpr uint32_t CommandBuffer::SizeUsed() const { return m_SizeUsed; };
     }
 }

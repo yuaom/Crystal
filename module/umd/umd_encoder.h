@@ -21,6 +21,8 @@ namespace Crystal
             template< typename CmdT >
             void Encode( CmdT& command );
 
+            void Render();
+
         private:
             Encoder( Device* pDevice );
 

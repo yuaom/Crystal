@@ -35,6 +35,9 @@ namespace Crystal
             D3DKMT_HANDLE   Allocate( D3DDDICB_ALLOCATE& cb );
             void            Deallocate( D3DDDICB_DEALLOCATE& cb );
 
+            // Render Callbacks
+            void Render( D3DDDICB_RENDER& cb );
+
         private:
 
             Device( D3D10DDIARG_CREATEDEVICE* pCreateDevice, Adapter* pAdapter );

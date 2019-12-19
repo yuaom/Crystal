@@ -197,6 +197,21 @@ namespace Crystal
             }
         }
 
+        ////////////////////////////////////////////////////////////////////////////////
+        void Device::Render( D3DDDICB_RENDER& cb )
+        {
+            cb.hContext = m_ContextHandle;
+
+            HRESULT hr = m_pKTCallbacks->pfnRenderCb(
+                m_hRTDevice.handle,
+                &cb );
+
+            if( FAILED( hr ) )
+            {
+                m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
+            }
+        }
+
 #pragma endregion
 #pragma region DDI Entrypoints
 

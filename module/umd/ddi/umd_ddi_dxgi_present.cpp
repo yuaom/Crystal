@@ -30,8 +30,13 @@ HRESULT WINAPI Present1(
     DXGI1_6_1_DDI_ARG_PRESENT* pPresent )
 {
     LOG_DLL_ENTRY;
+
     Device* pDevice = Device::FromHandle( pPresent->hDevice );
 
+    // Submit work
+    pDevice->GetEncoder()->Render();
+
+    // Present
     Crystal::UMD::Resource* pResource = 
         Crystal::UMD::Resource::FromHandle( pPresent->phSurfacesToPresent[0].hSurface );
 

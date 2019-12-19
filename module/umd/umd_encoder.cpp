@@ -40,6 +40,17 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        void Encoder::Render()
+        {
+            D3DDDICB_RENDER render;
+            ZeroMemory( &render, sizeof( render ) );
+
+            render.CommandLength = m_CommandBuffers.front()->SizeUsed();
+
+            m_pDevice->Render( render );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         void Encoder::EnsureSpace( uint32_t size )
         {
             size += 0x40; // temporary

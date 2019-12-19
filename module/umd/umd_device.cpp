@@ -24,6 +24,8 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Device::Destroy( Device* pDevice )
         {
+            Encoder::Destroy( pDevice->m_pEncoder );
+
             ZeroMemory( pDevice, sizeof( Device ) );
         }
 
@@ -52,6 +54,7 @@ namespace Crystal
             m_hRTDevice( pCreateDevice->hRTDevice ),
             m_hRTCoreLayer( pCreateDevice->hRTCoreLayer ),
             m_pAdapter( pAdapter ),
+            m_pEncoder( nullptr ),
             m_pKTCallbacks( nullptr ),
             m_pCoreLayerCallbacks( nullptr ),
             m_pDXGICallbacks( nullptr ),
@@ -78,6 +81,8 @@ namespace Crystal
             }
 
             DDI::FillDdiTable( pCreateDevice->DXGIBaseDDI.pDXGIDDIBaseFunctions6_1 );
+
+            m_pEncoder = Encoder::Create( this );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

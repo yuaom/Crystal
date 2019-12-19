@@ -1,12 +1,15 @@
 #pragma once
 #include "umd_adapter.h"
-#include "gmm.h"
+#include "umd_encoder.h"
 
 namespace Crystal
 {
     namespace UMD
     {
 #pragma region Device
+        ////////////////////////////////////////////////////////////////////////////////
+        /// @brief Forward declarations
+        struct Encoder;
 
         ////////////////////////////////////////////////////////////////////////////////
         /// @brief UMD Device
@@ -49,6 +52,7 @@ namespace Crystal
             HANDLE                  m_ContextHandle;
 
             Adapter* m_pAdapter;
+            Encoder* m_pEncoder;
         };
 
 #pragma endregion

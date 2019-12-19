@@ -1,6 +1,7 @@
 #pragma once
 #include "umd_adapter.h"
 #include "umd_encoder.h"
+#include "umd_cmdbuffer.h"
 
 namespace Crystal
 {
@@ -36,7 +37,7 @@ namespace Crystal
             void            Deallocate( D3DDDICB_DEALLOCATE& cb );
 
             // Render Callbacks
-            void Render( D3DDDICB_RENDER& cb );
+            void Render( CommandBuffer* pCommandBuffer );
 
         private:
 
@@ -53,7 +54,10 @@ namespace Crystal
             D3D10DDI_HRTDEVICE      m_hRTDevice;
             D3D10DDI_HRTCORELAYER   m_hRTCoreLayer;
 
-            HANDLE                  m_ContextHandle;
+            // Submission
+            HANDLE          m_ContextHandle;
+            CommandBuffer*  m_pRenderCommandBuffer;
+            Encoder*        m_pRenderEncoder;
 
             Adapter* m_pAdapter;
             Encoder* m_pEncoder;

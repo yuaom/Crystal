@@ -22,6 +22,20 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        CommandBuffer* CommandBuffer::Create(
+            Device* pDevice,
+            size_t placement, 
+            uint32_t size )
+        {
+            CommandBuffer* pCmdBuffer = new CommandBuffer( pDevice );
+
+            pCmdBuffer->m_pBuffer   = reinterpret_cast<byte*>( placement );
+            pCmdBuffer->m_SizeTotal = size;
+
+            return pCmdBuffer;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         void CommandBuffer::Destroy( CommandBuffer* pCmdBuffer )
         {
             delete pCmdBuffer;
@@ -33,29 +47,36 @@ namespace Crystal
             m_pBuffer( nullptr ),
             m_SizeUsed( 0 ),
             m_SizeTotal( 0 ),
-            m_pAllocationInfo( new GMM::ALLOCATION_INFO )
+            m_pAllocationInfo( nullptr ),
+            m_AllocationHandle( 0 )
         {
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        CommandBuffer::~CommandBuffer()
+        {
+            if( m_pAllocationInfo )
+            {
+                ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
+                delete m_pAllocationInfo;
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void CommandBuffer::Allocate( uint32_t size )
+        {
+            // Create allocation info
+            m_pAllocationInfo = new GMM::ALLOCATION_INFO;
             ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
 
             m_pAllocationInfo->ArraySlices      = 1;
             m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
             m_pAllocationInfo->IsInternal       = true;
             m_pAllocationInfo->MipLevels        = 1;
+            m_pAllocationInfo->Mip0TexelWidth   = size;
             m_pAllocationInfo->Mip0TexelHeight  = 1;
             m_pAllocationInfo->Mip0TexelDepth   = 1;
             m_pAllocationInfo->Dimension        = GMM::RESOURCE_DIMENSION::BUFFER;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        CommandBuffer::~CommandBuffer()
-        {
-
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        void CommandBuffer::Allocate( uint32_t size )
-        {
-            m_pAllocationInfo->Mip0TexelWidth = size;
 
             GMM::CreateAllocationInfo( m_pAllocationInfo );
 
@@ -97,6 +118,12 @@ namespace Crystal
         bool CommandBuffer::HasSpace( uint32_t size ) const
         {
             return m_SizeUsed + size <= m_SizeTotal;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        size_t CommandBuffer::GetAddress() const
+        {
+            return reinterpret_cast<size_t>( m_pBuffer );
         }
     }
 }

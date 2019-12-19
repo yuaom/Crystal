@@ -2,6 +2,7 @@
 #include "umd_device.h"
 #include "umd_ddi.h"
 #include "kmd_privatedata.h"
+#include "cmds.h"
 
 namespace Crystal
 {
@@ -58,7 +59,9 @@ namespace Crystal
             m_pKTCallbacks( nullptr ),
             m_pCoreLayerCallbacks( nullptr ),
             m_pDXGICallbacks( nullptr ),
-            m_ContextHandle( 0 )
+            m_ContextHandle( 0 ),
+            m_pRenderCommandBuffer( nullptr ),
+            m_pRenderEncoder( nullptr )
         {
             m_pKTCallbacks = pCreateDevice->pKTCallbacks;
             m_pCoreLayerCallbacks = pCreateDevice->pWDDM2_6UMCallbacks;
@@ -139,6 +142,15 @@ namespace Crystal
             if( SUCCEEDED( hr ) )
             {
                 m_ContextHandle = cb.hContext;
+
+                m_pRenderCommandBuffer = CommandBuffer::Create(
+                    this, 
+                    reinterpret_cast<size_t>( cb.pCommandBuffer ), 
+                    cb.CommandBufferSize );
+
+                m_pRenderEncoder = Encoder::Create(
+                    this,
+                    m_pRenderCommandBuffer );
             }
         }
 
@@ -198,9 +210,18 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Device::Render( D3DDDICB_RENDER& cb )
+        void Device::Render( CommandBuffer* pCommandBuffer )
         {
-            cb.hContext = m_ContextHandle;
+            Commands::NEXT_COMMANDBUFFER next;
+            next.Address    = pCommandBuffer->GetAddress();
+            next.Size       = pCommandBuffer->SizeUsed();
+
+            m_pRenderEncoder->Encode( next );
+
+            D3DDDICB_RENDER cb;
+            ZeroMemory( &cb, sizeof( D3DDDICB_RENDER ) );
+            cb.hContext         = m_ContextHandle;
+            cb.CommandLength    = m_pRenderCommandBuffer->SizeUsed();
 
             HRESULT hr = m_pKTCallbacks->pfnRenderCb(
                 m_hRTDevice.handle,

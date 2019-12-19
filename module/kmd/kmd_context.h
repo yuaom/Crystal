@@ -1,6 +1,8 @@
 #pragma once
 #include "kmd_handles.h"
 #include "kmd_device.h"
+#include "kmd_allocation.h"
+#include "gmm.h"
 
 namespace Crystal
 {
@@ -21,10 +23,16 @@ namespace Crystal
 
             ~Context( void );
 
+            void CreateRenderRing();
+
             D3DKMT_CLIENTHINT           m_ClientHint;
             D3DDDI_CREATECONTEXTFLAGS   m_Flags;
 
-            Device* m_pDevice;
+            Device*     m_pDevice;
+
+            // RenderRing
+            GMM::ALLOCATION_INFO*   m_pAllocationInfo;
+            Allocation*             m_pRing;
         };
     }
 }

@@ -15,6 +15,8 @@ namespace Crystal
             static void Destroy( Allocation* pAllocation );
 
             D3DKMT_HANDLE   GetHandle() const;
+            size_t          GetAddress() const;
+            size_t          GetSize() const;
 
         private:
 

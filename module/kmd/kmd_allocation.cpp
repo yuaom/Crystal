@@ -52,6 +52,18 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        size_t Allocation::GetAddress() const
+        {
+            return m_pAllocationInfo->Address;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        size_t Allocation::GetSize() const
+        {
+            return m_pAllocationInfo->Size;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         void Allocation::Allocate()
         {
             void* cpuAddress = VirtualAlloc( 

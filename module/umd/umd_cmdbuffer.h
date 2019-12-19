@@ -15,10 +15,12 @@ namespace Crystal
         {
         public:
             static CommandBuffer*   Create( Device* pDevice, uint32_t size );
+            static CommandBuffer*   Create( Device* pDevice, size_t placement, uint32_t size );
             static void             Destroy( CommandBuffer* pCmdBuffer );
 
             byte*   GetSpace( uint32_t size );
             bool    HasSpace( uint32_t size ) const;
+            size_t  GetAddress() const;
 
             constexpr uint32_t  SizeUsed() const;
 

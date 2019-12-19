@@ -15,7 +15,7 @@ namespace Crystal
         class Encoder
         {
         public:
-            static Encoder* Create( Device* pDevice );
+            static Encoder* Create( Device* pDevice, CommandBuffer* pInitialBuffer = nullptr );
             static void     Destroy( Encoder* pEncoder );
 
             template< typename CmdT >

@@ -6,9 +6,14 @@ namespace Crystal
     namespace UMD
     {
         ////////////////////////////////////////////////////////////////////////////////
-        Encoder* Encoder::Create( Device* pDevice )
+        Encoder* Encoder::Create( 
+            Device* pDevice, 
+            CommandBuffer* pInitialBuffer )
         {
             Encoder* pEncoder = new Encoder( pDevice );
+
+            pEncoder->m_pCurrent = pInitialBuffer;
+
             return pEncoder;
         }
 
@@ -45,9 +50,7 @@ namespace Crystal
             D3DDDICB_RENDER render;
             ZeroMemory( &render, sizeof( render ) );
 
-            render.CommandLength = m_CommandBuffers.front()->SizeUsed();
-
-            m_pDevice->Render( render );
+            m_pDevice->Render( m_CommandBuffers.front() );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

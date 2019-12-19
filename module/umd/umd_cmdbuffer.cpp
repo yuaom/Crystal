@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "umd_cmdbuffer.h"
+#include "kmd_privatedata.h"
 
 namespace Crystal
 {
@@ -31,9 +32,18 @@ namespace Crystal
             m_pDevice( pDevice ),
             m_pBuffer( nullptr ),
             m_SizeUsed( 0 ),
-            m_SizeTotal( 0 )
+            m_SizeTotal( 0 ),
+            m_pAllocationInfo( new GMM::ALLOCATION_INFO )
         {
+            ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
 
+            m_pAllocationInfo->ArraySlices      = 1;
+            m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+            m_pAllocationInfo->IsInternal       = true;
+            m_pAllocationInfo->MipLevels        = 1;
+            m_pAllocationInfo->Mip0TexelHeight  = 1;
+            m_pAllocationInfo->Mip0TexelDepth   = 1;
+            m_pAllocationInfo->Dimension        = GMM::RESOURCE_DIMENSION::BUFFER;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -45,8 +55,31 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void CommandBuffer::Allocate( uint32_t size )
         {
+            m_pAllocationInfo->Mip0TexelWidth = size;
+
+            GMM::CreateAllocationInfo( m_pAllocationInfo );
+
+            KMD::D3DDDI_ALLOCATIONINFO_PRIVATE allocInfoPrivateData;
+            ZeroMemory( &allocInfoPrivateData, sizeof( KMD::D3DDDI_ALLOCATIONINFO_PRIVATE ) );
+            allocInfoPrivateData.pAllocationInfo = m_pAllocationInfo;
+
+            D3DDDI_ALLOCATIONINFO allocInfo;
+            ZeroMemory( &allocInfo, sizeof( D3DDDI_ALLOCATIONINFO ) );
+
+            allocInfo.pPrivateDriverData    = &allocInfoPrivateData;
+            allocInfo.PrivateDriverDataSize = sizeof( KMD::D3DDDI_ALLOCATIONINFO_PRIVATE );
+
+            D3DDDICB_ALLOCATE allocate = { 0 };
+            allocate.NumAllocations     = 1;
+            allocate.pAllocationInfo    = &allocInfo;
+
+            m_pDevice->Allocate( allocate );
+
+            m_AllocationHandle = allocInfo.hAllocation;
+
             m_SizeUsed  = 0;
             m_SizeTotal = size;
+            m_pBuffer   = reinterpret_cast<byte*>( m_pAllocationInfo->Address );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

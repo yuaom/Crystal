@@ -19,13 +19,7 @@ namespace Crystal
             static void     Destroy( Encoder* pEncoder );
 
             template< typename CmdT >
-            void Encode( CmdT* pCommand );
-
-            template< typename CmdT >
-            struct EncodedCommand
-            {
-                CmdT* pCmd;
-            };
+            void Encode( CmdT& command );
 
         private:
             Encoder( Device* pDevice );
@@ -42,7 +36,7 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         template< typename CmdT >
-        CmdT* Encode( CmdT* pCommand )
+        void Encoder::Encode( CmdT& command )
         {
             const uint32_t size = sizeof( CmdT );
 
@@ -50,9 +44,10 @@ namespace Crystal
 
             CmdT* pData = reinterpret_cast<CmdT*>( m_pCurrent->GetSpace( size ) );
 
-            memcpy_s( pData, sizeof( CmdT ), pCommand, sizeof( CmdT ) );
-
-            return pData;
+            if( pData )
+            {
+                memcpy_s( pData, sizeof( CmdT ), &command, sizeof( CmdT ) );
+            }
         }
     }
 }

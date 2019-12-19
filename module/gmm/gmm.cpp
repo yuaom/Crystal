@@ -16,6 +16,13 @@ namespace Crystal
 
             switch( pInfo->Dimension )
             {
+            case RESOURCE_DIMENSION::BUFFER:
+            {
+                uint32_t mipWidth = pInfo->Mip0TexelWidth;
+
+                size += Bpp * mipWidth;
+            }
+            break;
             case RESOURCE_DIMENSION::_2D:
             {
                 uint32_t mipWidth   = pInfo->Mip0TexelWidth;
@@ -183,7 +190,7 @@ namespace Crystal
             {
                 case D3D10DDIRESOURCE_BUFFER:
                 case D3D11DDIRESOURCE_BUFFEREX:
-                    return RESOURCE_DIMENSION::LINEAR;
+                    return RESOURCE_DIMENSION::BUFFER;
                 case D3D10DDIRESOURCE_TEXTURE1D:
                     return RESOURCE_DIMENSION::_1D;
                 case D3D10DDIRESOURCE_TEXTURE2D:

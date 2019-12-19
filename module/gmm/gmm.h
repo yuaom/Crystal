@@ -9,7 +9,7 @@ namespace Crystal
         enum class RESOURCE_DIMENSION
         {
             UNKNOWN,
-            LINEAR,
+            BUFFER,
             _1D,
             _2D,
             _3D

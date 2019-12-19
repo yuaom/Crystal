@@ -1,4 +1,7 @@
 #include "pch.h"
+#include "umd_device.h"
+#include "umd_encoder.h"
+#include "cmds_rop.h"
 
 namespace Crystal
 {
@@ -21,10 +24,23 @@ VOID WINAPI ClearDepthStencilView(
 ////////////////////////////////////////////////////////////////////////////////
 VOID WINAPI ClearRenderTargetView(
     D3D10DDI_HDEVICE hDevice,
-    D3D10DDI_HRENDERTARGETVIEW pColorRGBA,
-    FLOAT hRenderTargetView[4] )
+    D3D10DDI_HRENDERTARGETVIEW hRenderTargetView,
+    FLOAT pColorRGBA[4] )
 {
     LOG_DLL_ENTRY;
+
+    Device* pDevice = Device::FromHandle( hDevice );
+    Encoder* pEncoder = pDevice->GetEncoder();
+
+    Commands::CLEAR_RENDER_TARGET_VIEW clear;
+    ZeroMemory( &clear, sizeof( Commands::CLEAR_RENDER_TARGET_VIEW ) );
+
+    clear.ClearValues[0] = pColorRGBA[0];
+    clear.ClearValues[1] = pColorRGBA[1];
+    clear.ClearValues[2] = pColorRGBA[2];
+    clear.ClearValues[3] = pColorRGBA[3];
+
+    pEncoder->Encode( clear );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

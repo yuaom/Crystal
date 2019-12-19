@@ -13,6 +13,7 @@ add_subdirectory(pch)
 add_subdirectory(umd)
 add_subdirectory(kmd)
 add_subdirectory(gmm)
+add_subdirectory(cmds)
 
 get_target_property( CRYSTAL_FILES Crystal SOURCES )
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${CRYSTAL_FILES} )

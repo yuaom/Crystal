@@ -25,7 +25,8 @@ namespace Crystal
             void GetFormatSupport( DXGI_FORMAT format, UINT* pOut );
             void GetMultisampleSupport( DXGI_FORMAT format, UINT sampleCount, UINT* pNumQualityLevels );
 
-            HANDLE  GetContextHandle() const;
+            HANDLE      GetContextHandle() const;
+            Encoder*    GetEncoder() const;
 
             // DXGI Callbacks
             void Present( DXGIDDICB_PRESENT& cb );

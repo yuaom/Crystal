@@ -1,5 +1,6 @@
 #pragma once
 #include "umd_device.h"
+#include "gmm.h"
 
 namespace Crystal
 {
@@ -31,6 +32,9 @@ namespace Crystal
             byte*       m_pBuffer;
             uint32_t    m_SizeTotal;
             uint32_t    m_SizeUsed;
+
+            D3DKMT_HANDLE           m_AllocationHandle;
+            GMM::ALLOCATION_INFO*   m_pAllocationInfo;
         };
     }
 }

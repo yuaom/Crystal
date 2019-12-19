@@ -150,6 +150,12 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        Encoder* Device::GetEncoder() const
+        {
+            return m_pEncoder;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         void Device::Present( DXGIDDICB_PRESENT& cb )
         {
             HRESULT hr = m_pDXGICallbacks->pfnPresentCb(

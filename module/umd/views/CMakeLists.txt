@@ -7,6 +7,3 @@ endforeach( src_file ${_SOURCES} )
 
 target_sources( Crystal PRIVATE ${_HEADERS} ${_SOURCES} )
 target_include_directories(Crystal PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
-
-add_subdirectory(ddi)
-add_subdirectory(views)

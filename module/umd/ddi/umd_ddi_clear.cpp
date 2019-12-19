@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "umd_device.h"
 #include "umd_encoder.h"
+#include "umd_rtv.h"
 #include "cmds_rop.h"
 
 namespace Crystal
@@ -31,14 +32,18 @@ VOID WINAPI ClearRenderTargetView(
 
     Device* pDevice = Device::FromHandle( hDevice );
     Encoder* pEncoder = pDevice->GetEncoder();
+    RenderTargetView* pRTV = RenderTargetView::FromHandle( hRenderTargetView );
 
     Commands::CLEAR_RENDER_TARGET_VIEW clear;
     ZeroMemory( &clear, sizeof( Commands::CLEAR_RENDER_TARGET_VIEW ) );
 
-    clear.ClearValues[0] = pColorRGBA[0];
-    clear.ClearValues[1] = pColorRGBA[1];
-    clear.ClearValues[2] = pColorRGBA[2];
-    clear.ClearValues[3] = pColorRGBA[3];
+    clear.hAllocation       = pRTV->GetResource()->GetAllocationHandle();
+    clear.ClearValues[0]    = pColorRGBA[0];
+    clear.ClearValues[1]    = pColorRGBA[1];
+    clear.ClearValues[2]    = pColorRGBA[2];
+    clear.ClearValues[3]    = pColorRGBA[3];
+
+    assert( clear.hAllocation );
 
     pEncoder->Encode( clear );
 }

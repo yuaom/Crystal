@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "umd_rtv.h"
 
 namespace Crystal
 {
@@ -15,6 +16,11 @@ VOID WINAPI CreateRenderTargetView(
     D3D10DDI_HRTRENDERTARGETVIEW hRTRenderTargetView )
 {
     LOG_DLL_ENTRY;
+
+    RenderTargetView::Create( 
+        pCreateRenderTargetView, 
+        hRenderTargetView, 
+        hRTRenderTargetView );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +29,9 @@ VOID WINAPI DestroyRenderTargetView(
     D3D10DDI_HRENDERTARGETVIEW hRenderTargetView )
 {
     LOG_DLL_ENTRY;
+
+    RenderTargetView::Destroy(
+        hRenderTargetView );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

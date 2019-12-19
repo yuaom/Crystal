@@ -110,6 +110,8 @@ namespace Crystal
             allocate.pAllocationInfo    = &allocInfo;
 
             m_ResourceHandle = m_pDevice->Allocate( allocate );
+
+            m_AllocationHandle = allocInfo.hAllocation;
         }
     }
 }

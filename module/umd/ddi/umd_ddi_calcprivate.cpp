@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "umd_resource.h"
+#include "umd_rtv.h"
 
 namespace Crystal
 {
@@ -105,7 +106,7 @@ SIZE_T WINAPI CalcPrivateRenderTargetViewSize(
     const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreateRenderTargetView )
 {
     LOG_DLL_ENTRY;
-    return 0;
+    return RenderTargetView::CalculateSize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

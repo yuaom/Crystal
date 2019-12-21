@@ -114,28 +114,6 @@ namespace Crystal
         }
 
 #pragma endregion
-#pragma region KmtObject
-
-        ////////////////////////////////////////////////////////////////////////////////
-        KmtObject::KmtObject() :
-            m_Handle( KmtHandleManager::Allocate( this ) )
-        {
-
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        KmtObject::~KmtObject()
-        {
-            KmtHandleManager::Free( m_Handle );
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        D3DKMT_HANDLE KmtObject::GetHandle() const
-        {
-            return m_Handle;
-        }
-
-#pragma endregion
     }
 }
 

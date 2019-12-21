@@ -15,7 +15,7 @@ namespace Crystal
         {
         public:
             static CommandBuffer*   Create( Device* pDevice, uint32_t size );
-            static CommandBuffer*   Create( Device* pDevice, size_t placement, uint32_t size );
+            static CommandBuffer*   Create( size_t placement, uint32_t size, CommandBuffer* pExisting = nullptr );
             static void             Destroy( CommandBuffer* pCmdBuffer );
 
             byte*   GetSpace( uint32_t size );
@@ -25,7 +25,7 @@ namespace Crystal
             constexpr uint32_t  SizeUsed() const;
 
         private:
-            CommandBuffer( Device* pDevice );
+            CommandBuffer( Device* pDevice = nullptr );
 
             ~CommandBuffer();
 

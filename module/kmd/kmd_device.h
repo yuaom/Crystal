@@ -6,7 +6,7 @@ namespace Crystal
     namespace KMD
     {
         ////////////////////////////////////////////////////////////////////////////////
-        class Device : public KmtObject
+        class Device : public KmtObject<Device>
         {
         public:
 

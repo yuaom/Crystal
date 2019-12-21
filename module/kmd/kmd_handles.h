@@ -58,6 +58,7 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        template< typename DerivedT >
         class KmtObject
         {
         public:
@@ -65,10 +66,41 @@ namespace Crystal
 
             ~KmtObject();
 
-            D3DKMT_HANDLE GetHandle() const;
+            static DerivedT* FromHandle( D3DKMT_HANDLE handle );
+
+            D3DKMT_HANDLE GetHandle() const;            
 
         private:
             D3DKMT_HANDLE m_Handle;
         };
+
+        ////////////////////////////////////////////////////////////////////////////////
+        template< typename DerivedT >
+        KmtObject<DerivedT>::KmtObject() :
+            m_Handle( KmtHandleManager::Allocate( this ) )
+        {
+
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        template< typename DerivedT >
+        KmtObject<DerivedT>::~KmtObject()
+        {
+            KmtHandleManager::Free( m_Handle );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        template< typename DerivedT >
+        D3DKMT_HANDLE KmtObject<DerivedT>::GetHandle() const
+        {
+            return m_Handle;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        template< typename DerivedT >
+        DerivedT* KmtObject<DerivedT>::FromHandle( D3DKMT_HANDLE handle )
+        {
+            return KmtHandleManager::To<DerivedT>( handle );
+        }
     }
 }

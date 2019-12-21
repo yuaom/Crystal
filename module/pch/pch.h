@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <stack>
 #include <tuple>
+#include <atomic>
 
 #include <Windows.h>
 #include <d3d10umddi.h>

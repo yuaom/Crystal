@@ -144,7 +144,6 @@ namespace Crystal
                 m_ContextHandle = cb.hContext;
 
                 m_pRenderCommandBuffer = CommandBuffer::Create(
-                    this, 
                     reinterpret_cast<size_t>( cb.pCommandBuffer ), 
                     cb.CommandBufferSize );
 
@@ -227,7 +226,14 @@ namespace Crystal
                 m_hRTDevice.handle,
                 &cb );
 
-            if( FAILED( hr ) )
+            if( SUCCEEDED( hr ) )
+            {
+                m_pRenderCommandBuffer = CommandBuffer::Create(
+                    reinterpret_cast<size_t>( cb.pNewCommandBuffer ),
+                    cb.NewCommandBufferSize,
+                    m_pRenderCommandBuffer );
+            }
+            else
             {
                 m_pCoreLayerCallbacks->pfnSetErrorCb( m_hRTCoreLayer, hr );
             }

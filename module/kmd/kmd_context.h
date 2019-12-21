@@ -1,21 +1,21 @@
 #pragma once
 #include "kmd_handles.h"
 #include "kmd_device.h"
-#include "kmd_allocation.h"
-#include "gmm.h"
+#include "kmd_ring.h"
 
 namespace Crystal
 {
     namespace KMD
     {
         ////////////////////////////////////////////////////////////////////////////////
-        class Context : public KmtObject
+        class Context : public KmtObject<Context>
         {
         public:
 
             static Context* Create( D3DKMT_CREATECONTEXT* pCreateContext );
+            static void     Destroy( D3DKMT_HANDLE handle );
 
-            static void Destroy( D3DKMT_HANDLE handle );
+            constexpr RenderRing* GetRing() const;
 
         private:
 
@@ -23,16 +23,15 @@ namespace Crystal
 
             ~Context( void );
 
-            void CreateRenderRing();
-
             D3DKMT_CLIENTHINT           m_ClientHint;
             D3DDDI_CREATECONTEXTFLAGS   m_Flags;
 
             Device*     m_pDevice;
 
-            // RenderRing
-            GMM::ALLOCATION_INFO*   m_pAllocationInfo;
-            Allocation*             m_pRing;
+            RenderRing* m_pRing;
         };
+
+        ////////////////////////////////////////////////////////////////////////////////
+        constexpr RenderRing* Context::GetRing() const { return m_pRing; }
     }
 }

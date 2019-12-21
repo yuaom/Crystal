@@ -23,11 +23,13 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         CommandBuffer* CommandBuffer::Create(
-            Device* pDevice,
             size_t placement, 
-            uint32_t size )
+            uint32_t size,
+            CommandBuffer* pExisting )
         {
-            CommandBuffer* pCmdBuffer = new CommandBuffer( pDevice );
+            CommandBuffer* pCmdBuffer = ( pExisting )
+                ? new ( pExisting ) CommandBuffer()
+                : new CommandBuffer();
 
             pCmdBuffer->m_pBuffer   = reinterpret_cast<byte*>( placement );
             pCmdBuffer->m_SizeTotal = size;

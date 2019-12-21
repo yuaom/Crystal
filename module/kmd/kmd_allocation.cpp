@@ -22,11 +22,10 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Allocation::Destroy( Allocation* pAllocation )
+        void Allocation::Destroy( Allocation* &pAllocation )
         {
-            pAllocation->Deallocate();
-
             delete pAllocation;
+            pAllocation = nullptr;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +41,8 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         Allocation::~Allocation()
         {
+            Deallocate();
+
             KmtHandleManager::Free( m_Handle );
         }
 

@@ -29,6 +29,7 @@ namespace Crystal
             if( m_pHandles )
             {
                 delete m_pHandles;
+                m_pHandles = nullptr;
             }
         }
 
@@ -64,7 +65,15 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         KmtHandleManager::~KmtHandleManager()
         {
+            if( m_Base )
+            {
+                BOOL result = VirtualFree( 
+                    reinterpret_cast<void*>( m_Base ), 
+                    0, 
+                    MEM_RELEASE );
 
+                assert( result != 0 );
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////

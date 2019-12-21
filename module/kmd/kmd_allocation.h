@@ -12,7 +12,7 @@ namespace Crystal
 
             static Allocation* Create( D3DDDI_ALLOCATIONINFO* pInfo );
 
-            static void Destroy( Allocation* pAllocation );
+            static void Destroy( Allocation* &pAllocation );
 
             D3DKMT_HANDLE   GetHandle() const;
             size_t          GetAddress() const;

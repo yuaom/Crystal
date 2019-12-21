@@ -60,8 +60,22 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing::~RenderRing()
         {
-            ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
-            delete m_pAllocationInfo;
+            if( m_pAllocation )
+            {
+                Allocation::Destroy( m_pAllocation );
+            }
+
+            if( m_pAllocationInfo )
+            {
+                ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
+                delete m_pAllocationInfo;
+                m_pAllocationInfo = nullptr;
+            }
+
+            m_pHead = 0;
+            m_pTail = 0;
+            m_pEnd  = 0;
+            m_Size  = 0;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +88,12 @@ namespace Crystal
         size_t RenderRing::GetTail() const
         {
             return m_pTail.load();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        size_t RenderRing::GetEnd() const
+        {
+            return m_pEnd;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +115,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void RenderRing::Advance( uint32_t offset, uint32_t length )
         {
-            assert( m_pHead + offset + length < m_pEnd );
+            assert( m_pHead + offset + length <= m_pEnd );
 
             m_pHead += length;
         }

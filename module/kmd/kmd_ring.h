@@ -16,6 +16,7 @@ namespace Crystal
 
             size_t      GetHead() const;
             size_t      GetTail() const;
+            size_t      GetEnd() const;
             uint32_t    GetWriteDistance() const;
             uint32_t    GetSize() const;
 
@@ -30,7 +31,7 @@ namespace Crystal
             std::atomic_size_t      m_pHead;
             std::atomic_size_t      m_pTail;
             size_t                  m_pEnd;
-            const uint32_t          m_Size;
+            uint32_t                m_Size;
             GMM::ALLOCATION_INFO*   m_pAllocationInfo;
             Allocation*             m_pAllocation;
         };

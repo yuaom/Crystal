@@ -17,10 +17,12 @@ namespace Crystal
             size_t      GetHead() const;
             size_t      GetTail() const;
             uint32_t    GetWriteDistance() const;
+            uint32_t    GetSize() const;
 
             void        Advance( uint32_t offset, uint32_t length );
 
         private:
+
             RenderRing( uint32_t size );
 
             ~RenderRing();

@@ -77,6 +77,12 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        uint32_t RenderRing::GetSize() const
+        {
+            return m_Size;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         uint32_t RenderRing::GetWriteDistance() const
         {
             uint32_t distance = ( m_pTail <= m_pHead )

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "kmd_adapter.h"
 #include "kmd_handles.h"
+#include "kmd_entrypoints.h"
 
 BOOL WINAPI DllMain(
     HINSTANCE const instance,

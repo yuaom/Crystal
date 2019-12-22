@@ -13,6 +13,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <iomanip>
 
 #include <Windows.h>
 #include <d3d10umddi.h>

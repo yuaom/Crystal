@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma pack(push)
+#pragma pack(4)
 namespace Crystal
 {
     namespace Commands
@@ -7,6 +9,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         enum class COMMAND_TYPE
         {
+            NOOP = 0,
             NEXT_COMMANDBUFFER,
             COMMAND_TYPE_CLEAR_RTV
         };
@@ -42,3 +45,4 @@ namespace Crystal
         };
     }
 }
+#pragma pack(pop)

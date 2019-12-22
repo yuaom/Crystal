@@ -124,7 +124,7 @@ namespace Crystal
         {
             RenderRing* pRing = RenderRing::Create( 4 );
 
-            byte* pBuffer = nullptr;
+            uint32_t* pBuffer = nullptr;
             uint32_t bufferSize = 0;
 
             pBuffer = pRing->Checkout();
@@ -171,7 +171,7 @@ namespace Crystal
         {
             RenderRing* pRing = RenderRing::Create( 8 );
 
-            byte* pBuffer = nullptr;
+            uint32_t* pBuffer = nullptr;
             uint32_t bufferSize = 0;
             uint32_t minRequired = 4;
 

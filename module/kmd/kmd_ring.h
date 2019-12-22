@@ -18,14 +18,14 @@ namespace Crystal
             bool        Full() const;
             uint32_t    Capacity() const;
             uint32_t    Size() const;
-            void        Put( byte item );
-            byte        Get();
+            void        Put( uint32_t item );
+            uint32_t    Get();
             uint32_t    Head() const;
             uint32_t    Tail() const;
 
             void        ResetHead();
 
-            byte*       Checkout();
+            uint32_t*   Checkout();
             uint32_t    CheckoutSize();
             void        Commit( uint32_t size );
 
@@ -36,7 +36,7 @@ namespace Crystal
             ~RenderRing();
 
             std::mutex  m_Mutex;
-            byte*       m_pBuffer;
+            uint32_t*   m_pBuffer;
             uint32_t    m_Head;
             uint32_t    m_Tail;
             uint32_t    m_MaxSize;

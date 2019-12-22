@@ -10,14 +10,17 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTRender( D3DKMT_RENDER* pRender )
     Crystal::KMD::Context* pContext = Crystal::KMD::Context::FromHandle( pRender->hContext );
     Crystal::KMD::RenderRing* pRenderRing = pContext->GetRing();
 
+    assert( pRender->CommandLength % sizeof( uint32_t ) == 0 );
+    uint32_t commands = pRender->CommandLength / sizeof( uint32_t );
+
     // Submit the work
-    pRenderRing->Commit( pRender->CommandLength );
+    pRenderRing->Commit( commands );
 
     // Checkout the next command buffer span
     pRender->pNewCommandBuffer      = reinterpret_cast<void*>( pRenderRing->Checkout() );
     pRender->NewCommandBufferSize   = pRenderRing->CheckoutSize();
 
-    uint32_t minimumSize = 256;
+    uint32_t minimumSize = 32;
 
     if( pRender->NewCommandBufferSize < minimumSize )
     {
@@ -37,6 +40,9 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTRender( D3DKMT_RENDER* pRender )
             Sleep( 10 );
         }
     }
+
+    // Convert size into bytes
+    pRender->NewCommandBufferSize *= sizeof( uint32_t );
 
     return STATUS_SUCCESS;
 }

@@ -29,6 +29,12 @@ namespace Crystal
             Device*     m_pDevice;
 
             RenderRing* m_pRing;
+
+            // Consumer Thread
+            static void ConsumerStart( Context* pContext );
+
+            std::atomic<bool>   m_ProducerExiting;
+            std::thread         m_ConsumerThread;
         };
 
         ////////////////////////////////////////////////////////////////////////////////

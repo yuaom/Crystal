@@ -24,7 +24,7 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing::RenderRing( uint32_t size ) :
-            m_MaxSize( size ),
+            m_MaxSize( size / sizeof(uint32_t) ),
             m_pAllocationInfo( new GMM::ALLOCATION_INFO ),
             m_Head( 0 ),
             m_Tail( 0 ),
@@ -36,7 +36,7 @@ namespace Crystal
             ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
 
             m_pAllocationInfo->ArraySlices      = 1;
-            m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R8_UINT;
+            m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
             m_pAllocationInfo->IsInternal       = true;
             m_pAllocationInfo->MipLevels        = 1;
             m_pAllocationInfo->Mip0TexelWidth   = m_MaxSize;
@@ -56,7 +56,7 @@ namespace Crystal
 
             m_pAllocation = Allocation::Create( &allocInfo );
 
-            m_pBuffer = reinterpret_cast<byte*>( m_pAllocation->GetAddress() );
+            m_pBuffer = reinterpret_cast<uint32_t*>( m_pAllocation->GetAddress() );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::Put( byte item )
+        void RenderRing::Put( uint32_t item )
         {
             std::lock_guard<std::mutex> lock( m_Mutex );
 
@@ -135,7 +135,7 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        byte* RenderRing::Checkout()
+        uint32_t* RenderRing::Checkout()
         {
             return &m_pBuffer[m_Head];
         }
@@ -165,13 +165,13 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        byte RenderRing::Get()
+        uint32_t RenderRing::Get()
         {
             std::lock_guard<std::mutex> lock( m_Mutex );
 
             if( Empty() ) return 0;
 
-            byte value = m_pBuffer[ m_Tail ];
+            uint32_t value = m_pBuffer[ m_Tail ];
 
             m_IsFull = false;
             m_Tail = ( m_Tail + 1 ) % m_MaxSize;

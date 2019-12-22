@@ -10,6 +10,8 @@ namespace Crystal
         {
         public:
 
+            static bool Create( D3DKMT_CREATEDEVICE* pKTCreateDevice );
+
             static void Destroy( D3DKMT_HANDLE handle );
 
             Device( const D3DKMT_CREATEDEVICE* pKtCreateDevice );
@@ -17,7 +19,11 @@ namespace Crystal
             ~Device();
 
         private:
+
+            bool LoadRasterizer();
+
             D3DKMT_CREATEDEVICEFLAGS    m_Flags;
+            HMODULE                     m_hRaster;
         };
     }
 }

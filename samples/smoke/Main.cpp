@@ -5,20 +5,6 @@
 #include <assert.h>
 #include <array>
 
-void GetCommandLineArguments( std::vector<std::wstring>& args )
-{
-    LPWSTR* szArglist;
-    int nArgs;
-    int i;
-
-    szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
-    for (int i = 0; i < nArgs; i++)
-    {
-        args.push_back(szArglist[i]);
-    }
-    LocalFree(szArglist);
-}
-
 LRESULT CALLBACK WindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     switch( uMsg )
@@ -60,10 +46,7 @@ int main()
 
     if( useSoftware )
     {
-        std::vector<std::wstring> args;
-        GetCommandLineArguments( args );
-
-        module = LoadLibraryW( args[1].c_str() );
+        module = LoadLibrary( "Crystal64.dll" );
         assert( module != NULL );
 
         driverType = D3D_DRIVER_TYPE_SOFTWARE;

@@ -9,11 +9,16 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDev
 {
     LOG_DLL_ENTRY;
 
-    Crystal::KMD::Device* pDevice = new Crystal::KMD::Device( pKTCreateDevice );
+    NTSTATUS result = STATUS_SUCCESS;
 
-    pKTCreateDevice->hDevice = pDevice->GetHandle();
+    bool success = Crystal::KMD::Device::Create( pKTCreateDevice );
 
-    return STATUS_SUCCESS;
+    if( !success )
+    {
+        result = E_FAIL;
+    }
+
+    return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

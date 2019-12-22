@@ -2,7 +2,6 @@
 #include "umd_device.h"
 #include "umd_ddi.h"
 #include "kmd_privatedata.h"
-#include "cmds.h"
 
 namespace Crystal
 {
@@ -211,7 +210,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Device::Render( CommandBuffer* pCommandBuffer )
         {
-            Commands::NEXT_COMMANDBUFFER next;
+            RasterCommands::NEXT_COMMANDBUFFER next;
             next.Address    = pCommandBuffer->GetAddress();
             next.Size       = pCommandBuffer->SizeUsed();
 

@@ -9,7 +9,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, Create )
         {
-            RenderRing* pRing = RenderRing::Create( 4 );
+            RenderRing* pRing = RenderRing::Create( 4 * sizeof(uint32_t) );
 
             ASSERT_EQ( pRing->Capacity(), 4 );
             ASSERT_EQ( pRing->Size(), 4 );
@@ -21,7 +21,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, Put )
         {
-            RenderRing* pRing = RenderRing::Create( 4 );
+            RenderRing* pRing = RenderRing::Create( 4 * sizeof(uint32_t) );
 
             pRing->Put( 1 );
             pRing->Put( 2 );
@@ -44,7 +44,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, Get )
         {
-            RenderRing* pRing = RenderRing::Create( 4 );
+            RenderRing* pRing = RenderRing::Create( 4 * sizeof(uint32_t) );
 
             ASSERT_EQ( pRing->Get(), 0 );
 
@@ -63,7 +63,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, Size )
         {
-            RenderRing* pRing = RenderRing::Create( 4 );
+            RenderRing* pRing = RenderRing::Create( 4 * sizeof( uint32_t ) );
 
             ASSERT_EQ( pRing->Size(), 4 );
 
@@ -86,7 +86,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, ProducerConsumer )
         {
-            RenderRing* pRing = RenderRing::Create( 4 );
+            RenderRing* pRing = RenderRing::Create( 4 * sizeof( uint32_t ) );
 
             std::atomic<bool> producer_done = false;
 
@@ -94,7 +94,7 @@ namespace Crystal
                 for( uint32_t i = 1; i <= 5000; i++ )
                 {
                     while( pRing->Full() ) Sleep( 1 );
-                    pRing->Put( i % 0xFF );
+                    pRing->Put( i );
                 }
                 producer_done = true;
             } );
@@ -107,7 +107,7 @@ namespace Crystal
                     if( !pRing->Empty() )
                     {
                         uint32_t value_curr = pRing->Get();
-                        ASSERT_EQ( value_curr, ( value_prev + 1 ) % 0xFF );
+                        ASSERT_EQ( value_curr, value_prev + 1 );
                         value_prev = value_curr;
                     }
                 }
@@ -122,7 +122,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, Checkout )
         {
-            RenderRing* pRing = RenderRing::Create( 4 );
+            RenderRing* pRing = RenderRing::Create( 4 * sizeof( uint32_t ) );
 
             uint32_t* pBuffer = nullptr;
             uint32_t bufferSize = 0;
@@ -169,7 +169,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, Checkout_Overflow )
         {
-            RenderRing* pRing = RenderRing::Create( 8 );
+            RenderRing* pRing = RenderRing::Create( 8 * sizeof( uint32_t ) );
 
             uint32_t* pBuffer = nullptr;
             uint32_t bufferSize = 0;

@@ -148,14 +148,19 @@ int main()
         ShowWindow( hwnd, SW_SHOWDEFAULT );
 
         MSG msg = { };
-        while( GetMessage( &msg, NULL, 0, 0 ) )
-        {
-            TranslateMessage( &msg );
-            DispatchMessage( &msg );
 
-            FLOAT color[4] = { 0.21f, 0.37f, 0.72f, 1.0f };
-            pContext->ClearRenderTargetView( pRTV, color );
-            pSwapChain->Present( 0, 0 );
+        while( msg.message != WM_QUIT )
+        {
+            // Process any messages in the queue.
+            if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
+            {
+                TranslateMessage( &msg );
+                DispatchMessage( &msg );
+
+                FLOAT color[4] = { 0.21f, 0.37f, 0.72f, 1.0f };
+                pContext->ClearRenderTargetView( pRTV, color );
+                pSwapChain->Present( 0, 0 );
+            }
         }
     }
 

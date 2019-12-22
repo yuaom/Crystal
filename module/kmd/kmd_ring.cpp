@@ -7,10 +7,9 @@ namespace Crystal
     {
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing* RenderRing::Create( 
-            uint32_t size,
-            uint32_t min_distance )
+            uint32_t size )
         {
-            return new RenderRing( size, min_distance );
+            return new RenderRing( size );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -24,20 +23,20 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        RenderRing::RenderRing( uint32_t size, uint32_t min_distance ) :
+        RenderRing::RenderRing( uint32_t size ) :
             m_MaxSize( size ),
             m_pAllocationInfo( new GMM::ALLOCATION_INFO ),
             m_Head( 0 ),
             m_Tail( 0 ),
-            m_MinDistance( min_distance ),
             m_pAllocation( nullptr ),
             m_pBuffer( nullptr ),
             m_IsFull( false )
         {
+            assert( size % sizeof( uint32_t ) == 0 );
             ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
 
             m_pAllocationInfo->ArraySlices      = 1;
-            m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+            m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R8_UINT;
             m_pAllocationInfo->IsInternal       = true;
             m_pAllocationInfo->MipLevels        = 1;
             m_pAllocationInfo->Mip0TexelWidth   = m_MaxSize;
@@ -57,7 +56,7 @@ namespace Crystal
 
             m_pAllocation = Allocation::Create( &allocInfo );
 
-            m_pBuffer = reinterpret_cast<uint32_t*>( m_pAllocation->GetAddress() );
+            m_pBuffer = reinterpret_cast<byte*>( m_pAllocation->GetAddress() );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -112,7 +111,14 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::Put( uint32_t item )
+        void RenderRing::ResetHead()
+        {
+            std::lock_guard<std::mutex> lock( m_Mutex );
+            m_Head = 0;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void RenderRing::Put( byte item )
         {
             std::lock_guard<std::mutex> lock( m_Mutex );
 
@@ -129,18 +135,60 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::Get()
+        byte* RenderRing::Checkout()
+        {
+            return &m_pBuffer[m_Head];
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t RenderRing::CheckoutSize()
+        {
+            uint32_t size = ( m_Tail <= m_Head )
+                ? m_MaxSize - m_Head
+                : m_Tail - m_Head;
+            return size;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void RenderRing::Commit( uint32_t size )
+        {
+            std::lock_guard<std::mutex> lock( m_Mutex );
+
+            if( m_IsFull )
+            {
+                m_Tail = ( m_Tail + size ) % m_MaxSize;
+            }
+
+            m_Head = ( m_Head + size ) % m_MaxSize;
+
+            m_IsFull = m_Head == m_Tail;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        byte RenderRing::Get()
         {
             std::lock_guard<std::mutex> lock( m_Mutex );
 
             if( Empty() ) return 0;
 
-            uint32_t value = m_pBuffer[ m_Tail ];
+            byte value = m_pBuffer[ m_Tail ];
 
             m_IsFull = false;
             m_Tail = ( m_Tail + 1 ) % m_MaxSize;
 
             return value;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t RenderRing::Head() const
+        {
+            return m_Head;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t RenderRing::Tail() const
+        {
+            return m_Tail;
         }
     }
 }

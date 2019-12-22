@@ -12,9 +12,9 @@ namespace Crystal
             Context* pContext = new Context( pCreateContext );
 
             // Populate DDI Return Arguments
-            //pCreateContext->hContext            = pContext->GetHandle();
-            //pCreateContext->pCommandBuffer      = reinterpret_cast<void*>( pContext->GetRing()->GetNextCommandBufferAddress() );
-            //pCreateContext->CommandBufferSize   = pContext->GetRing()->GetNextCommandBufferSize();
+            pCreateContext->hContext            = pContext->GetHandle();
+            pCreateContext->pCommandBuffer      = reinterpret_cast<void*>( pContext->GetRing()->Checkout() );
+            pCreateContext->CommandBufferSize   = pContext->GetRing()->CheckoutSize();
 
             return pContext;
         }
@@ -37,7 +37,7 @@ namespace Crystal
             m_pDevice( nullptr ),
             m_pRing( nullptr )
         {
-            m_pRing = RenderRing::Create( 32 * PAGE_SIZE, PAGE_SIZE );
+            m_pRing = RenderRing::Create( 16 * KILOBYTE );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

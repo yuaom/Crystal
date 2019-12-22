@@ -114,6 +114,8 @@ namespace Crystal
         void RenderRing::ResetHead()
         {
             std::lock_guard<std::mutex> lock( m_Mutex );
+            uint32_t remaining = ( m_MaxSize - m_Head ) * sizeof( uint32_t );
+            ZeroMemory( &m_pBuffer[m_Head], remaining );
             m_Head = 0;
         }
 

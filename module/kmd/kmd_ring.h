@@ -10,28 +10,31 @@ namespace Crystal
         class RenderRing
         {
         public:
-            static RenderRing* Create( uint32_t size );
+            static RenderRing* Create( uint32_t size, uint32_t min_distance );
 
-            static void Destroy( RenderRing* ring );
+            static void Destroy( RenderRing* &pRing );
 
-            size_t      GetHead() const;
-            size_t      GetTail() const;
-            size_t      GetEnd() const;
-            uint32_t    GetWriteDistance() const;
-            uint32_t    GetSize() const;
-
-            void        Advance( uint32_t offset, uint32_t length );
+            bool        Empty() const;
+            bool        Full() const;
+            uint32_t    Capacity() const;
+            uint32_t    Size() const;
+            void        Put( uint32_t item );
+            uint32_t    Get();
 
         private:
 
-            RenderRing( uint32_t size );
+            RenderRing( uint32_t size, uint32_t min_distance );
 
             ~RenderRing();
 
-            std::atomic_size_t      m_pHead;
-            std::atomic_size_t      m_pTail;
-            size_t                  m_pEnd;
-            uint32_t                m_Size;
+            std::mutex              m_Mutex;
+            uint32_t*               m_pBuffer;
+            uint32_t                m_Head;
+            uint32_t                m_Tail;
+            uint32_t                m_MaxSize;
+            bool                    m_IsFull;
+
+            uint32_t                m_MinDistance;
             GMM::ALLOCATION_INFO*   m_pAllocationInfo;
             Allocation*             m_pAllocation;
         };

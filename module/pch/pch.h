@@ -11,6 +11,8 @@
 #include <stack>
 #include <tuple>
 #include <atomic>
+#include <thread>
+#include <mutex>
 
 #include <Windows.h>
 #include <d3d10umddi.h>

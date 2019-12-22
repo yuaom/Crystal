@@ -8,13 +8,10 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTRender( D3DKMT_RENDER* pRender )
 
     Crystal::KMD::Context* pContext = Crystal::KMD::Context::FromHandle( pRender->hContext );
 
-    pContext->GetRing()->Advance(
-        pRender->CommandOffset,
-        pRender->CommandLength
-    );
+    //pContext->GetRing()->AdvanceHead( pRender->CommandLength );
 
-    pRender->pNewCommandBuffer      = reinterpret_cast<void*>( pContext->GetRing()->GetHead() );
-    pRender->NewCommandBufferSize   = pContext->GetRing()->GetWriteDistance();
+    //pRender->pNewCommandBuffer      = reinterpret_cast<void*>( pContext->GetRing()->GetNextCommandBufferAddress() );
+    //pRender->NewCommandBufferSize   = pContext->GetRing()->GetNextCommandBufferSize();
 
     return STATUS_SUCCESS;
 }

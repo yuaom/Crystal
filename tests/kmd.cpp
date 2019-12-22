@@ -9,37 +9,89 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         TEST_F( RenderRingTest, Create )
         {
-            RenderRing* pRing = RenderRing::Create( 32 );
+            RenderRing* pRing = RenderRing::Create( 4, 0 );
 
-            ASSERT_EQ( pRing->GetSize(), 32 );
-            ASSERT_EQ( pRing->GetHead(), pRing->GetTail() );
-            ASSERT_EQ( pRing->GetWriteDistance(), pRing->GetSize() );
+            ASSERT_EQ( pRing->Capacity(), 4 );
+            ASSERT_EQ( pRing->Size(), 4 );
+            ASSERT_EQ( pRing->Full(), false );
 
             RenderRing::Destroy( pRing );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        TEST_F( RenderRingTest, Advance )
+        TEST_F( RenderRingTest, Put )
         {
-            RenderRing* pRing = RenderRing::Create( 24 );
+            RenderRing* pRing = RenderRing::Create( 4, 0 );
 
-            pRing->Advance( 0, 8 );
+            pRing->Put( 1 );
+            pRing->Put( 2 );
+            pRing->Put( 3 );
+            pRing->Put( 4 );
 
-            ASSERT_EQ( pRing->GetSize(), 24);
-            ASSERT_EQ( pRing->GetHead() - 8, pRing->GetTail() );
-            ASSERT_EQ( pRing->GetWriteDistance(), pRing->GetSize() - 8 );
+            ASSERT_EQ( pRing->Full(), true );
 
-            pRing->Advance( 0, 8 );
+            pRing->Put( 5 );
 
-            ASSERT_EQ( pRing->GetSize(), 24 );
-            ASSERT_EQ( pRing->GetHead() - 16, pRing->GetTail() );
-            ASSERT_EQ( pRing->GetWriteDistance(), pRing->GetSize() - 16 );
+            ASSERT_EQ( pRing->Full(), true );
 
-            pRing->Advance( 0, 8 );
+            pRing->Put( 6 );
 
-            ASSERT_EQ( pRing->GetSize(), 24 );
-            ASSERT_EQ( pRing->GetHead(), pRing->GetEnd() );
-            ASSERT_EQ( pRing->GetWriteDistance(), 0 );
+            ASSERT_EQ( pRing->Full(), true );
+
+            RenderRing::Destroy( pRing );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        TEST_F( RenderRingTest, Get )
+        {
+            RenderRing* pRing = RenderRing::Create( 4, 0 );
+
+            ASSERT_EQ( pRing->Get(), 0 );
+
+            pRing->Put( 1 );
+            pRing->Put( 2 );
+            pRing->Put( 3 );
+
+            ASSERT_EQ( pRing->Get(), 1 );
+            ASSERT_EQ( pRing->Get(), 2 );
+            ASSERT_EQ( pRing->Get(), 3 );
+            ASSERT_EQ( pRing->Empty(), true );
+
+            RenderRing::Destroy( pRing );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        TEST_F( RenderRingTest, ProducerConsumer )
+        {
+            RenderRing* pRing = RenderRing::Create( 4, 0 );
+
+            std::atomic<bool> producer_done = false;
+
+            std::thread producer( [&]() {
+                for( uint32_t i = 1; i <= 10000; i++ )
+                {
+                    while( pRing->Full() ) Sleep( 1 );
+                    pRing->Put( i );
+                }
+                producer_done = true;
+            } );
+
+            std::thread consumer( [&]() {
+                uint32_t value_prev = 0;
+
+                while( !producer_done )
+                {
+                    if( !pRing->Empty() )
+                    {
+                        uint32_t value_curr = pRing->Get();
+                        ASSERT_EQ( value_curr, value_prev + 1 );
+                        value_prev = value_curr;
+                    }
+                }
+            } );
+
+            producer.join();
+            consumer.join();
 
             RenderRing::Destroy( pRing );
         }

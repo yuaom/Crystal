@@ -12,9 +12,9 @@ namespace Crystal
             Context* pContext = new Context( pCreateContext );
 
             // Populate DDI Return Arguments
-            pCreateContext->hContext            = pContext->GetHandle();
-            pCreateContext->pCommandBuffer      = reinterpret_cast<void*>( pContext->GetRing()->GetHead() );
-            pCreateContext->CommandBufferSize   = pContext->GetRing()->GetWriteDistance();
+            //pCreateContext->hContext            = pContext->GetHandle();
+            //pCreateContext->pCommandBuffer      = reinterpret_cast<void*>( pContext->GetRing()->GetNextCommandBufferAddress() );
+            //pCreateContext->CommandBufferSize   = pContext->GetRing()->GetNextCommandBufferSize();
 
             return pContext;
         }
@@ -23,7 +23,11 @@ namespace Crystal
         void Context::Destroy( D3DKMT_HANDLE handle )
         {
             Context* pContext = KmtHandleManager::To<Context>( handle );
-            delete pContext;
+
+            if( pContext )
+            {
+                delete pContext;
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -33,13 +37,13 @@ namespace Crystal
             m_pDevice( nullptr ),
             m_pRing( nullptr )
         {
-            m_pRing = RenderRing::Create( 32 * KILOBYTE );
+            m_pRing = RenderRing::Create( 32 * PAGE_SIZE, PAGE_SIZE );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         Context::~Context()
         {
-
+            RenderRing::Destroy( m_pRing );
         }
     }
 }

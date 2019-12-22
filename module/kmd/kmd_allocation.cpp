@@ -24,8 +24,11 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Allocation::Destroy( Allocation* &pAllocation )
         {
-            delete pAllocation;
-            pAllocation = nullptr;
+            if( pAllocation )
+            {
+                delete pAllocation;
+                pAllocation = nullptr;
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -76,6 +79,10 @@ namespace Crystal
             if( cpuAddress != NULL )
             {
                 m_pAllocationInfo->Address = reinterpret_cast<size_t>( cpuAddress );
+
+                #if defined(_DEBUG)
+                FillMemory( cpuAddress, m_pAllocationInfo->Size, 0xCC );
+                #endif
             }
             else
             {

@@ -6,36 +6,41 @@ namespace Crystal
     namespace KMD
     {
         ////////////////////////////////////////////////////////////////////////////////
-        RenderRing* RenderRing::Create( uint32_t size )
+        RenderRing* RenderRing::Create( 
+            uint32_t size,
+            uint32_t min_distance )
         {
-            return new RenderRing( size );
+            return new RenderRing( size, min_distance );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::Destroy( RenderRing* pRing )
+        void RenderRing::Destroy( RenderRing* &pRing )
         {
-            if( pRing ) delete pRing;
+            if( pRing )
+            {
+                delete pRing;
+                pRing = nullptr;
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        RenderRing::RenderRing( uint32_t size ) :
-            m_Size( size ),
+        RenderRing::RenderRing( uint32_t size, uint32_t min_distance ) :
+            m_MaxSize( size ),
             m_pAllocationInfo( new GMM::ALLOCATION_INFO ),
-            m_pHead( 0 ),
-            m_pTail( 0 ),
-            m_pEnd( 0 ),
-            m_pAllocation( nullptr )
+            m_Head( 0 ),
+            m_Tail( 0 ),
+            m_MinDistance( min_distance ),
+            m_pAllocation( nullptr ),
+            m_pBuffer( nullptr ),
+            m_IsFull( false )
         {
-            assert( m_pHead.is_lock_free() );
-            assert( m_pTail.is_lock_free() );
-
             ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
 
             m_pAllocationInfo->ArraySlices      = 1;
             m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
             m_pAllocationInfo->IsInternal       = true;
             m_pAllocationInfo->MipLevels        = 1;
-            m_pAllocationInfo->Mip0TexelWidth   = m_Size / 4;
+            m_pAllocationInfo->Mip0TexelWidth   = m_MaxSize;
             m_pAllocationInfo->Mip0TexelHeight  = 1;
             m_pAllocationInfo->Mip0TexelDepth   = 1;
             m_pAllocationInfo->Dimension        = GMM::RESOURCE_DIMENSION::BUFFER;
@@ -52,18 +57,13 @@ namespace Crystal
 
             m_pAllocation = Allocation::Create( &allocInfo );
 
-            m_pHead = m_pAllocation->GetAddress();
-            m_pTail = m_pAllocation->GetAddress();
-            m_pEnd  = m_pAllocation->GetAddress() + m_pAllocation->GetSize();
+            m_pBuffer = reinterpret_cast<uint32_t*>( m_pAllocation->GetAddress() );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing::~RenderRing()
         {
-            if( m_pAllocation )
-            {
-                Allocation::Destroy( m_pAllocation );
-            }
+            Allocation::Destroy( m_pAllocation );
 
             if( m_pAllocationInfo )
             {
@@ -71,53 +71,76 @@ namespace Crystal
                 delete m_pAllocationInfo;
                 m_pAllocationInfo = nullptr;
             }
-
-            m_pHead = 0;
-            m_pTail = 0;
-            m_pEnd  = 0;
-            m_Size  = 0;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        size_t RenderRing::GetHead() const
+        bool RenderRing::Empty() const
         {
-            return m_pHead.load();
+            return !m_IsFull && ( m_Head == m_Tail );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        size_t RenderRing::GetTail() const
+        bool RenderRing::Full() const
         {
-            return m_pTail.load();
+            return m_IsFull;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        size_t RenderRing::GetEnd() const
+        uint32_t RenderRing::Capacity() const
         {
-            return m_pEnd;
+            return m_MaxSize;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::GetSize() const
+        uint32_t RenderRing::Size() const
         {
-            return m_Size;
+            uint32_t size = m_MaxSize;
+
+            if( !m_IsFull )
+            {
+                if( m_Head > m_Tail )
+                {
+                    size = m_Head - m_Tail;
+                }
+                else
+                {
+                    size = m_MaxSize + m_Head - m_Tail;
+                }
+            }
+
+            return size;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::GetWriteDistance() const
+        void RenderRing::Put( uint32_t item )
         {
-            uint32_t distance = ( m_pTail <= m_pHead )
-                ? m_pEnd - m_pHead
-                : m_pTail - m_pHead;
+            std::lock_guard<std::mutex> lock( m_Mutex );
 
-            return distance;
+            m_pBuffer[ m_Head ] = item;
+
+            if( m_IsFull )
+            {
+                m_Tail = ( m_Tail + 1 ) % m_MaxSize;
+            }
+
+            m_Head = ( m_Head + 1 ) % m_MaxSize;
+
+            m_IsFull = m_Head == m_Tail;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::Advance( uint32_t offset, uint32_t length )
+        uint32_t RenderRing::Get()
         {
-            assert( m_pHead + offset + length <= m_pEnd );
+            std::lock_guard<std::mutex> lock( m_Mutex );
 
-            m_pHead += length;
+            if( Empty() ) return 0;
+
+            uint32_t value = m_pBuffer[ m_Tail ];
+
+            m_IsFull = false;
+            m_Tail = ( m_Tail + 1 ) % m_MaxSize;
+
+            return value;
         }
     }
 }

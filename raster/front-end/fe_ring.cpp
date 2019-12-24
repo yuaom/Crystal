@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "kmd_ring.h"
+#include "fe_ring.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace Raster
     {
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing* RenderRing::Create( 
@@ -25,51 +25,20 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing::RenderRing( uint32_t size ) :
             m_MaxSize( size / sizeof(uint32_t) ),
-            m_pAllocationInfo( new GMM::ALLOCATION_INFO ),
             m_Head( 0 ),
             m_Tail( 0 ),
-            m_pAllocation( nullptr ),
             m_pBuffer( nullptr ),
             m_IsFull( false )
         {
             assert( size % sizeof( uint32_t ) == 0 );
-            ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
 
-            m_pAllocationInfo->ArraySlices      = 1;
-            m_pAllocationInfo->Format           = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
-            m_pAllocationInfo->IsInternal       = true;
-            m_pAllocationInfo->MipLevels        = 1;
-            m_pAllocationInfo->Mip0TexelWidth   = m_MaxSize;
-            m_pAllocationInfo->Mip0TexelHeight  = 1;
-            m_pAllocationInfo->Mip0TexelDepth   = 1;
-            m_pAllocationInfo->Dimension        = GMM::RESOURCE_DIMENSION::BUFFER;
-
-            GMM::CreateAllocationInfo( m_pAllocationInfo );
-
-            D3DDDI_ALLOCATIONINFO_PRIVATE data;
-            data.pAllocationInfo = m_pAllocationInfo;
-
-            D3DDDI_ALLOCATIONINFO allocInfo;
-            ZeroMemory( &allocInfo, sizeof( D3DDDI_ALLOCATIONINFO ) );
-            allocInfo.pPrivateDriverData    = &data;
-            allocInfo.PrivateDriverDataSize = sizeof( D3DDDI_ALLOCATIONINFO_PRIVATE );
-
-            m_pAllocation = Allocation::Create( &allocInfo );
-
-            m_pBuffer = reinterpret_cast<uint32_t*>( m_pAllocation->GetAddress() );
+            m_pBuffer = std::make_unique<uint32_t[]>( m_MaxSize );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing::~RenderRing()
         {
-            Allocation::Destroy( m_pAllocation );
-
-            if( m_pAllocationInfo )
-            {
-                ZeroMemory( m_pAllocationInfo, sizeof( GMM::ALLOCATION_INFO ) );
-                delete m_pAllocationInfo;
-                m_pAllocationInfo = nullptr;
-            }
+            m_pBuffer.release();
         }
 
         ////////////////////////////////////////////////////////////////////////////////

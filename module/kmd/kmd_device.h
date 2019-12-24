@@ -18,12 +18,15 @@ namespace Crystal
 
             ~Device();
 
+            bool CreateContext( RASTERCONTEXT_HANDLE& handle );
+
         private:
 
             bool LoadRasterizer();
 
             D3DKMT_CREATEDEVICEFLAGS    m_Flags;
             HMODULE                     m_hRaster;
+            RASTER_FUNCTIONS*           m_pRasterFuncs;
         };
     }
 }

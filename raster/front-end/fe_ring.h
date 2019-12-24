@@ -1,10 +1,8 @@
 #pragma once
-#include "kmd_allocation.h"
-#include "gmm.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace Raster
     {
         ////////////////////////////////////////////////////////////////////////////////
         class RenderRing
@@ -35,15 +33,12 @@ namespace Crystal
 
             ~RenderRing();
 
-            std::mutex  m_Mutex;
-            uint32_t*   m_pBuffer;
-            uint32_t    m_Head;
-            uint32_t    m_Tail;
-            uint32_t    m_MaxSize;
-            bool        m_IsFull;
-
-            GMM::ALLOCATION_INFO*   m_pAllocationInfo;
-            Allocation*             m_pAllocation;
+            std::mutex                  m_Mutex;
+            std::unique_ptr<uint32_t[]> m_pBuffer;
+            uint32_t                    m_Head;
+            uint32_t                    m_Tail;
+            uint32_t                    m_MaxSize;
+            bool                        m_IsFull;
         };
     }
 }

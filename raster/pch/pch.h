@@ -14,6 +14,7 @@
 #include <thread>
 #include <mutex>
 #include <iomanip>
+#include <memory>
 
 #include <Windows.h>
 

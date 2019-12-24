@@ -64,9 +64,18 @@ namespace Crystal
                 PFNOPENRASTERIZER pfnOpenRasterizer =
                     reinterpret_cast<PFNOPENRASTERIZER>( GetProcAddress( m_hRaster, "OpenRasterizer" ) );
 
+                RASTERARGS_OPENRASTERIZER rasterArgs = { 0 };
+                rasterArgs.options.TotalRingSize        = 16 * KILOBYTE;
+                rasterArgs.options.MinimumRingWriteSize = 32 * sizeof( uint32_t );
+
                 if( pfnOpenRasterizer )
                 {
-                    success = pfnOpenRasterizer();
+                    success = pfnOpenRasterizer( &rasterArgs );
+
+                    if( success )
+                    {
+                        m_pRasterFuncs = rasterArgs.pRasterFuncs;
+                    }
                 }
                 else
                 {
@@ -77,6 +86,21 @@ namespace Crystal
             else
             {
                 success = false;
+            }
+
+            return success;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        bool Device::CreateContext( RASTERCONTEXT_HANDLE& handle )
+        {
+            RASTERARGS_CREATECONTEXT args = { 0 };
+
+            bool success = m_pRasterFuncs->pfnCreateContext( &args );
+            
+            if( success )
+            {
+                handle = args.hHandle;
             }
 
             return success;

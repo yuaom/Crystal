@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include "pch.h"
 #include "kmd_handles.h"
-#include "kmd_ring.h"
 
 #pragma region Fixtures
 

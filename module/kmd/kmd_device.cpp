@@ -41,7 +41,8 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         Device::Device( const D3DKMT_CREATEDEVICE* pKtCreateDevice ) :
             m_Flags( pKtCreateDevice->Flags ),
-            m_hRaster( NULL )
+            m_hRaster( NULL ),
+            m_pRasterFuncs( std::make_unique<RASTER_FUNCTIONS>() )
         {
 
         }
@@ -57,35 +58,40 @@ namespace Crystal
         {
             bool success = true;
 
+            PFNOPENRASTERIZER pfnOpenRasterizer = nullptr;
+
             m_hRaster = LoadLibrary( "CrystalRaster64.dll" );
 
             if( m_hRaster )
             {
-                PFNOPENRASTERIZER pfnOpenRasterizer =
-                    reinterpret_cast<PFNOPENRASTERIZER>( GetProcAddress( m_hRaster, "OpenRasterizer" ) );
+                pfnOpenRasterizer = reinterpret_cast<PFNOPENRASTERIZER>( 
+                    GetProcAddress( m_hRaster, "OpenRasterizer" ) );
 
+                if( pfnOpenRasterizer == nullptr )
+                {
+                    success = false;
+                }
+            }
+            else
+            {
+                success = false;
+            }
+
+            if( success )
+            {
                 RASTERARGS_OPENRASTERIZER rasterArgs = { 0 };
                 rasterArgs.options.TotalRingSize        = 16 * KILOBYTE;
                 rasterArgs.options.MinimumRingWriteSize = 32 * sizeof( uint32_t );
+                rasterArgs.pRasterFuncs                 = m_pRasterFuncs.get();
 
                 if( pfnOpenRasterizer )
                 {
                     success = pfnOpenRasterizer( &rasterArgs );
-
-                    if( success )
-                    {
-                        m_pRasterFuncs = rasterArgs.pRasterFuncs;
-                    }
                 }
                 else
                 {
                     success = false;
                 }
-
-            }
-            else
-            {
-                success = false;
             }
 
             return success;

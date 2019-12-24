@@ -24,9 +24,9 @@ namespace Crystal
 
             bool LoadRasterizer();
 
-            D3DKMT_CREATEDEVICEFLAGS    m_Flags;
-            HMODULE                     m_hRaster;
-            RASTER_FUNCTIONS*           m_pRasterFuncs;
+            D3DKMT_CREATEDEVICEFLAGS            m_Flags;
+            HMODULE                             m_hRaster;
+            std::unique_ptr<RASTER_FUNCTIONS>   m_pRasterFuncs;
         };
     }
 }

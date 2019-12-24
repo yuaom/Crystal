@@ -1,20 +1,23 @@
+#include "pch.h"
 #include "entrypoints.h"
-
-RASTER_FUNCTIONS g_RasterFuncs =
-{
-    CreateContext
-};
+#include "raster_context.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 bool OpenRasterizer( RASTERARGS_OPENRASTERIZER* pOpenRasterizer )
 {
-    pOpenRasterizer->pRasterFuncs = &g_RasterFuncs;
+    pOpenRasterizer->pRasterFuncs->pfnCreateContext = Crystal::Raster::CreateContext;
 
     return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-bool CreateContext( RASTERARGS_CREATECONTEXT* pContext )
+namespace Crystal
 {
-    return true;
+    namespace Raster
+    {
+        ////////////////////////////////////////////////////////////////////////////////
+        bool CreateContext( RASTERARGS_CREATECONTEXT* pCreateContextArgs )
+        {
+            return Context::Create( pCreateContextArgs );
+        }
+    }
 }

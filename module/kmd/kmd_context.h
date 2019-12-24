@@ -28,12 +28,6 @@ namespace Crystal
             Device*     m_pDevice;
 
             RASTERCONTEXT_HANDLE    m_hRasterContext;
-
-            // Consumer Thread
-            //static void ConsumerStart( Context* pContext );
-
-            std::atomic<bool>   m_ProducerExiting;
-            std::thread         m_ConsumerThread;
         };
     }
 }

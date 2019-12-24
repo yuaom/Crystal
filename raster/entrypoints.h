@@ -36,4 +36,11 @@ struct RASTERARGS_OPENRASTERIZER
 /// @brief Function Pointer Types
 using PFNOPENRASTERIZER = bool ( * )( RASTERARGS_OPENRASTERIZER* );
 bool OpenRasterizer( RASTERARGS_OPENRASTERIZER* pOpenRasterizer );
-bool CreateContext( RASTERARGS_CREATECONTEXT* pContext );
+
+namespace Crystal
+{
+    namespace Raster
+    {
+        bool CreateContext( RASTERARGS_CREATECONTEXT* pContext );
+    }
+}

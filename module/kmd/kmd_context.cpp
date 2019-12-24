@@ -36,13 +36,6 @@ namespace Crystal
 
             if( pContext )
             {
-                pContext->m_ProducerExiting = true;
-
-                if( pContext->m_ConsumerThread.joinable() )
-                {
-                    pContext->m_ConsumerThread.join();
-                }
-
                 delete pContext;
             }
         }
@@ -52,16 +45,15 @@ namespace Crystal
             m_ClientHint( pCreateContext->ClientHint ),
             m_Flags( pCreateContext->Flags ),
             m_pDevice( Device::FromHandle( pCreateContext->hDevice ) ),
-            m_ProducerExiting( false ),
             m_hRasterContext( 0 )
         {
-            //m_pRing = RenderRing::Create( 16 * KILOBYTE );
+            
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         Context::~Context()
         {
-            //RenderRing::Destroy( m_pRing );
+
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -69,35 +61,5 @@ namespace Crystal
         {
             return m_pDevice->CreateContext( m_hRasterContext );
         }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        //void Context::ConsumerStart( Context* pContext )
-        //{
-        //    RenderRing* pRenderRing = nullptr;
-
-        //    while( !pContext->m_ProducerExiting )
-        //    {
-        //        if( pRenderRing == nullptr )
-        //        {
-        //            pRenderRing = pContext->GetRing();
-        //        }
-        //        else
-        //        {
-        //            if( !pRenderRing->Empty() )
-        //            {
-        //                uint32_t cmd = pRenderRing->Get();
-
-        //                // do something with command
-        //                std::stringstream s;
-        //                s << "Consumer processed 0x" << std::hex << std::setw(8) << std::setfill('0') << cmd << std::endl;
-        //                OutputDebugString( s.str().c_str() );
-        //            }
-        //            else
-        //            {
-        //                Sleep( 1 );
-        //            }
-        //        }
-        //    }
-        //}
     }
 }

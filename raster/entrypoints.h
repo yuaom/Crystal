@@ -1,8 +1,6 @@
 #pragma once
 #include <cstdint>
 
-////////////////////////////////////////////////////////////////////////////////
-/// @brief CreateContext
 using RASTERCONTEXT_HANDLE = size_t;
 
 struct RASTERARGS_CREATECONTEXT
@@ -10,12 +8,17 @@ struct RASTERARGS_CREATECONTEXT
     RASTERCONTEXT_HANDLE    hHandle;    ///<< Raster Handle (out)
 };
 
-using PFNCREATECONTEXT = bool( * )( RASTERARGS_CREATECONTEXT* );
+using PFNCREATECONTEXT      = bool( * )( RASTERARGS_CREATECONTEXT* args );
+using PFNGETRINGWRITEINFO   = void( * )( RASTERCONTEXT_HANDLE handle, void* &pAddress, uint32_t& size );
 
 ////////////////////////////////////////////////////////////////////////////////
 struct RASTER_FUNCTIONS
 {
+    // Context Management
     PFNCREATECONTEXT    pfnCreateContext;
+
+    // Ring Management
+    PFNGETRINGWRITEINFO pfnGetRingWriteInfo;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,5 +45,7 @@ namespace Crystal
     namespace Raster
     {
         bool CreateContext( RASTERARGS_CREATECONTEXT* pContext );
+
+        void GetRingWriteInfo( RASTERCONTEXT_HANDLE handle, void* &pAddress, uint32_t& size );
     }
 }

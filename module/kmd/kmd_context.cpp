@@ -22,8 +22,11 @@ namespace Crystal
             {
                 // Populate DDI Return Arguments
                 pCreateContext->hContext = pContext->GetHandle();
-                //pCreateContext->pCommandBuffer      = reinterpret_cast<void*>( pContext->GetRing()->Checkout() );
-                //pCreateContext->CommandBufferSize   = pContext->GetRing()->CheckoutSize();
+
+                pContext->m_pDevice->GetRasterFuncs()->pfnGetRingWriteInfo(
+                    pContext->m_hRasterContext,
+                    pCreateContext->pCommandBuffer,
+                    pCreateContext->CommandBufferSize );
             }
 
             return pContext;

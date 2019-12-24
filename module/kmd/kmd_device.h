@@ -19,6 +19,8 @@ namespace Crystal
             ~Device();
 
             bool CreateContext( RASTERCONTEXT_HANDLE& handle );
+            
+            constexpr const std::unique_ptr<RASTER_FUNCTIONS>& GetRasterFuncs() const;
 
         private:
 
@@ -28,5 +30,11 @@ namespace Crystal
             HMODULE                             m_hRaster;
             std::unique_ptr<RASTER_FUNCTIONS>   m_pRasterFuncs;
         };
+
+        ////////////////////////////////////////////////////////////////////////////////
+        constexpr const std::unique_ptr<RASTER_FUNCTIONS>& Device::GetRasterFuncs() const
+        {
+            return m_pRasterFuncs;
+        }
     }
 }

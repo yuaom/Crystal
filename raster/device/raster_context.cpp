@@ -46,6 +46,12 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        Context* Context::FromHandle( RASTERCONTEXT_HANDLE handle )
+        {
+            return reinterpret_cast<Context*>( handle );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         void Context::ConsumerStart( Context* pContext )
         {
             RenderRing*& pRing = pContext->m_pRing;

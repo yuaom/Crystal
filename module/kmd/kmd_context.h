@@ -14,6 +14,9 @@ namespace Crystal
             static Context* Create( D3DKMT_CREATECONTEXT* pCreateContext );
             static void     Destroy( D3DKMT_HANDLE handle );
 
+            void RingDoorbell( uint32_t writeSize );
+            void GetDmaBuffer( VOID*& pBuffer, UINT& maxSize );
+
         private:
 
             Context( D3DKMT_CREATECONTEXT* pCreateContext );

@@ -25,6 +25,7 @@
 namespace Utilities
 {
     bool GetEnvironmentVariable( const std::wstring& name, std::wstring& out );
+    void SetThreadName( const char* threadName );
 }
 
 #include "log.h"

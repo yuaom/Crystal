@@ -54,6 +54,8 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Context::ConsumerStart( Context* pContext )
         {
+            Utilities::SetThreadName( "CrystalRaster-Consumer" );
+
             RenderRing*& pRing = pContext->m_pRing;
 
             while( !pContext->m_ProducerExiting )

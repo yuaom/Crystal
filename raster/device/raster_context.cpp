@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "cmds.h"
+#include "fe_parser.h"
 #include "raster_context.h"
 
 namespace Crystal
@@ -65,10 +67,20 @@ namespace Crystal
                     pRenderRing->AdvanceReadHead();
 
                     Ring::ptr_t& pRing = pRenderRing->GetRead();
+                    uint32_t* pCommand = pRing->GetAddress();
+                    uint32_t  count = pRing->GetCommandCount();
 
-                    //std::stringstream s;
-                    //s << "Consumer processed 0x" << std::hex << std::setw(8) << std::setfill('0') << cmd << std::endl;
-                    //OutputDebugString( s.str().c_str() );
+                    assert( count > 0 );
+
+                    while( count )
+                    {
+                        COMMANDS::Header* pCommandHeader = reinterpret_cast<COMMANDS::Header*>( pCommand );
+
+                        Execute( pCommandHeader );
+
+                        pCommand    += pCommandHeader->Length;
+                        count       -= pCommandHeader->Length;
+                    }
                 }
                 else
                 {

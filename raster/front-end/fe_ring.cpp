@@ -20,15 +20,23 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void* Ring::GetAddress()
+        uint32_t* Ring::GetAddress()
         {
-            return reinterpret_cast<void*>( &m_CommandBuffer );
+            return reinterpret_cast<uint32_t*>( m_CommandBuffer.data() );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         uint32_t Ring::GetMaxSize() const
         {
             return m_CommandBuffer.size();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Ring::GetCommandCount() const
+        {
+            assert( m_Tail % sizeof( uint32_t ) == 0 );
+
+            return m_Tail / sizeof( uint32_t );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

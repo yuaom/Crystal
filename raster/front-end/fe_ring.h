@@ -13,8 +13,9 @@ namespace Crystal
             Ring( uint32_t size );
             ~Ring();
 
-            void*       GetAddress();
+            uint32_t*   GetAddress();
             uint32_t    GetMaxSize() const;
+            uint32_t    GetCommandCount() const;
 
             void        SetTail( uint32_t offset );
 

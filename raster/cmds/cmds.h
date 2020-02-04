@@ -15,7 +15,14 @@ namespace Crystal
             {
                 NOOP = 0,
                 NEXT_COMMANDBUFFER,
-                COMMAND_TYPE_CLEAR_RTV
+                CLEAR_RTV
+            };
+
+            ////////////////////////////////////////////////////////////////////////////////
+            struct Header
+            {
+                COMMAND_TYPE    Type    : 16;
+                uint32_t        Length  : 16;
             };
 
             ////////////////////////////////////////////////////////////////////////////////
@@ -25,12 +32,13 @@ namespace Crystal
                 NEXT_COMMANDBUFFER()
                 {
                     ZeroMemory( this, sizeof( NEXT_COMMANDBUFFER ) );
-                    Type = COMMAND_TYPE::NEXT_COMMANDBUFFER;
+                    Header.Type     = COMMAND_TYPE::NEXT_COMMANDBUFFER;
+                    Header.Length   = sizeof( NEXT_COMMANDBUFFER ) / sizeof(uint32_t);
                 }
 
-                COMMAND_TYPE    Type;
-                size_t          Address;
-                uint32_t        Size;
+                Header      Header;
+                size_t      Address;
+                uint32_t    Size;
             };
 
             ////////////////////////////////////////////////////////////////////////////////
@@ -40,12 +48,13 @@ namespace Crystal
                 CLEAR_RENDER_TARGET_VIEW()
                 {
                     ZeroMemory( this, sizeof( CLEAR_RENDER_TARGET_VIEW ) );
-                    Type = COMMAND_TYPE::COMMAND_TYPE_CLEAR_RTV;
+                    Header.Type     = COMMAND_TYPE::CLEAR_RTV;
+                    Header.Length   = sizeof( CLEAR_RENDER_TARGET_VIEW ) / sizeof( uint32_t );
                 }
 
-                COMMAND_TYPE    Type;
-                size_t          Address;
-                float           ClearValues[4];
+                Header  Header;
+                size_t  Address;
+                float   ClearValues[4];
             };
         }
     }

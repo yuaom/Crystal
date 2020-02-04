@@ -6,10 +6,44 @@ namespace Crystal
     namespace Raster
     {
         ////////////////////////////////////////////////////////////////////////////////
+        Ring::Ring( uint32_t size ) :
+            m_MaxSize( size ),
+            m_Tail( 0 ),
+            m_Head( 0 ),
+            m_CommandBuffer( std::make_unique<uint32_t[]>( size ) )
+        {
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        Ring::~Ring()
+        {
+            m_CommandBuffer.release();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void* Ring::GetAddress() const
+        {
+            return m_CommandBuffer.get();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Ring::GetMaxSize() const
+        {
+            return m_MaxSize;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void Ring::SetTail( uint32_t offset )
+        {
+            m_Tail = offset;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         RenderRing* RenderRing::Create( 
+            uint32_t count,
             uint32_t size )
         {
-            return new RenderRing( size );
+            return new RenderRing( count, size );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -23,143 +57,62 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        RenderRing::RenderRing( uint32_t size ) :
-            m_MaxSize( size / sizeof(uint32_t) ),
-            m_Head( 0 ),
-            m_Tail( 0 ),
-            m_pBuffer( nullptr ),
-            m_IsFull( false )
+        RenderRing::RenderRing( uint32_t count, uint32_t size ) :
+            m_ProducerHead( -1 ),
+            m_ConsumerHead( -1 ),
+            m_ConsumerTail( -1 )
         {
             assert( size % sizeof( uint32_t ) == 0 );
 
-            m_pBuffer = std::make_unique<uint32_t[]>( m_MaxSize );
+            for( uint32_t i = 0; i < count; i++ )
+            {
+                m_Rings.emplace_back( std::make_unique<Ring>( size ) );
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing::~RenderRing()
         {
-            m_pBuffer.release();
+            m_Rings.clear();
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        bool RenderRing::Empty() const
+        void RenderRing::AdvanceProducer()
         {
-            return !m_IsFull && ( m_Head == m_Tail );
+            m_ProducerHead = ( m_ProducerHead + 1 ) % m_Rings.size();
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        bool RenderRing::Full() const
+        std::unique_ptr<Ring>& RenderRing::GetProducerRing()
         {
-            return m_IsFull;
+            return m_Rings[m_ProducerHead];
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::Capacity() const
+        void RenderRing::ProducerDone()
         {
-            return m_MaxSize;
+            m_ConsumerTail = m_ProducerHead;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::Size() const
+        bool RenderRing::IsEmpty() const
         {
-            uint32_t size = m_MaxSize;
+            return m_ConsumerHead == m_ConsumerTail;
+        }
 
-            if( !m_IsFull )
+        ////////////////////////////////////////////////////////////////////////////////
+        void RenderRing::AdvanceConsumerHead()
+        {
+            if( !IsEmpty() )
             {
-                if( m_Head > m_Tail )
-                {
-                    size = m_Head - m_Tail;
-                }
-                else
-                {
-                    size = m_MaxSize + m_Head - m_Tail;
-                }
+                m_ConsumerHead = ( m_ConsumerHead + 1 ) % m_Rings.size();
             }
-
-            return size;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::ResetHead()
+        std::unique_ptr<Ring>& RenderRing::GetConsumerRing()
         {
-            std::lock_guard<std::mutex> lock( m_Mutex );
-            uint32_t remaining = ( m_MaxSize - m_Head ) * sizeof( uint32_t );
-            ZeroMemory( &m_pBuffer[m_Head], remaining );
-            m_Head = 0;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::Put( uint32_t item )
-        {
-            std::lock_guard<std::mutex> lock( m_Mutex );
-
-            m_pBuffer[ m_Head ] = item;
-
-            if( m_IsFull )
-            {
-                m_Tail = ( m_Tail + 1 ) % m_MaxSize;
-            }
-
-            m_Head = ( m_Head + 1 ) % m_MaxSize;
-
-            m_IsFull = m_Head == m_Tail;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        uint32_t* RenderRing::Checkout()
-        {
-            return &m_pBuffer[m_Head];
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::CheckoutSize()
-        {
-            uint32_t size = ( m_Tail <= m_Head )
-                ? m_MaxSize - m_Head
-                : m_Tail - m_Head;
-            return size;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::Commit( uint32_t size )
-        {
-            std::lock_guard<std::mutex> lock( m_Mutex );
-
-            if( m_IsFull )
-            {
-                m_Tail = ( m_Tail + size ) % m_MaxSize;
-            }
-
-            m_Head = ( m_Head + size ) % m_MaxSize;
-
-            m_IsFull = m_Head == m_Tail;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::Get()
-        {
-            std::lock_guard<std::mutex> lock( m_Mutex );
-
-            if( Empty() ) return 0;
-
-            uint32_t value = m_pBuffer[ m_Tail ];
-
-            m_IsFull = false;
-            m_Tail = ( m_Tail + 1 ) % m_MaxSize;
-
-            return value;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::Head() const
-        {
-            return m_Head;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        uint32_t RenderRing::Tail() const
-        {
-            return m_Tail;
+            return m_Rings[m_ConsumerHead];
         }
     }
 }

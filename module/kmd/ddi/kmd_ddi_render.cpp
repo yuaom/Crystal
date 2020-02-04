@@ -8,12 +8,12 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTRender( D3DKMT_RENDER* pRender )
 
     Crystal::KMD::Context* pContext = Crystal::KMD::Context::FromHandle( pRender->hContext );
 
-    // Commit the written DMA commands
+    // Commit the written command buffer commands
     pContext->RingDoorbell( 
         pRender->CommandLength );
 
-    // Retrieve the next DMA buffer
-    pContext->GetDmaBuffer( 
+    // Retrieve the next command buffer
+    pContext->GetNextCommandBuffer( 
         pRender->pNewCommandBuffer, 
         pRender->NewCommandBufferSize );
 

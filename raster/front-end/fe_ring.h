@@ -5,40 +5,52 @@ namespace Crystal
     namespace Raster
     {
         ////////////////////////////////////////////////////////////////////////////////
+        class Ring
+        {
+        public:
+            Ring( uint32_t size );
+            ~Ring();
+
+            void*       GetAddress() const;
+            uint32_t    GetMaxSize() const;
+
+            void        SetTail( uint32_t offset );
+
+        private:
+            std::unique_ptr<uint32_t[]> m_CommandBuffer;
+            uint32_t                    m_Tail;
+            uint32_t                    m_Head;
+            uint32_t                    m_MaxSize;
+        };
+
+        ////////////////////////////////////////////////////////////////////////////////
         class RenderRing
         {
         public:
-            static RenderRing* Create( uint32_t size );
+            static RenderRing* Create( uint32_t count, uint32_t size );
 
             static void Destroy( RenderRing* &pRing );
 
-            bool        Empty() const;
-            bool        Full() const;
-            uint32_t    Capacity() const;
-            uint32_t    Size() const;
-            void        Put( uint32_t item );
-            uint32_t    Get();
-            uint32_t    Head() const;
-            uint32_t    Tail() const;
+            void                    AdvanceProducer();
+            std::unique_ptr<Ring>&  GetProducerRing();
+            void                    ProducerDone();
 
-            void        ResetHead();
-
-            uint32_t*   Checkout();
-            uint32_t    CheckoutSize();
-            void        Commit( uint32_t size );
+            void                    AdvanceConsumerHead();
+            bool                    IsEmpty() const;
+            std::unique_ptr<Ring>&  GetConsumerRing();
 
         private:
 
-            RenderRing( uint32_t size );
+            RenderRing( uint32_t count, uint32_t size );
 
             ~RenderRing();
 
-            std::mutex                  m_Mutex;
-            std::unique_ptr<uint32_t[]> m_pBuffer;
-            uint32_t                    m_Head;
-            uint32_t                    m_Tail;
-            uint32_t                    m_MaxSize;
-            bool                        m_IsFull;
+            std::mutex                          m_Mutex;
+            std::vector<std::unique_ptr<Ring>>  m_Rings;
+
+            uint32_t    m_ProducerHead;
+            uint32_t    m_ConsumerHead;
+            uint32_t    m_ConsumerTail;
         };
     }
 }

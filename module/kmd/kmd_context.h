@@ -15,7 +15,7 @@ namespace Crystal
             static void     Destroy( D3DKMT_HANDLE handle );
 
             void RingDoorbell( uint32_t writeSize );
-            void GetDmaBuffer( VOID*& pBuffer, UINT& maxSize );
+            void GetNextCommandBuffer( VOID*& pBuffer, UINT& maxSize );
 
         private:
 

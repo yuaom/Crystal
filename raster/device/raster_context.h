@@ -13,13 +13,13 @@ namespace Crystal
             static void     Destroy();
             static Context* FromHandle( RASTERCONTEXT_HANDLE handle );
 
-            constexpr RenderRing* GetRing() const;
+            constexpr RenderRing* GetRing();
 
         private:
             Context();
             ~Context();
 
-            RenderRing* m_pRing;
+            RenderRing* m_pRenderRing;
 
             static void ConsumerStart( Context* pContext );
             std::atomic<bool>   m_ProducerExiting;
@@ -27,9 +27,9 @@ namespace Crystal
         };
 
         ////////////////////////////////////////////////////////////////////////////////
-        constexpr RenderRing* Context::GetRing() const
+        constexpr RenderRing* Context::GetRing()
         {
-            return m_pRing;
+            return m_pRenderRing;
         }
     }
 }

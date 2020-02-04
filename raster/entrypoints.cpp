@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 bool OpenRasterizer( RASTERARGS_OPENRASTERIZER* pOpenRasterizer )
 {
-    pOpenRasterizer->pRasterFuncs->pfnCreateContext     = Crystal::Raster::CreateContext;
-    pOpenRasterizer->pRasterFuncs->pfnGetRingWriteInfo  = Crystal::Raster::GetRingWriteInfo;
-    pOpenRasterizer->pRasterFuncs->pfnRingDoorbell      = Crystal::Raster::RingDoorbell;
+    pOpenRasterizer->pRasterFuncs->pfnCreateContext         = Crystal::Raster::CreateContext;
+    pOpenRasterizer->pRasterFuncs->pfnGetNextCommandBuffer  = Crystal::Raster::GetNextCommandBuffer;
+    pOpenRasterizer->pRasterFuncs->pfnRingDoorbell          = Crystal::Raster::RingDoorbell;
 
     return true;
 }
@@ -23,15 +23,19 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void GetRingWriteInfo(
+        void GetNextCommandBuffer(
             RASTERCONTEXT_HANDLE handle,
             void* &pAddress,
             uint32_t& size )
         {
             Context* pContext = Context::FromHandle( handle );
 
-            pAddress = reinterpret_cast<void*>( pContext->GetRing()->Checkout() );
-            size     = pContext->GetRing()->CheckoutSize();
+            pContext->GetRing()->AdvanceProducer();
+
+            std::unique_ptr<Ring>& pRing = pContext->GetRing()->GetProducerRing();
+
+            pAddress = pRing->GetAddress();
+            size     = pRing->GetMaxSize();
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +45,10 @@ namespace Crystal
         {
             Context* pContext = Context::FromHandle( handle );
 
-            pContext->GetRing()->Commit( size );
+            RenderRing* pRenderRing = pContext->GetRing();
+
+            pRenderRing->GetProducerRing()->SetTail( size );
+            pRenderRing->ProducerDone();
         }
     }
 }

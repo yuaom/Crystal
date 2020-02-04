@@ -23,7 +23,7 @@ namespace Crystal
                 // Populate DDI Return Arguments
                 pCreateContext->hContext = pContext->GetHandle();
 
-                pContext->GetDmaBuffer(
+                pContext->GetNextCommandBuffer(
                     pCreateContext->pCommandBuffer,
                     pCreateContext->CommandBufferSize );
             }
@@ -69,13 +69,13 @@ namespace Crystal
         {
             m_pDevice->GetRasterFuncs()->pfnRingDoorbell(
                 m_hRasterContext,
-                writeSize / sizeof( uint32_t ) );
+                writeSize );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void Context::GetDmaBuffer( VOID*& pBuffer, UINT& maxSize )
+        void Context::GetNextCommandBuffer( VOID*& pBuffer, UINT& maxSize )
         {
-            m_pDevice->GetRasterFuncs()->pfnGetRingWriteInfo(
+            m_pDevice->GetRasterFuncs()->pfnGetNextCommandBuffer(
                 m_hRasterContext,
                 pBuffer,
                 maxSize );

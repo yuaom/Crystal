@@ -8,9 +8,9 @@ struct RASTERARGS_CREATECONTEXT
     RASTERCONTEXT_HANDLE    hHandle;    ///<< Raster Handle (out)
 };
 
-using PFNCREATECONTEXT      = bool( * )( RASTERARGS_CREATECONTEXT* args );
-using PFNGETRINGWRITEINFO   = void( * )( RASTERCONTEXT_HANDLE handle, void* &pAddress, uint32_t& size );
-using PFNRINGDOORBELL       = void( * )( RASTERCONTEXT_HANDLE handle, uint32_t size );
+using PFNCREATECONTEXT          = bool( * )( RASTERARGS_CREATECONTEXT* args );
+using PFNGETNEXTCOMMANDBUFFER   = void( * )( RASTERCONTEXT_HANDLE handle, void* &pAddress, uint32_t& size );
+using PFNRINGDOORBELL           = void( * )( RASTERCONTEXT_HANDLE handle, uint32_t size );
 
 ////////////////////////////////////////////////////////////////////////////////
 struct RASTER_FUNCTIONS
@@ -19,8 +19,8 @@ struct RASTER_FUNCTIONS
     PFNCREATECONTEXT    pfnCreateContext;
 
     // Ring Management
-    PFNGETRINGWRITEINFO pfnGetRingWriteInfo;
-    PFNRINGDOORBELL     pfnRingDoorbell;
+    PFNGETNEXTCOMMANDBUFFER pfnGetNextCommandBuffer;
+    PFNRINGDOORBELL         pfnRingDoorbell;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ namespace Crystal
     {
         bool CreateContext( RASTERARGS_CREATECONTEXT* pContext );
 
-        void GetRingWriteInfo( RASTERCONTEXT_HANDLE handle, void* &pAddress, uint32_t& size );
+        void GetNextCommandBuffer( RASTERCONTEXT_HANDLE handle, void* &pAddress, uint32_t& size );
         void RingDoorbell( RASTERCONTEXT_HANDLE handle, uint32_t size );
     }
 }

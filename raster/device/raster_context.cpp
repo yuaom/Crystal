@@ -25,7 +25,7 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         Context::Context() :
-            m_pRing( RenderRing::Create( 16 * KILOBYTE ) ),
+            m_pRenderRing( RenderRing::Create( 8, 64 * KILOBYTE ) ),
             m_ProducerExiting( false ),
             m_ConsumerThread( ConsumerStart, this )
         {
@@ -42,7 +42,7 @@ namespace Crystal
                 m_ConsumerThread.join();
             }
 
-            RenderRing::Destroy( m_pRing );
+            RenderRing::Destroy( m_pRenderRing );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -56,18 +56,19 @@ namespace Crystal
         {
             Utilities::SetThreadName( "CrystalRaster-Consumer" );
 
-            RenderRing*& pRing = pContext->m_pRing;
+            RenderRing*& pRenderRing = pContext->m_pRenderRing;
 
             while( !pContext->m_ProducerExiting )
             {
-                if( !pRing->Empty() )
+                if( !pRenderRing->IsEmpty() )
                 {
-                    uint32_t cmd = pRing->Get();
+                    pRenderRing->AdvanceConsumerHead();
 
-                    // do something with command
-                    std::stringstream s;
-                    s << "Consumer processed 0x" << std::hex << std::setw(8) << std::setfill('0') << cmd << std::endl;
-                    OutputDebugString( s.str().c_str() );
+                    std::unique_ptr<Ring>& pRing = pRenderRing->GetConsumerRing();
+
+                    //std::stringstream s;
+                    //s << "Consumer processed 0x" << std::hex << std::setw(8) << std::setfill('0') << cmd << std::endl;
+                    //OutputDebugString( s.str().c_str() );
                 }
                 else
                 {

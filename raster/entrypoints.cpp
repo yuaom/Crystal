@@ -30,9 +30,10 @@ namespace Crystal
         {
             Context* pContext = Context::FromHandle( handle );
 
-            pContext->GetRing()->AdvanceProducer();
+            RenderRing* pRenderRings = pContext->GetRing();
+            pRenderRings->AdvanceWriteHead();
 
-            std::unique_ptr<Ring>& pRing = pContext->GetRing()->GetProducerRing();
+            Ring::ptr_t& pRing = pRenderRings->GetWrite();
 
             pAddress = pRing->GetAddress();
             size     = pRing->GetMaxSize();
@@ -45,10 +46,10 @@ namespace Crystal
         {
             Context* pContext = Context::FromHandle( handle );
 
-            RenderRing* pRenderRing = pContext->GetRing();
+            RenderRing* pRenderRings = pContext->GetRing();
 
-            pRenderRing->GetProducerRing()->SetTail( size );
-            pRenderRing->ProducerDone();
+            pRenderRings->GetWrite()->SetTail( size );
+            pRenderRings->WriteComplete();
         }
     }
 }

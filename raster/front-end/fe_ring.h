@@ -8,19 +8,20 @@ namespace Crystal
         class Ring
         {
         public:
+            using ptr_t = std::unique_ptr<Ring>;
+
             Ring( uint32_t size );
             ~Ring();
 
-            void*       GetAddress() const;
+            void*       GetAddress();
             uint32_t    GetMaxSize() const;
 
             void        SetTail( uint32_t offset );
 
         private:
-            std::unique_ptr<uint32_t[]> m_CommandBuffer;
-            uint32_t                    m_Tail;
-            uint32_t                    m_Head;
-            uint32_t                    m_MaxSize;
+            std::vector<byte>   m_CommandBuffer;
+            uint32_t            m_Tail;
+            uint32_t            m_Head;
         };
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -31,13 +32,15 @@ namespace Crystal
 
             static void Destroy( RenderRing* &pRing );
 
-            void                    AdvanceProducer();
-            std::unique_ptr<Ring>&  GetProducerRing();
-            void                    ProducerDone();
+            void            AdvanceWriteHead();
+            void            AdvanceReadHead();
 
-            void                    AdvanceConsumerHead();
-            bool                    IsEmpty() const;
-            std::unique_ptr<Ring>&  GetConsumerRing();
+            void            WriteComplete();
+
+            Ring::ptr_t&    GetRead();
+            Ring::ptr_t&    GetWrite();
+
+            bool            HasWork() const;
 
         private:
 
@@ -48,9 +51,9 @@ namespace Crystal
             std::mutex                          m_Mutex;
             std::vector<std::unique_ptr<Ring>>  m_Rings;
 
-            uint32_t    m_ProducerHead;
-            uint32_t    m_ConsumerHead;
-            uint32_t    m_ConsumerTail;
+            uint32_t    m_WriteHead;
+            uint32_t    m_ReadHead;
+            uint32_t    m_ReadTail;
         };
     }
 }

@@ -7,29 +7,28 @@ namespace Crystal
     {
         ////////////////////////////////////////////////////////////////////////////////
         Ring::Ring( uint32_t size ) :
-            m_MaxSize( size ),
             m_Tail( 0 ),
             m_Head( 0 ),
-            m_CommandBuffer( std::make_unique<uint32_t[]>( size ) )
+            m_CommandBuffer( size, 0 )
         {
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         Ring::~Ring()
         {
-            m_CommandBuffer.release();
+
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void* Ring::GetAddress() const
+        void* Ring::GetAddress()
         {
-            return m_CommandBuffer.get();
+            return reinterpret_cast<void*>( &m_CommandBuffer );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         uint32_t Ring::GetMaxSize() const
         {
-            return m_MaxSize;
+            return m_CommandBuffer.size();
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -58,9 +57,9 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         RenderRing::RenderRing( uint32_t count, uint32_t size ) :
-            m_ProducerHead( -1 ),
-            m_ConsumerHead( -1 ),
-            m_ConsumerTail( -1 )
+            m_WriteHead( -1 ),
+            m_ReadHead( -1 ),
+            m_ReadTail( -1 )
         {
             assert( size % sizeof( uint32_t ) == 0 );
 
@@ -77,42 +76,45 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::AdvanceProducer()
+        void RenderRing::AdvanceWriteHead()
         {
-            m_ProducerHead = ( m_ProducerHead + 1 ) % m_Rings.size();
-        }
+            m_WriteHead = ( ++m_WriteHead ) % m_Rings.size();
 
-        ////////////////////////////////////////////////////////////////////////////////
-        std::unique_ptr<Ring>& RenderRing::GetProducerRing()
-        {
-            return m_Rings[m_ProducerHead];
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::ProducerDone()
-        {
-            m_ConsumerTail = m_ProducerHead;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        bool RenderRing::IsEmpty() const
-        {
-            return m_ConsumerHead == m_ConsumerTail;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-        void RenderRing::AdvanceConsumerHead()
-        {
-            if( !IsEmpty() )
+            while( m_WriteHead == m_ReadHead )
             {
-                m_ConsumerHead = ( m_ConsumerHead + 1 ) % m_Rings.size();
+                assert( 0 );
+                Sleep( 100 );
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        std::unique_ptr<Ring>& RenderRing::GetConsumerRing()
+        Ring::ptr_t& RenderRing::GetWrite()
         {
-            return m_Rings[m_ConsumerHead];
+            return m_Rings[m_WriteHead];
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void RenderRing::WriteComplete()
+        {
+            m_ReadTail = m_WriteHead;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        bool RenderRing::HasWork() const
+        {
+            return m_ReadHead != m_ReadTail;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void RenderRing::AdvanceReadHead()
+        {
+            m_ReadHead = ( ++m_ReadHead ) % m_Rings.size();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        Ring::ptr_t& RenderRing::GetRead()
+        {
+            return m_Rings[m_ReadHead];
         }
     }
 }

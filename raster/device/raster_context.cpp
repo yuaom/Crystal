@@ -60,11 +60,11 @@ namespace Crystal
 
             while( !pContext->m_ProducerExiting )
             {
-                if( !pRenderRing->IsEmpty() )
+                if( pRenderRing->HasWork() )
                 {
-                    pRenderRing->AdvanceConsumerHead();
+                    pRenderRing->AdvanceReadHead();
 
-                    std::unique_ptr<Ring>& pRing = pRenderRing->GetConsumerRing();
+                    Ring::ptr_t& pRing = pRenderRing->GetRead();
 
                     //std::stringstream s;
                     //s << "Consumer processed 0x" << std::hex << std::setw(8) << std::setfill('0') << cmd << std::endl;

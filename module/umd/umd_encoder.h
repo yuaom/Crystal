@@ -33,7 +33,6 @@ namespace Crystal
             Device* m_pDevice;
 
             std::vector<CommandBuffer*> m_CommandBuffers;
-            CommandBuffer*              m_pCurrent;
         };
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ namespace Crystal
 
             EnsureSpace( size );
 
-            CmdT* pData = reinterpret_cast<CmdT*>( m_pCurrent->GetSpace( size ) );
+            CmdT* pData = reinterpret_cast<CmdT*>( m_CommandBuffers.back()->GetSpace( size ) );
 
             if( pData )
             {

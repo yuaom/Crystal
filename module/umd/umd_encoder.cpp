@@ -12,7 +12,7 @@ namespace Crystal
         {
             Encoder* pEncoder = new Encoder( pDevice );
 
-            pEncoder->m_pCurrent = pInitialBuffer;
+            pEncoder->m_CommandBuffers.push_back( pInitialBuffer );
 
             return pEncoder;
         }
@@ -32,8 +32,7 @@ namespace Crystal
 
         ////////////////////////////////////////////////////////////////////////////////
         Encoder::Encoder( Device* pDevice ) :
-            m_pDevice( pDevice ),
-            m_pCurrent( nullptr )
+            m_pDevice( pDevice )
         {
 
         }
@@ -47,26 +46,17 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Encoder::Render()
         {
-            D3DDDICB_RENDER render;
-            ZeroMemory( &render, sizeof( render ) );
-
-            m_pDevice->Render( m_CommandBuffers.front() );
+            m_pDevice->Render( m_CommandBuffers.front()->SizeUsed() );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         void Encoder::EnsureSpace( uint32_t size )
         {
-            size += 0x40; // temporary
+            size += sizeof( Raster::COMMANDS::NEXT_COMMANDBUFFER );
 
-            if( m_pCurrent == nullptr )
+            if( !m_CommandBuffers.back()->HasSpace( size ) )
             {
-                m_pCurrent = CommandBuffer::Create( m_pDevice, size );
-                m_CommandBuffers.push_back( m_pCurrent );
-            }
-            else if( !m_pCurrent->HasSpace( size ) )
-            {
-                m_pCurrent = CommandBuffer::Create( m_pDevice, size );
-                m_CommandBuffers.push_back( m_pCurrent );
+                m_CommandBuffers.push_back( CommandBuffer::Create( m_pDevice, size ) );
             }
         }
     }

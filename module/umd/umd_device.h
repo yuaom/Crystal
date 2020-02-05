@@ -37,7 +37,7 @@ namespace Crystal
             void            Deallocate( D3DDDICB_DEALLOCATE& cb );
 
             // Render Callbacks
-            void Render( CommandBuffer* pCommandBuffer );
+            void Render( uint32_t size );
 
         private:
 
@@ -56,8 +56,6 @@ namespace Crystal
 
             // Submission
             HANDLE          m_ContextHandle;
-            CommandBuffer*  m_pRenderCommandBuffer;
-            Encoder*        m_pRenderEncoder;
 
             Adapter* m_pAdapter;
             Encoder* m_pEncoder;

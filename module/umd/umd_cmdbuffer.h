@@ -15,7 +15,7 @@ namespace Crystal
         {
         public:
             static CommandBuffer*   Create( Device* pDevice, uint32_t size );
-            static CommandBuffer*   Create( size_t placement, uint32_t size, CommandBuffer* pExisting = nullptr );
+            static CommandBuffer*   Create( size_t placement, uint32_t size );
             static void             Destroy( CommandBuffer* pCmdBuffer );
 
             byte*   GetSpace( uint32_t size );
@@ -25,7 +25,7 @@ namespace Crystal
             constexpr uint32_t  SizeUsed() const;
 
         private:
-            CommandBuffer( Device* pDevice = nullptr );
+            CommandBuffer( bool isPlaced, Device* pDevice );
 
             ~CommandBuffer();
 
@@ -36,6 +36,7 @@ namespace Crystal
             byte*       m_pBuffer;
             uint32_t    m_SizeTotal;
             uint32_t    m_SizeUsed;
+            const bool  m_IsPlaced;
 
             D3DKMT_HANDLE           m_AllocationHandle;
             GMM::ALLOCATION_INFO*   m_pAllocationInfo;

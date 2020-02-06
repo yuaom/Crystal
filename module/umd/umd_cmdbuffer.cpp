@@ -11,7 +11,7 @@ namespace Crystal
             Device* pDevice,
             uint32_t size )
         {
-            CommandBuffer* pCmdBuffer = new CommandBuffer( pDevice );
+            CommandBuffer* pCmdBuffer = new CommandBuffer( false, pDevice );
 
             if( size )
             {
@@ -24,12 +24,9 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         CommandBuffer* CommandBuffer::Create(
             size_t placement, 
-            uint32_t size,
-            CommandBuffer* pExisting )
+            uint32_t size )
         {
-            CommandBuffer* pCmdBuffer = ( pExisting )
-                ? new ( pExisting ) CommandBuffer()
-                : new CommandBuffer();
+            CommandBuffer* pCmdBuffer = new CommandBuffer( true, nullptr );
 
             pCmdBuffer->m_pBuffer   = reinterpret_cast<byte*>( placement );
             pCmdBuffer->m_SizeTotal = size;
@@ -40,17 +37,22 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void CommandBuffer::Destroy( CommandBuffer* pCmdBuffer )
         {
-            delete pCmdBuffer;
+            if( pCmdBuffer &&
+                !pCmdBuffer->m_IsPlaced )
+            {
+                delete pCmdBuffer;
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        CommandBuffer::CommandBuffer( Device* pDevice ) :
+        CommandBuffer::CommandBuffer( bool isPlaced, Device* pDevice ) :
             m_pDevice( pDevice ),
             m_pBuffer( nullptr ),
             m_SizeUsed( 0 ),
             m_SizeTotal( 0 ),
             m_pAllocationInfo( nullptr ),
-            m_AllocationHandle( 0 )
+            m_AllocationHandle( 0 ),
+            m_IsPlaced( isPlaced )
         {
         }
 

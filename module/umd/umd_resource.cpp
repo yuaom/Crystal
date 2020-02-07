@@ -113,5 +113,11 @@ namespace Crystal
 
             m_AllocationHandle = allocInfo.hAllocation;
         }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        size_t Resource::GetAddress() const
+        {
+            return m_pAllocationInfo->Address;
+        }
     }
 }

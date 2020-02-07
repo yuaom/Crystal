@@ -17,6 +17,7 @@ namespace Crystal
             static Resource*    FromHandle( DXGI_DDI_HRESOURCE handle );
 
             D3DKMT_HANDLE   GetAllocationHandle() const;
+            size_t          GetAddress() const;
 
         private:
 

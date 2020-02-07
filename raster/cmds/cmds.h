@@ -42,6 +42,23 @@ namespace Crystal
             };
 
             ////////////////////////////////////////////////////////////////////////////////
+            enum class SURFACE_TYPE
+            {
+                _1D,
+                _2D,
+                _3D,
+                LINEAR
+            };
+
+            ////////////////////////////////////////////////////////////////////////////////
+            /// @brief Clears a surface to an RGBA float4 value
+            struct SURFACE_VIEW
+            {
+                SURFACE_TYPE    Type;
+                size_t          Address;
+            };
+
+            ////////////////////////////////////////////////////////////////////////////////
             /// @brief Clears a surface to an RGBA float4 value
             struct CLEAR_RENDER_TARGET_VIEW
             {
@@ -52,9 +69,9 @@ namespace Crystal
                     Header.Length   = sizeof( CLEAR_RENDER_TARGET_VIEW ) / sizeof( uint32_t );
                 }
 
-                Header  Header;
-                size_t  Address;
-                float   ClearValues[4];
+                Header          Header;
+                SURFACE_VIEW    View;
+                float           ClearValues[4];
             };
         }
     }

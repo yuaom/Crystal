@@ -22,6 +22,8 @@ namespace Crystal
 
             constexpr Resource*  GetResource() const;
 
+            const RasterCommands::SURFACE_VIEW& GetView();
+
         private:
             RenderTargetView( 
                 const D3D10DDIARG_CREATERENDERTARGETVIEW* pCreateRenderTargetView, 
@@ -29,7 +31,15 @@ namespace Crystal
             ~RenderTargetView();
 
             D3D10DDI_HRTRENDERTARGETVIEW    m_RuntimeHandle;
+
             Resource*                       m_pResource;
+
+            // Creation parameters
+            DXGI_FORMAT                     m_Format;
+            D3D10DDIRESOURCE_TYPE           m_Type;
+
+            // HW State
+            RasterCommands::SURFACE_VIEW    m_View;
         };
 
         ////////////////////////////////////////////////////////////////////////////////

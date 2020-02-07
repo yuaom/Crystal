@@ -35,6 +35,7 @@ VOID WINAPI ClearRenderTargetView(
 
     RasterCommands::CLEAR_RENDER_TARGET_VIEW clear;
 
+    clear.View              = pRTV->GetView();
     clear.ClearValues[0]    = pColorRGBA[0];
     clear.ClearValues[1]    = pColorRGBA[1];
     clear.ClearValues[2]    = pColorRGBA[2];

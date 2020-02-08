@@ -17,6 +17,16 @@ namespace Crystal
             void RingDoorbell( uint32_t writeSize );
             void GetNextCommandBuffer( VOID*& pBuffer, UINT& maxSize );
 
+            __declspec( align( 64 ) ) volatile LONG64   m_RenderFenceGPU;
+            __declspec( align( 64 ) ) LONG64            m_RenderFenceCPU;
+
+            void*           m_pCurrentCommandBuffer;
+
+            struct RenderEpilog
+            {
+                Crystal::Raster::COMMANDS::ATOMIC_WRITE fenceUpdate;
+            };
+
         private:
 
             Context( D3DKMT_CREATECONTEXT* pCreateContext );

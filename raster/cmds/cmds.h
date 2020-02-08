@@ -14,6 +14,7 @@ namespace Crystal
             enum class COMMAND_TYPE
             {
                 NOOP = 0,
+                ATOMIC_WRITE,
                 NEXT_COMMANDBUFFER,
                 CLEAR_RTV
             };
@@ -74,6 +75,22 @@ namespace Crystal
                 Header          Header;
                 SURFACE_VIEW    View;
                 float           ClearValues[4];
+            };
+
+            ////////////////////////////////////////////////////////////////////////////////
+            /// @brief Atomically writes a value to the address
+            struct ATOMIC_WRITE
+            {
+                ATOMIC_WRITE()
+                {
+                    ZeroMemory( this, sizeof( ATOMIC_WRITE ) );
+                    Header.Type     = COMMAND_TYPE::ATOMIC_WRITE;
+                    Header.Length   = sizeof( ATOMIC_WRITE ) / sizeof( uint32_t );
+                }
+
+                Header              Header;
+                volatile LONG64*    Address;
+                LONG64              Value;
             };
         }
     }

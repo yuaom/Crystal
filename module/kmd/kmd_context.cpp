@@ -47,7 +47,10 @@ namespace Crystal
             m_ClientHint( pCreateContext->ClientHint ),
             m_Flags( pCreateContext->Flags ),
             m_pDevice( Device::FromHandle( pCreateContext->hDevice ) ),
-            m_hRasterContext( 0 )
+            m_hRasterContext( 0 ),
+            m_RenderFenceGPU( 0 ),
+            m_RenderFenceCPU( 0 ),
+            m_pCurrentCommandBuffer( nullptr )
         {
 
         }
@@ -79,6 +82,8 @@ namespace Crystal
                 m_hRasterContext,
                 pBuffer,
                 maxSize );
+
+            m_pCurrentCommandBuffer = pBuffer;
         }
     }
 }

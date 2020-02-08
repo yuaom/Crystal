@@ -68,6 +68,24 @@ namespace Crystal
         }
 
         ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Allocation::GetWidth() const
+        {
+            return m_pAllocationInfo->Mip0TexelWidth;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Allocation::GetHeight() const
+        {
+            return m_pAllocationInfo->Mip0TexelHeight;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Allocation::GetBitsPerPixel() const
+        {
+            return m_pAllocationInfo->BitsPerPixel;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
         void Allocation::Allocate()
         {
             void* cpuAddress = VirtualAlloc( 

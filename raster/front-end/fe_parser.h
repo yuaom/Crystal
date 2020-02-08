@@ -9,5 +9,6 @@ namespace Crystal
 
         void Execute_NextCommandBuffer( COMMANDS::NEXT_COMMANDBUFFER* pCmd );
         void Execute_ClearRTV( COMMANDS::CLEAR_RENDER_TARGET_VIEW* pCmd );
+        void Execute_AtomicWrite( COMMANDS::ATOMIC_WRITE* pCmd );
     }
 }

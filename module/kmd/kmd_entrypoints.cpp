@@ -3,6 +3,7 @@
 #include "kmd_adapter.h"
 #include "kmd_device.h"
 #include "kmd_context.h"
+#include "kmd_allocation.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDevice )
@@ -162,24 +163,66 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
 
     if( pPresent->Flags.Blt )
     {
-        // Fake ClearRenderTargetView ( doesn't work )
-        RECT rc = { 0 };
-        GetClientRect( pPresent->hWindow, &rc );
+        Crystal::KMD::Context* pContext = Crystal::KMD::Context::FromHandle( pPresent->hContext );
+
+        // For now just synchronize the CPU/GPU, but later will
+        // wait on the presentable surface
+        while( pContext->m_RenderFenceCPU != pContext->m_RenderFenceGPU ) Sleep( 1 );
+
+        Crystal::KMD::Allocation* pAllocation = Crystal::KMD::Allocation::FromHandle( pPresent->hSource );
 
         HDC dc = ::GetDC( pPresent->hWindow );
-        HDC mdc = CreateCompatibleDC( dc );
-        HBITMAP hBmp = CreateCompatibleBitmap( dc, rc.right - rc.left, rc.bottom - rc.top );
-        SelectObject( mdc, hBmp );
+        HDC srcDC = CreateCompatibleDC( dc );
 
-        COLORREF color = RGB( 53, 94, 184 );
-        HBRUSH brush = CreateSolidBrush( color );
+        //BITMAPINFO info;
+        //ZeroMemory( &info, sizeof( BITMAPINFO ) );
+        //info.bmiHeader.biSize           = sizeof( BITMAPINFO );
+        //info.bmiHeader.biWidth          = pAllocation->GetWidth();
+        //info.bmiHeader.biHeight         = -pAllocation->GetHeight();
+        //info.bmiHeader.biPlanes         = 1;
+        //info.bmiHeader.biBitCount       = pAllocation->GetBitsPerPixel();
+        //info.bmiHeader.biCompression    = BI_RGB;
+        BITMAPV5HEADER info;
+        memset( &info, 0, sizeof( BITMAPV5HEADER ) );
+        info.bV5Size        = sizeof( BITMAPV5HEADER );
+        info.bV5Width       = pAllocation->GetWidth();
+        info.bV5Height      = -pAllocation->GetHeight();
+        info.bV5Planes      = 1;
+        info.bV5BitCount    = 32;
+        info.bV5Compression = BI_RGB;
+        info.bV5AlphaMask   = 0xFF000000;
+        info.bV5RedMask     = 0x00FF0000;
+        info.bV5GreenMask   = 0x0000FF00;
+        info.bV5BlueMask    = 0x000000FF;
 
-        int result = FillRect( dc, &rc, brush );
-        assert( result != 0 );
+        uint64_t srcData = pAllocation->GetAddress();
 
-        DeleteObject( brush );
-        DeleteObject( hBmp );
-        DeleteDC( mdc );
+        HBITMAP hSrcBitmap = CreateDIBSection( 
+            dc,
+            reinterpret_cast<BITMAPINFO*>( &info ),
+            DIB_RGB_COLORS, 
+            reinterpret_cast<void**>( srcData ),
+            NULL, 
+            0 );
+
+        if( hSrcBitmap )
+        {
+            SelectObject( srcDC, hSrcBitmap );
+
+            BOOL success = BitBlt( dc,
+                0, 
+                0, 
+                pAllocation->GetWidth(),
+                pAllocation->GetHeight(),
+                srcDC, 
+                0, 
+                0, 
+                SRCCOPY );
+
+            assert( success );
+        }
+
+        DeleteDC( srcDC );
         ReleaseDC( pPresent->hWindow, dc );
     }
     

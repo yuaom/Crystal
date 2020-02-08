@@ -119,5 +119,17 @@ namespace Crystal
         {
             return m_pAllocationInfo->Address;
         }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Resource::GetWidth() const
+        {
+            return m_pAllocationInfo->Mip0TexelWidth;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Resource::GetHeight() const
+        {
+            return m_pAllocationInfo->Mip0TexelHeight;
+        }
     }
 }

@@ -56,6 +56,8 @@ namespace Crystal
             {
                 SURFACE_TYPE    Type;
                 size_t          Address;
+                uint32_t        Width;
+                uint32_t        Height;
             };
 
             ////////////////////////////////////////////////////////////////////////////////

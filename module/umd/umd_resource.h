@@ -18,6 +18,8 @@ namespace Crystal
 
             D3DKMT_HANDLE   GetAllocationHandle() const;
             size_t          GetAddress() const;
+            uint32_t        GetWidth() const;
+            uint32_t        GetHeight() const;
 
         private:
 

@@ -99,7 +99,7 @@ namespace Crystal
                 m_pAllocationInfo->Address = reinterpret_cast<size_t>( cpuAddress );
 
                 #if defined(_DEBUG)
-                FillMemory( cpuAddress, m_pAllocationInfo->Size, 0xCC );
+                FillMemory( cpuAddress, m_pAllocationInfo->Size, 0xFF );
                 #endif
             }
             else

@@ -32,16 +32,18 @@ namespace Crystal
             COMMANDS::SURFACE_VIEW& view = pCmd->View;
             byte* pColorBuffer = reinterpret_cast<byte*>( view.Address );
 
-            for( uint32_t j = 0; j < view.Height; j++ )
+            for( uint32_t row = 0; row < view.Height; row++ )
             {
-                for( uint32_t i = 0; i < view.Width; i++ )
-                {
-                    byte* pixel = &pColorBuffer[j * view.Width + i * 4];
+                uint32_t pitch_offset = 4 * view.Width * row;
 
-                    pixel[0] = static_cast<byte>( 255 * pCmd->ClearValues[0] );
-                    pixel[1] = static_cast<byte>( 255 * pCmd->ClearValues[1] );
-                    pixel[2] = static_cast<byte>( 255 * pCmd->ClearValues[2] );
-                    pixel[3] = static_cast<byte>( 255 * pCmd->ClearValues[3] );
+                for( uint32_t col = 0; col < view.Width; col++ )
+                {
+                    byte* pixel = pColorBuffer + pitch_offset + col * 4;
+
+                    pixel[3] = static_cast<byte>( 255 * pCmd->ClearValues[0] );
+                    pixel[2] = static_cast<byte>( 255 * pCmd->ClearValues[1] );
+                    pixel[1] = static_cast<byte>( 255 * pCmd->ClearValues[2] );
+                    pixel[0] = static_cast<byte>( 255 * pCmd->ClearValues[3] );
                 }
             }
         }

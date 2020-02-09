@@ -160,6 +160,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateContextVirtual( D3DKMT_CREATECONTEXTVIRTU
 EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
 {
     LOG_DLL_ENTRY;
+    NTSTATUS result = STATUS_SUCCESS;
 
     if( pPresent->Flags.Blt )
     {
@@ -171,62 +172,67 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
 
         Crystal::KMD::Allocation* pAllocation = Crystal::KMD::Allocation::FromHandle( pPresent->hSource );
 
-        HDC dc = ::GetDC( pPresent->hWindow );
-        HDC srcDC = CreateCompatibleDC( dc );
+        HDC dstDC = GetDC( pPresent->hWindow );
 
-        //BITMAPINFO info;
-        //ZeroMemory( &info, sizeof( BITMAPINFO ) );
-        //info.bmiHeader.biSize           = sizeof( BITMAPINFO );
-        //info.bmiHeader.biWidth          = pAllocation->GetWidth();
-        //info.bmiHeader.biHeight         = -pAllocation->GetHeight();
-        //info.bmiHeader.biPlanes         = 1;
-        //info.bmiHeader.biBitCount       = pAllocation->GetBitsPerPixel();
-        //info.bmiHeader.biCompression    = BI_RGB;
-        BITMAPV5HEADER info;
-        memset( &info, 0, sizeof( BITMAPV5HEADER ) );
-        info.bV5Size        = sizeof( BITMAPV5HEADER );
-        info.bV5Width       = pAllocation->GetWidth();
-        info.bV5Height      = -pAllocation->GetHeight();
-        info.bV5Planes      = 1;
-        info.bV5BitCount    = 32;
-        info.bV5Compression = BI_RGB;
-        info.bV5AlphaMask   = 0xFF000000;
-        info.bV5RedMask     = 0x00FF0000;
-        info.bV5GreenMask   = 0x0000FF00;
-        info.bV5BlueMask    = 0x000000FF;
+        void* pSrcData = reinterpret_cast<void*>( pAllocation->GetAddress() );
 
-        uint64_t srcData = pAllocation->GetAddress();
+        D3DKMT_CREATEDCFROMMEMORY dcFromMem;
+        ZeroMemory( &dcFromMem, sizeof( D3DKMT_CREATEDCFROMMEMORY ) );
+        dcFromMem.pMemory       = pSrcData;
+        dcFromMem.Format        = D3DDDIFMT_A8R8G8B8;
+        dcFromMem.Width         = pAllocation->GetWidth();
+        dcFromMem.Height        = pAllocation->GetHeight();
+        dcFromMem.Pitch         = pAllocation->GetWidth() * pAllocation->GetBitsPerPixel() / 8;
+        dcFromMem.hDeviceDc     = CreateDCW( L"DISPLAY", NULL, NULL, NULL );
 
-        HBITMAP hSrcBitmap = CreateDIBSection( 
-            dc,
-            reinterpret_cast<BITMAPINFO*>( &info ),
-            DIB_RGB_COLORS, 
-            reinterpret_cast<void**>( srcData ),
-            NULL, 
-            0 );
+        result = D3DKMTCreateDCFromMemory( &dcFromMem );
 
-        if( hSrcBitmap )
+        if( SUCCEEDED( result ) )
         {
-            SelectObject( srcDC, hSrcBitmap );
+            RECT dstRect = { 0 };
+            RECT srcRect = { 0 };
 
-            BOOL success = BitBlt( dc,
-                0, 
-                0, 
-                pAllocation->GetWidth(),
-                pAllocation->GetHeight(),
-                srcDC, 
-                0, 
-                0, 
+            if( pPresent->Flags.DstRectValid )
+            {
+                dstRect = pPresent->DstRect;
+            }
+            else
+            {
+                GetClientRect( pPresent->hWindow, &dstRect );
+            }
+
+            if( pPresent->Flags.SrcRectValid )
+            {
+                srcRect = pPresent->SrcRect;
+            }
+
+            BOOL success = BitBlt(
+                dstDC,
+                dstRect.left,
+                dstRect.top,
+                dstRect.right - dstRect.left,
+                dstRect.bottom - dstRect.top,
+                dcFromMem.hDc,
+                srcRect.left,
+                srcRect.top,
                 SRCCOPY );
 
-            assert( success );
+            if( !success )
+            {
+                result = E_FAIL;
+            }
         }
 
-        DeleteDC( srcDC );
-        ReleaseDC( pPresent->hWindow, dc );
+        D3DKMT_DESTROYDCFROMMEMORY destroyMem;
+        ZeroMemory( &destroyMem, sizeof( D3DKMT_DESTROYDCFROMMEMORY ));
+        destroyMem.hBitmap  = dcFromMem.hBitmap;
+        destroyMem.hDc      = dcFromMem.hDc;
+
+        D3DKMTDestroyDCFromMemory( &destroyMem );
+        ReleaseDC( pPresent->hWindow, dstDC );
     }
     
-    return STATUS_SUCCESS;
+    return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

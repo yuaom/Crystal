@@ -52,10 +52,12 @@ namespace Crystal
             case D3D10DDIRESOURCE_TEXTURE1D:
                 break;
             case D3D10DDIRESOURCE_TEXTURE2D:
-                m_View.Address  = m_pResource->GetAddress();
-                m_View.Type     = RasterCommands::SURFACE_TYPE::_2D;
-                m_View.Width    = m_pResource->GetWidth();
-                m_View.Height   = m_pResource->GetHeight();
+                m_View.Address      = m_pResource->GetAddress();
+                m_View.Type         = RasterCommands::SURFACE_TYPE::_2D;
+                m_View.Width        = m_pResource->GetWidth();
+                m_View.Height       = m_pResource->GetHeight();
+                m_View.Pitch        = m_pResource->GetPitch();
+                m_View.BitsPerPixel = m_pResource->GetBitsPerPixel();
                 break;
             case D3D10DDIRESOURCE_TEXTURE3D:
                 break;

@@ -59,6 +59,8 @@ namespace Crystal
                 size_t          Address;
                 uint32_t        Width;
                 uint32_t        Height;
+                uint32_t        Pitch;
+                uint32_t        BitsPerPixel;
             };
 
             ////////////////////////////////////////////////////////////////////////////////

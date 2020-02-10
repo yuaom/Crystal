@@ -28,6 +28,8 @@ namespace Crystal
                 uint32_t mipWidth   = pInfo->Mip0TexelWidth;
                 uint32_t mipHeight  = pInfo->Mip0TexelHeight;
 
+                pInfo->Pitch = pInfo->BitsPerPixel / 8 * mipWidth;
+
                 for( uint32_t i = 0; i < pInfo->MipLevels; i++ )
                 {
                     size += Bpp * mipWidth * mipHeight * pInfo->ArraySlices;

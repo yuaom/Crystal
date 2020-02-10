@@ -21,24 +21,26 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Execute_NextCommandBuffer( COMMANDS::NEXT_COMMANDBUFFER* pCmd )
         {
-            OutputDebugString( "NEXT_COMMAND_BUFFER\n" );
+            //OutputDebugString( "NEXT_COMMAND_BUFFER\n" );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         void Execute_ClearRTV( COMMANDS::CLEAR_RENDER_TARGET_VIEW* pCmd )
         {
-            OutputDebugString( "CLEAR_RENDER_TARGET_VIEW\n" );
+            //OutputDebugString( "CLEAR_RENDER_TARGET_VIEW\n" );
 
             COMMANDS::SURFACE_VIEW& view = pCmd->View;
+            uint32_t Bpp = view.BitsPerPixel / 8;
+
             byte* pColorBuffer = reinterpret_cast<byte*>( view.Address );
 
             for( uint32_t row = 0; row < view.Height; row++ )
             {
-                uint32_t pitch_offset = 4 * view.Width * row;
+                uint32_t row_offset = row * view.Pitch;
 
                 for( uint32_t col = 0; col < view.Width; col++ )
                 {
-                    byte* pixel = pColorBuffer + pitch_offset + col * 4;
+                    byte* pixel = pColorBuffer + row_offset + col * Bpp;
 
                     pixel[3] = static_cast<byte>( 255 * pCmd->ClearValues[0] );
                     pixel[2] = static_cast<byte>( 255 * pCmd->ClearValues[1] );
@@ -51,7 +53,7 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Execute_AtomicWrite( COMMANDS::ATOMIC_WRITE* pCmd )
         {
-            OutputDebugString( "ATOMIC_WRITE\n" );
+            //OutputDebugString( "ATOMIC_WRITE\n" );
             InterlockedExchange64( pCmd->Address, pCmd->Value );
         }
     }

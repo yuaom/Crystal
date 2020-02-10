@@ -131,5 +131,17 @@ namespace Crystal
         {
             return m_pAllocationInfo->Mip0TexelHeight;
         }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Resource::GetPitch() const
+        {
+            return m_pAllocationInfo->Pitch;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        uint32_t Resource::GetBitsPerPixel() const
+        {
+            return m_pAllocationInfo->BitsPerPixel;
+        }
     }
 }

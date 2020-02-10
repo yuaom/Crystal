@@ -20,6 +20,8 @@ namespace Crystal
             size_t          GetAddress() const;
             uint32_t        GetWidth() const;
             uint32_t        GetHeight() const;
+            uint32_t        GetPitch() const;
+            uint32_t        GetBitsPerPixel() const;
 
         private:
 

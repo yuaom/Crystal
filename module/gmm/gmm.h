@@ -32,6 +32,7 @@ namespace Crystal
             // @create
             uint32_t            Size;
             uint32_t            BitsPerPixel;
+            uint32_t            Pitch;
 
             // @map
             size_t              Address;

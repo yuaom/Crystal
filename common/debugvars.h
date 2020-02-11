@@ -8,6 +8,10 @@ namespace Crystal
 {
     namespace Common
     {
+        ////////////////////////////////////////////////////////////////////////////////
+        /// @brief DebugVariables structure
+        /// @description Supported debug variables include:
+        ///     EnableLog = <MESSAGE_TYPE> ( see log.h )
         struct DebugVariables
         {
         public:

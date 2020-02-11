@@ -40,10 +40,10 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Log::Message( MESSAGE_TYPE type, const char* str )
         {
-            if( DV_VALUE( EnableLog ) )
+            if( DV_VALUE( EnableLog ) & type )
             {
                 std::stringstream s;
-                s << "CRYSTAL : Module : ";
+                s << "CRYSTAL : ";
 
                 switch( type )
                 {

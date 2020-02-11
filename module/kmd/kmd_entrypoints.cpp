@@ -4,6 +4,7 @@
 #include "kmd_device.h"
 #include "kmd_context.h"
 #include "kmd_allocation.h"
+#include "kmd_display.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDevice )
@@ -38,10 +39,12 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 {
     LOG_DLL_ENTRY;
 
-    auto& pDisplays = Crystal::Displays::get();
+    using displays_t = Crystal::KMD::Displays;
 
-    Crystal::Displays::find_result_itr_t display;
-    if( pDisplays->FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
+    displays_t displays = displays_t();
+
+    displays_t::find_result_itr_t display;
+    if( displays.FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
     {
         auto& pKmdAdapterManger = Crystal::KMD::KmdAdapterManager::get();
 

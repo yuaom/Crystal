@@ -17,9 +17,6 @@ BOOL WINAPI DllMain(
         Crystal::Common::DebugVariables::OnDllProcessAttach();
         Crystal::Common::Log::OnDllProcessAttach();
 
-        // Load generic managers
-        Crystal::Displays::OnDllProcessAttach();
-
         // Load top level managers
         Crystal::KMD::KmtHandleManager::OnDllProcessAttach();
         Crystal::KMD::KmdAdapterManager::OnDllProcessAttach();
@@ -35,8 +32,6 @@ BOOL WINAPI DllMain(
         // Go in reverse order
         Crystal::KMD::KmdAdapterManager::OnDllProcessDetach();
         Crystal::KMD::KmtHandleManager::OnDllProcessDetach();
-
-        Crystal::Displays::OnDllProcessDetach();
 
         Crystal::Common::Log::OnDllProcessDetach();
         Crystal::Common::DebugVariables::OnDllProcessDetach();

@@ -33,5 +33,3 @@ extern HINSTANCE    g_hInstance;
 
 // Project: Common
 #include "../common/common.h"
-
-#include "display.h"

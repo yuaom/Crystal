@@ -14,8 +14,8 @@ BOOL WINAPI DllMain(
         g_hInstance = instance;
 
         // Load instrumentation and logging
-        Crystal::DebugVariables::OnDllProcessAttach();
-        Crystal::Log::OnDllProcessAttach();
+        Crystal::Common::DebugVariables::OnDllProcessAttach();
+        Crystal::Common::Log::OnDllProcessAttach();
 
         // Load generic managers
         Crystal::Displays::OnDllProcessAttach();
@@ -38,8 +38,8 @@ BOOL WINAPI DllMain(
 
         Crystal::Displays::OnDllProcessDetach();
 
-        Crystal::Log::OnDllProcessDetach();
-        Crystal::DebugVariables::OnDllProcessDetach();
+        Crystal::Common::Log::OnDllProcessDetach();
+        Crystal::Common::DebugVariables::OnDllProcessDetach();
 
         g_hInstance = NULL;
         break;

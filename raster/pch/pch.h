@@ -18,16 +18,7 @@
 
 #include <Windows.h>
 
-#define KILOBYTE    ( 1024 )
-#define MEGABYTE    ( 1024 * KILOBYTE )
-#define PAGE_SIZE   ( 4 * KILOBYTE )
+// Project: Common
+#include "../../common/common.h"
 
-namespace Utilities
-{
-    bool GetEnvironmentVariable( const std::wstring& name, std::wstring& out );
-    void SetThreadName( const char* threadName );
-}
-
-#include "log.h"
-#include "debugvars.h"
 #include "../entrypoints.h"

@@ -29,17 +29,9 @@ namespace RasterCommands = Crystal::Raster::COMMANDS;
 #include <ntstatus.h>
 #pragma warning( pop )
 
-#define KILOBYTE    ( 1024 )
-#define MEGABYTE    ( 1024 * KILOBYTE )
-#define PAGE_SIZE   ( 4 * KILOBYTE )
-
-namespace Utilities
-{
-    bool GetEnvironmentVariable( const std::wstring& name, std::wstring& out );
-}
-
 extern HINSTANCE    g_hInstance;
 
-#include "log.h"
-#include "debugvars.h"
+// Project: Common
+#include "../common/common.h"
+
 #include "display.h"

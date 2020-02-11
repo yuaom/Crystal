@@ -1,12 +1,8 @@
 set( PCH_HEADERS
-	log.h
-	debugvars.h
 	pch.h
 	)
 
 set( PCH_SOURCE 
-	log.cpp
-	debugvars.cpp
 	)
 
 set_source_files_properties( pch.cpp PROPERTIES COMPILE_FLAGS "/Ycpch.h" )

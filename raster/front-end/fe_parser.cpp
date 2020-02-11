@@ -21,13 +21,13 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Execute_NextCommandBuffer( COMMANDS::NEXT_COMMANDBUFFER* pCmd )
         {
-            //OutputDebugString( "NEXT_COMMAND_BUFFER\n" );
+            LOG_RASTER_COMMAND( "NEXT_COMMAND_BUFFER" );
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         void Execute_ClearRTV( COMMANDS::CLEAR_RENDER_TARGET_VIEW* pCmd )
         {
-            //OutputDebugString( "CLEAR_RENDER_TARGET_VIEW\n" );
+            LOG_RASTER_COMMAND( "CLEAR_RENDER_TARGET_VIEW" );
 
             COMMANDS::SURFACE_VIEW& view = pCmd->View;
             uint32_t Bpp = view.BitsPerPixel / 8;
@@ -53,7 +53,8 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Execute_AtomicWrite( COMMANDS::ATOMIC_WRITE* pCmd )
         {
-            //OutputDebugString( "ATOMIC_WRITE\n" );
+            LOG_RASTER_COMMAND( "ATOMIC_WRITE" );
+
             InterlockedExchange64( pCmd->Address, pCmd->Value );
         }
     }

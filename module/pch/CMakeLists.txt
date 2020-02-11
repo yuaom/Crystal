@@ -1,13 +1,9 @@
 set( PCH_HEADERS
-	log.h
-	debugvars.h
 	display.h
 	pch.h
 	)
 
 set( PCH_SOURCE 
-	log.cpp
-	debugvars.cpp
 	display.cpp
 	)
 

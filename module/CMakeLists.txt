@@ -23,8 +23,10 @@ set_target_properties( CrystalDLL PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 get_target_property( CRYSTALDLL_FILES CrystalDLL SOURCES )
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${CRYSTALDLL_FILES} )
+target_link_libraries( CrystalDLL PUBLIC $<TARGET_FILE:Common> )
 target_link_libraries( CrystalDLL PUBLIC $<TARGET_FILE:Crystal> )
 add_dependencies( CrystalDLL Crystal )
+add_dependencies( CrystalDLL Common )
 
 # Copy include directories from the Cyrstal LIB
 get_target_property(CRYSTAL_INCLUDES Crystal INCLUDE_DIRECTORIES )

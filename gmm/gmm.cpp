@@ -1,5 +1,5 @@
-#include "pch.h"
 #include "gmm.h"
+#include <assert.h>
 
 namespace Crystal
 {

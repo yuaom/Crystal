@@ -1,7 +1,7 @@
 #include "pch.h"
+#include "../gmm/gmm.h"
 #include "kmd_handles.h"
 #include "kmd_allocation.h"
-#include "gmm.h"
 #include "kmd_privatedata.h"
 
 namespace Crystal

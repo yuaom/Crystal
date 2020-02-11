@@ -1,5 +1,5 @@
 #pragma once
-#include "gmm.h"
+#include "../gmm/gmm.h"
 #include "kmd_privatedata.h"
 #include "kmd_handles.h"
 

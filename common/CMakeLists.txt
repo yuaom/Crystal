@@ -1,4 +1,4 @@
-# Raster Library
+# Common Library
 file(GLOB _HEADERS "*.h")
 file(GLOB _SOURCE "*.cpp")
 add_library( Common STATIC ${_HEADERS} ${_SOURCE} )

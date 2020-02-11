@@ -33,6 +33,7 @@ set_target_properties( gtest_main PROPERTIES FOLDER "Tests//Google")
 
 # Add projects
 add_subdirectory( common )
+add_subdirectory( gmm )
 add_subdirectory( module )
 add_subdirectory( benchmarks )
 add_subdirectory( tests )

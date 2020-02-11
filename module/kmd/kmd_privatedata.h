@@ -1,5 +1,5 @@
 #pragma once
-#include "gmm.h"
+#include "../gmm/gmm.h"
 
 namespace Crystal
 {

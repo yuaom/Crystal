@@ -1,4 +1,7 @@
 #pragma once
+#include <cstdint>
+#include <Windows.h>
+#include <d3d10umddi.h>
 
 namespace Crystal
 {

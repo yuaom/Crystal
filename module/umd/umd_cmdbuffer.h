@@ -1,6 +1,6 @@
 #pragma once
 #include "umd_device.h"
-#include "gmm.h"
+#include "../gmm/gmm.h"
 
 namespace Crystal
 {

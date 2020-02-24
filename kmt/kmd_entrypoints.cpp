@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "kmd_entrypoints.h"
-#include "kmd_adapter.h"
-#include "kmd_device.h"
-#include "kmd_context.h"
-#include "kmd_allocation.h"
-#include "kmd_display.h"
+#include "objects/kmd_adapter.h"
+#include "objects/kmd_device.h"
+#include "objects/kmd_context.h"
+#include "objects/kmd_allocation.h"
+#include "objects/kmd_display.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDevice )

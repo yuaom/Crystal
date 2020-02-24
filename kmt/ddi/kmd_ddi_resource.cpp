@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "kmd_resource.h"
-#include "kmd_privatedata.h"
+#include "../objects/kmd_resource.h"
+#include "../objects/kmd_privatedata.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateAllocation( D3DKMT_CREATEALLOCATION* pCreateAllocation )

@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "../gmm/gmm.h"
-#include "kmd_handles.h"
-#include "kmd_allocation.h"
-#include "kmd_privatedata.h"
+#include "kmt_handles.h"
+#include "kmt_allocation.h"
+#include "kmt_privatedata.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         Allocation* Allocation::Create( D3DDDI_ALLOCATIONINFO* pInfo )

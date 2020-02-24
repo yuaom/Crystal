@@ -1,9 +1,9 @@
 #pragma once
-#include "kmd_handles.h"
+#include "kmt_handles.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         class Device : public KmtObject<Device>

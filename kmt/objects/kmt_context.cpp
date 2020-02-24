@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "kmd_context.h"
+#include "kmt_context.h"
 
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         Context* Context::Create( D3DKMT_CREATECONTEXT* pCreateContext )

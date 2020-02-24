@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "objects/kmd_adapter.h"
-#include "objects/kmd_handles.h"
-#include "kmd_entrypoints.h"
+#include "objects/kmt_adapter.h"
+#include "objects/kmt_handles.h"
+#include "kmt_entrypoints.h"
 
 BOOL WINAPI DllMain(
     HINSTANCE const instance,
@@ -11,15 +11,13 @@ BOOL WINAPI DllMain(
     switch( reason )
     {
     case DLL_PROCESS_ATTACH:
-        g_hInstance = instance;
-
         // Load instrumentation and logging
         Crystal::Common::DebugVariables::OnDllProcessAttach();
         Crystal::Common::Log::OnDllProcessAttach();
 
         // Load top level managers
-        Crystal::KMD::KmtHandleManager::OnDllProcessAttach();
-        Crystal::KMD::KmdAdapterManager::OnDllProcessAttach();
+        Crystal::KMT::KmtHandleManager::OnDllProcessAttach();
+        Crystal::KMT::KmtAdapterManager::OnDllProcessAttach();
         break;
 
     case DLL_THREAD_ATTACH:
@@ -30,13 +28,11 @@ BOOL WINAPI DllMain(
 
     case DLL_PROCESS_DETACH:
         // Go in reverse order
-        Crystal::KMD::KmdAdapterManager::OnDllProcessDetach();
-        Crystal::KMD::KmtHandleManager::OnDllProcessDetach();
+        Crystal::KMT::KmtAdapterManager::OnDllProcessDetach();
+        Crystal::KMT::KmtHandleManager::OnDllProcessDetach();
 
         Crystal::Common::Log::OnDllProcessDetach();
         Crystal::Common::DebugVariables::OnDllProcessDetach();
-
-        g_hInstance = NULL;
         break;
     }
 

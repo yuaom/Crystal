@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "kmd_resource.h"
-#include "kmd_handles.h"
+#include "kmt_resource.h"
+#include "kmt_handles.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         Resource* Resource::Create( D3DKMT_CREATEALLOCATION* pCreateResource )

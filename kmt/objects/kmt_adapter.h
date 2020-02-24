@@ -2,15 +2,15 @@
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
-        class KmdAdapter
+        class KmtAdapter
         {
         public:
-            KmdAdapter( const LUID& luid );
+            KmtAdapter( const LUID& luid );
 
-            ~KmdAdapter();
+            ~KmtAdapter();
 
             D3DKMT_HANDLE   GetHandle();
             const LUID&     GetLUID();
@@ -22,37 +22,37 @@ namespace Crystal
         };
 
         ////////////////////////////////////////////////////////////////////////////////
-        class KmdAdapterManager
+        class KmtAdapterManager
         {
         public:
             static void OnDllProcessAttach();
 
             static void OnDllProcessDetach();
 
-            static std::unique_ptr<KmdAdapterManager>& get();
+            static std::unique_ptr<KmtAdapterManager>& get();
 
-            KmdAdapterManager();
+            KmtAdapterManager();
 
-            ~KmdAdapterManager();
+            ~KmtAdapterManager();
 
             template< typename ... ParamsT >
-            KmdAdapter* CreateAdapter( ParamsT&&... p );
+            KmtAdapter* CreateAdapter( ParamsT&&... p );
 
         private:
 
-            static std::unique_ptr<KmdAdapterManager> m_pAdapters;
+            static std::unique_ptr<KmtAdapterManager> m_pAdapters;
 
-            std::vector<KmdAdapter*>    m_Adapters;
+            std::vector<KmtAdapter*>    m_Adapters;
         };
 
         ////////////////////////////////////////////////////////////////////////////////
         template< typename... ParamsT >
-        KmdAdapter* KmdAdapterManager::CreateAdapter( ParamsT&&... p )
+        KmtAdapter* KmtAdapterManager::CreateAdapter( ParamsT&&... p )
         {
             LUID luid = { 0 };
             luid.LowPart = static_cast<DWORD>( m_Adapters.size() );
 
-            m_Adapters.emplace_back( new KmdAdapter( luid, std::forward<ParamsT>( p )... ) );
+            m_Adapters.emplace_back( new KmtAdapter( luid, std::forward<ParamsT>( p )... ) );
 
             return m_Adapters.back();
         }

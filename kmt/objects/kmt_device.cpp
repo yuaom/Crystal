@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "kmd_device.h"
+#include "kmt_device.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         bool Device::Create( D3DKMT_CREATEDEVICE* pKTCreateDevice )

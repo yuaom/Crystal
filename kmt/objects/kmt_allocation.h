@@ -1,11 +1,11 @@
 #pragma once
 #include "../gmm/gmm.h"
-#include "kmd_privatedata.h"
-#include "kmd_handles.h"
+#include "kmt_privatedata.h"
+#include "kmt_handles.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         class Allocation : public KmtObject<Allocation>
         {

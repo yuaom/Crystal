@@ -3,7 +3,7 @@
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         struct D3DDDI_ALLOCATIONINFO_PRIVATE

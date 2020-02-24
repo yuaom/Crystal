@@ -1,73 +1,73 @@
 #include "pch.h"
-#include "kmd_adapter.h"
-#include "kmd_handles.h"
+#include "kmt_adapter.h"
+#include "kmt_handles.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
-#pragma region KmdAdapter
+#pragma region KmtAdapter
 
         ////////////////////////////////////////////////////////////////////////////////
-        KmdAdapter::KmdAdapter( const LUID& luid ) :
+        KmtAdapter::KmtAdapter( const LUID& luid ) :
             m_Handle( KmtHandleManager::Allocate( this ) ),
             m_LUID( luid )
         {
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        KmdAdapter::~KmdAdapter()
+        KmtAdapter::~KmtAdapter()
         {
             KmtHandleManager::Free( m_Handle );
             m_Handle = 0;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        D3DKMT_HANDLE KmdAdapter::GetHandle()
+        D3DKMT_HANDLE KmtAdapter::GetHandle()
         {
             return m_Handle;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        const LUID& KmdAdapter::GetLUID()
+        const LUID& KmtAdapter::GetLUID()
         {
             return m_LUID;
         }
 
 #pragma endregion
-#pragma region KmdAdapterManager
+#pragma region KmtAdapterManager
 
         ////////////////////////////////////////////////////////////////////////////////
-        std::unique_ptr<KmdAdapterManager>    KmdAdapterManager::m_pAdapters = nullptr;
+        std::unique_ptr<KmtAdapterManager>    KmtAdapterManager::m_pAdapters = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
-        void KmdAdapterManager::OnDllProcessAttach()
+        void KmtAdapterManager::OnDllProcessAttach()
         {
             if( m_pAdapters == nullptr )
             {
-                m_pAdapters = std::make_unique<KmdAdapterManager>();
+                m_pAdapters = std::make_unique<KmtAdapterManager>();
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        void KmdAdapterManager::OnDllProcessDetach()
+        void KmtAdapterManager::OnDllProcessDetach()
         {
             m_pAdapters.release();
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        std::unique_ptr<KmdAdapterManager>& KmdAdapterManager::get()
+        std::unique_ptr<KmtAdapterManager>& KmtAdapterManager::get()
         {
             return m_pAdapters;
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        KmdAdapterManager::KmdAdapterManager()
+        KmtAdapterManager::KmtAdapterManager()
         {
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        KmdAdapterManager::~KmdAdapterManager()
+        KmtAdapterManager::~KmtAdapterManager()
         {
         }
     }

@@ -27,7 +27,5 @@
 #include <ntstatus.h>
 #pragma warning( pop )
 
-extern HINSTANCE    g_hInstance;
-
 // Project: Common
 #include "../common/common.h"

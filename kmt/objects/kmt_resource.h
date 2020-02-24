@@ -1,9 +1,9 @@
 #pragma once
-#include "kmd_allocation.h"
+#include "kmt_allocation.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         class Resource
         {

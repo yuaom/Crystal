@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "kmd_display.h"
+#include "kmt_display.h"
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         /// @brief Constructs a display device from a descriptor and pin source

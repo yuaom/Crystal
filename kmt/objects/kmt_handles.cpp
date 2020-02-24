@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "kmd_handles.h"
+#include "kmt_handles.h"
 
 // KmtHandleManager relies on pointer truncation
 #pragma warning( push )
@@ -7,7 +7,7 @@
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
 #pragma region KmtHandleManager
 
@@ -117,7 +117,7 @@ namespace Crystal
             KmtHandleManager* pManager = get();
 
             HANDLE* handle = reinterpret_cast<HANDLE*>( pManager->m_Base + kmtHandle );
-            handle->m_KmdObject = nullptr;
+            handle->m_KmtObject = nullptr;
 
             pManager->m_FreeList.push( kmtHandle );
         }

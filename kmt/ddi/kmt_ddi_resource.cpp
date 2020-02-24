@@ -1,13 +1,13 @@
 #include "pch.h"
-#include "../objects/kmd_resource.h"
-#include "../objects/kmd_privatedata.h"
+#include "../objects/kmt_resource.h"
+#include "../objects/kmt_privatedata.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateAllocation( D3DKMT_CREATEALLOCATION* pCreateAllocation )
 {
     LOG_DLL_ENTRY;
 
-    Crystal::KMD::Resource::Create( pCreateAllocation );
+    Crystal::KMT::Resource::Create( pCreateAllocation );
 
     return STATUS_SUCCESS;
 }
@@ -17,7 +17,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyAllocation( CONST D3DKMT_DESTROYALLOCATI
 {
     LOG_DLL_ENTRY;
 
-    Crystal::KMD::Resource::Destroy( pDestroyAllocation->hResource );
+    Crystal::KMT::Resource::Destroy( pDestroyAllocation->hResource );
 
     return STATUS_SUCCESS;
 }

@@ -2,7 +2,7 @@
 
 namespace Crystal
 {
-    namespace KMD
+    namespace KMT
     {
         ////////////////////////////////////////////////////////////////////////////////
         class KmtHandleManager
@@ -31,7 +31,7 @@ namespace Crystal
 
             union HANDLE
             {
-                HANDLE( void* pObj ) : m_KmdObject( pObj ){}
+                HANDLE( void* pObj ) : m_KmtObject( pObj ){}
 
                 struct
                 {
@@ -39,7 +39,7 @@ namespace Crystal
                     UINT            Reserved;
                 };
 
-                void* m_KmdObject;
+                void* m_KmtObject;
             };
 
             size_t                      m_Base;
@@ -54,7 +54,7 @@ namespace Crystal
         {
             const KmtHandleManager* mgr = get();
             HANDLE* handle = reinterpret_cast<HANDLE*>( mgr->m_Base + kmtHandle );
-            return reinterpret_cast<T*>( handle->m_KmdObject );
+            return reinterpret_cast<T*>( handle->m_KmtObject );
         }
 
         ////////////////////////////////////////////////////////////////////////////////

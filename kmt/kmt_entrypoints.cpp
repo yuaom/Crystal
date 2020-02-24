@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "kmd_entrypoints.h"
-#include "objects/kmd_adapter.h"
-#include "objects/kmd_device.h"
-#include "objects/kmd_context.h"
-#include "objects/kmd_allocation.h"
-#include "objects/kmd_display.h"
+#include "kmt_entrypoints.h"
+#include "objects/kmt_adapter.h"
+#include "objects/kmt_device.h"
+#include "objects/kmt_context.h"
+#include "objects/kmt_allocation.h"
+#include "objects/kmt_display.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDevice )
@@ -13,7 +13,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDev
 
     NTSTATUS result = STATUS_SUCCESS;
 
-    bool success = Crystal::KMD::Device::Create( pKTCreateDevice );
+    bool success = Crystal::KMT::Device::Create( pKTCreateDevice );
 
     if( !success )
     {
@@ -28,7 +28,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTDestroyDevice( CONST D3DKMT_DESTROYDEVICE* pKTD
 {
     LOG_DLL_ENTRY;
 
-    Crystal::KMD::Device::Destroy( pKTDestroyDevice->hDevice );
+    Crystal::KMT::Device::Destroy( pKTDestroyDevice->hDevice );
     
     return STATUS_SUCCESS;
 }
@@ -39,16 +39,16 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTOpenAdapterFromGdiDisplayName(
 {
     LOG_DLL_ENTRY;
 
-    using displays_t = Crystal::KMD::Displays;
+    using displays_t = Crystal::KMT::Displays;
 
     displays_t displays = displays_t();
 
     displays_t::find_result_itr_t display;
     if( displays.FindByName( pOpenAdapterFromGdiDisplayName->DeviceName, display ) )
     {
-        auto& pKmdAdapterManger = Crystal::KMD::KmdAdapterManager::get();
+        auto& pKmtAdapterManger = Crystal::KMT::KmtAdapterManager::get();
 
-        Crystal::KMD::KmdAdapter* pAdapter = pKmdAdapterManger->CreateAdapter();
+        Crystal::KMT::KmtAdapter* pAdapter = pKmtAdapterManger->CreateAdapter();
 
         pOpenAdapterFromGdiDisplayName->hAdapter        = pAdapter->GetHandle();
         pOpenAdapterFromGdiDisplayName->AdapterLuid     = pAdapter->GetLUID();
@@ -83,15 +83,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTQueryAdapterInfo(
         if (pFileNameInfo->Version == KMTUMDVERSION_DX10 ||
             pFileNameInfo->Version == KMTUMDVERSION_DX11)
         {
-            DWORD dw = GetModuleFileNameW(
-                g_hInstance,
-                pFileNameInfo->UmdFileName,
-                _countof( pFileNameInfo->UmdFileName ) );
-
-            if( dw == 0 )
-            {
-                result = STATUS_INVALID_PARAMETER;
-            }
+            wcscpy( pFileNameInfo->UmdFileName, L"CrystalUmd64.dll" );
         }
         else
         {
@@ -167,13 +159,13 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
 
     if( pPresent->Flags.Blt )
     {
-        Crystal::KMD::Context* pContext = Crystal::KMD::Context::FromHandle( pPresent->hContext );
+        Crystal::KMT::Context* pContext = Crystal::KMT::Context::FromHandle( pPresent->hContext );
 
         // For now just synchronize the CPU/GPU, but later will
         // wait on the presentable surface
         while( pContext->m_RenderFenceCPU != pContext->m_RenderFenceGPU ) Sleep( 1 );
 
-        Crystal::KMD::Allocation* pAllocation = Crystal::KMD::Allocation::FromHandle( pPresent->hSource );
+        Crystal::KMT::Allocation* pAllocation = Crystal::KMT::Allocation::FromHandle( pPresent->hSource );
 
         HDC dstDC = GetDC( pPresent->hWindow );
 
@@ -242,7 +234,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTPresent( D3DKMT_PRESENT* pPresent )
 EXTERN_C NTSTATUS APIENTRY D3DKMTCreateContext( D3DKMT_CREATECONTEXT* pCreateContext ) {
     LOG_DLL_ENTRY;
 
-    Crystal::KMD::Context::Create( pCreateContext );
+    Crystal::KMT::Context::Create( pCreateContext );
 
     return STATUS_SUCCESS;
 }

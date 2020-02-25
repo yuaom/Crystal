@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "umd_exports.h"
-#include "umd_adapter.h"
+#include "objects\umd_adapter.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 EXTERN_C HRESULT APIENTRY OpenAdapter10( D3D10DDIARG_OPENADAPTER* arg1 )

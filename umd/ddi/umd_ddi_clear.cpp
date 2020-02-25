@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "umd_device.h"
-#include "umd_encoder.h"
-#include "umd_rtv.h"
+#include "objects\umd_device.h"
+#include "objects\umd_encoder.h"
+#include "views\umd_rtv.h"
 
 namespace Crystal
 {

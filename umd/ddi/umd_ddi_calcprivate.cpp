@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "umd_resource.h"
-#include "umd_rtv.h"
+#include "objects\umd_resource.h"
+#include "views\umd_rtv.h"
 
 namespace Crystal
 {

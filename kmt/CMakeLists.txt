@@ -4,7 +4,7 @@ file(GLOB _SOURCES "*.cpp")
 
 # CrystalKmt DLL
 add_library( CrystalKmt SHARED ${_HEADERS} ${_SOURCES} exports.def )
-target_include_directories( CrystalKmt PRIVATE ${WDK_KM} $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
+target_include_directories( CrystalKmt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${WDK_KM} $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
 
 # CrystalKmt DLL Properties
 set_target_properties( CrystalKmt PROPERTIES OUTPUT_NAME "CrystalKmt64" )

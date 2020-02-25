@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../objects/kmt_context.h"
+#include "objects/kmt_context.h"
 #include "cmds/cmds.h"
 
 ////////////////////////////////////////////////////////////////////////////////

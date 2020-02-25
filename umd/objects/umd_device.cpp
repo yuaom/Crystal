@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "umd_device.h"
-#include "umd_ddi.h"
-#include "kmd_privatedata.h"
+#include "..\ddi\umd_ddi.h"
+#include "kmt_privatedata.h"
 
 namespace Crystal
 {

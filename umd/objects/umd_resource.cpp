@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "umd_resource.h"
-#include "kmd_privatedata.h"
+#include "kmt_privatedata.h"
 
 namespace Crystal
 {
@@ -93,8 +93,8 @@ namespace Crystal
         ////////////////////////////////////////////////////////////////////////////////
         void Resource::Allocate( const D3D11DDIARG_CREATERESOURCE* pCreateResource )
         {
-            KMD::D3DDDI_ALLOCATIONINFO_PRIVATE allocInfoPrivateData;
-            ZeroMemory( &allocInfoPrivateData, sizeof( KMD::D3DDDI_ALLOCATIONINFO_PRIVATE ) );
+            KMT::D3DDDI_ALLOCATIONINFO_PRIVATE allocInfoPrivateData;
+            ZeroMemory( &allocInfoPrivateData, sizeof( KMT::D3DDDI_ALLOCATIONINFO_PRIVATE ) );
             allocInfoPrivateData.pAllocationInfo = m_pAllocationInfo;
 
             // Allocate the Resource
@@ -102,7 +102,7 @@ namespace Crystal
             ZeroMemory( &allocInfo, sizeof( D3DDDI_ALLOCATIONINFO ) );
 
             allocInfo.pPrivateDriverData    = &allocInfoPrivateData;
-            allocInfo.PrivateDriverDataSize = sizeof( KMD::D3DDDI_ALLOCATIONINFO_PRIVATE );
+            allocInfo.PrivateDriverDataSize = sizeof( KMT::D3DDDI_ALLOCATIONINFO_PRIVATE );
 
             D3DDDICB_ALLOCATE allocate = { 0 };
             allocate.hResource          = m_hRTResource.handle;

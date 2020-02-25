@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "umd_cmdbuffer.h"
-#include "kmd_privatedata.h"
+#include "kmt_privatedata.h"
 
 namespace Crystal
 {
@@ -84,15 +84,15 @@ namespace Crystal
 
             GMM::CreateAllocationInfo( m_pAllocationInfo );
 
-            KMD::D3DDDI_ALLOCATIONINFO_PRIVATE allocInfoPrivateData;
-            ZeroMemory( &allocInfoPrivateData, sizeof( KMD::D3DDDI_ALLOCATIONINFO_PRIVATE ) );
+            KMT::D3DDDI_ALLOCATIONINFO_PRIVATE allocInfoPrivateData;
+            ZeroMemory( &allocInfoPrivateData, sizeof( KMT::D3DDDI_ALLOCATIONINFO_PRIVATE ) );
             allocInfoPrivateData.pAllocationInfo = m_pAllocationInfo;
 
             D3DDDI_ALLOCATIONINFO allocInfo;
             ZeroMemory( &allocInfo, sizeof( D3DDDI_ALLOCATIONINFO ) );
 
             allocInfo.pPrivateDriverData    = &allocInfoPrivateData;
-            allocInfo.PrivateDriverDataSize = sizeof( KMD::D3DDDI_ALLOCATIONINFO_PRIVATE );
+            allocInfo.PrivateDriverDataSize = sizeof( KMT::D3DDDI_ALLOCATIONINFO_PRIVATE );
 
             D3DDDICB_ALLOCATE allocate = { 0 };
             allocate.NumAllocations     = 1;

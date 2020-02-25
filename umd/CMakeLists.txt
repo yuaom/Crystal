@@ -8,7 +8,7 @@ target_include_directories( CrystalUmd PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${WDK
 
 # CrystalUmd DLL Properties
 set_target_properties( CrystalUmd PROPERTIES OUTPUT_NAME "CrystalUmd64" )
-set_target_properties( CrystalUmd PROPERTIES FOLDER "umd" )
+set_target_properties( CrystalUmd PROPERTIES FOLDER "Driver" )
 set_target_properties( CrystalUmd PROPERTIES CXX_STANDARD 17 )
 set_target_properties( CrystalUmd PROPERTIES CXX_STANDARD_REQUIRED ON )
 

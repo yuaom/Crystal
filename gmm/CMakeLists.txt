@@ -6,7 +6,7 @@ add_library( GMM STATIC ${_HEADERS} ${_SOURCE} )
 
 target_include_directories( GMM PRIVATE ${WDK_KM} )
 
-set_target_properties( GMM PROPERTIES FOLDER "Crystal")
+set_target_properties( GMM PROPERTIES FOLDER "Driver")
 set_target_properties( GMM PROPERTIES CXX_STANDARD 17)
 set_target_properties( GMM PROPERTIES CXX_STANDARD_REQUIRED ON)
 

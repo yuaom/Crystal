@@ -46,13 +46,11 @@ int main()
 
     if( useSoftware )
     {
-        module = LoadLibrary( "Crystal64.dll" );
+        module = LoadLibrary( "CrystalKmt64.dll" );
         assert( module != NULL );
 
         driverType = D3D_DRIVER_TYPE_SOFTWARE;
 
-        assert( GetProcAddress( module, "OpenAdapter10" ) != NULL );
-        assert( GetProcAddress( module, "OpenAdapter10_2" ) != NULL );
         assert( GetProcAddress( module, "D3DKMTCreateDevice" ) != NULL );
     }
 

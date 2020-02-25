@@ -8,7 +8,7 @@ target_include_directories( CrystalKmt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${WDK
 
 # CrystalKmt DLL Properties
 set_target_properties( CrystalKmt PROPERTIES OUTPUT_NAME "CrystalKmt64" )
-set_target_properties( CrystalKmt PROPERTIES FOLDER "kmt" )
+set_target_properties( CrystalKmt PROPERTIES FOLDER "Driver" )
 set_target_properties( CrystalKmt PROPERTIES CXX_STANDARD 17 )
 set_target_properties( CrystalKmt PROPERTIES CXX_STANDARD_REQUIRED ON )
 

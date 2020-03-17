@@ -30,4 +30,4 @@ namespace RasterCommands = Crystal::Raster::COMMANDS;
 #pragma warning( pop )
 
 // Project: Common
-#include "../common/common.h"
+#include <common.h>

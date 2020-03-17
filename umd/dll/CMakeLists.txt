@@ -5,6 +5,7 @@ file(GLOB _SOURCES "*.cpp")
 add_library( CrystalUmdDLL SHARED ${_HEADERS} ${_SOURCES} exports.def )
 
 # Include Directories
+target_include_directories( CrystalUmdDLL PRIVATE $<TARGET_PROPERTY:Common,SOURCE_DIR> )
 
 # Target Properties
 set_target_properties( CrystalUmdDLL PROPERTIES OUTPUT_NAME "CrystalUmd64" )

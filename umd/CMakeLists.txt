@@ -9,6 +9,7 @@ target_include_directories( CrystalUmd PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
 target_include_directories( CrystalUmd PRIVATE ${WDK_KM} )
 target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
 target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:CrystalKmt,SOURCE_DIR> )
+target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:Common,SOURCE_DIR> )
 
 # Target Properties
 set_target_properties( CrystalUmd PROPERTIES FOLDER "Umd" )

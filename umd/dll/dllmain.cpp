@@ -1,5 +1,4 @@
 #include "dllmain.h"
-#include "../../common/common.h"
 
 BOOL WINAPI DllMain(
     HINSTANCE const instance,

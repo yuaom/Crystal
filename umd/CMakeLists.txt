@@ -1,20 +1,24 @@
-# Add all source files
 file(GLOB _HEADERS "*.h")
 file(GLOB _SOURCES "*.cpp")
 
-# CrystalUmd DLL
-add_library( CrystalUmd SHARED ${_HEADERS} ${_SOURCES} exports.def )
-target_include_directories( CrystalUmd PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${WDK_KM} $<TARGET_PROPERTY:Raster,SOURCE_DIR> $<TARGET_PROPERTY:CrystalKmt,SOURCE_DIR> )
+# CrystalUmd Library
+add_library( CrystalUmd STATIC ${_HEADERS} ${_SOURCES} )
 
-# CrystalUmd DLL Properties
-set_target_properties( CrystalUmd PROPERTIES OUTPUT_NAME "CrystalUmd64" )
-set_target_properties( CrystalUmd PROPERTIES FOLDER "Driver" )
+# Include Directories
+target_include_directories( CrystalUmd PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
+target_include_directories( CrystalUmd PRIVATE ${WDK_KM} )
+target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
+target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:CrystalKmt,SOURCE_DIR> )
+
+# Target Properties
+set_target_properties( CrystalUmd PROPERTIES FOLDER "Umd" )
 set_target_properties( CrystalUmd PROPERTIES CXX_STANDARD 17 )
 set_target_properties( CrystalUmd PROPERTIES CXX_STANDARD_REQUIRED ON )
 
-# Dependencies
+# Linked Libraries & Dependencies
 target_link_libraries( CrystalUmd PUBLIC $<TARGET_FILE:Common> )
 target_link_libraries( CrystalUmd PUBLIC $<TARGET_FILE:GMM> )
+
 add_dependencies( CrystalUmd Common )
 add_dependencies( CrystalUmd GMM )
 
@@ -32,3 +36,7 @@ foreach( src_file ${CRYSTALUMDDLL_FILES} )
     set_source_files_properties( ${src_file} PROPERTIES COMPILE_FLAGS "/Yupch.h" )
 endforeach( src_file ${CRYSTALUMDDLL_FILES} )
 set_source_files_properties( pch.cpp PROPERTIES COMPILE_FLAGS "/Ycpch.h" )
+
+# CrystalUmd DLL/Tests
+add_subdirectory(dll)
+add_subdirectory(tests)

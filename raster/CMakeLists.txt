@@ -14,8 +14,6 @@ add_subdirectory(device)
 get_target_property( CRYSTALRASTER_FILES Raster SOURCES )
 source_group( TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${CRYSTALRASTER_FILES} )
 
-# Raster Dll
+# Raster Dll/Tests
 add_subdirectory(dll)
-
-# Raster Tests
 add_subdirectory(tests)

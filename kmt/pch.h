@@ -28,4 +28,4 @@
 #pragma warning( pop )
 
 // Project: Common
-#include "../common/common.h"
+#include <common.h>

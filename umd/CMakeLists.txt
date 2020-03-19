@@ -38,6 +38,6 @@ foreach( src_file ${CRYSTALUMDDLL_FILES} )
 endforeach( src_file ${CRYSTALUMDDLL_FILES} )
 set_source_files_properties( pch.cpp PROPERTIES COMPILE_FLAGS "/Ycpch.h" )
 
-# CrystalUmd DLL/Tests
+# DLL/Tests
 add_subdirectory(dll)
 add_subdirectory(tests)

@@ -1,7 +1,7 @@
-#include "pch.h"
-#include "objects/kmt_adapter.h"
-#include "objects/kmt_handles.h"
-#include "kmt_entrypoints.h"
+#include <pch.h>
+#include <objects/kmt_adapter.h>
+#include <objects/kmt_handles.h>
+#include <kmt_entrypoints.h>
 
 BOOL WINAPI DllMain(
     HINSTANCE const instance,

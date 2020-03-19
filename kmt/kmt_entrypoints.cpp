@@ -17,6 +17,7 @@ EXTERN_C NTSTATUS APIENTRY D3DKMTCreateDevice( D3DKMT_CREATEDEVICE* pKTCreateDev
 
     if( !success )
     {
+        assert( 0 );
         result = E_FAIL;
     }
 

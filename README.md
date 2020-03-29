@@ -3,7 +3,7 @@ A D3D11 software rasterizer.
 
 Crystal is primarly intended to be an educational tool for those developers interested in implementing parts of the rasterization pipeline or driver stack for a well established API. It is not a D3D11 API compiliant implementation like Microsoft's reference or WARP rasterizers.
 
-The project components are broken up into the their logical stack responsibilities.
+The project's components are broken up into the their logical stack responsibilities.
 
 D3D12 is not currently supported since the benefits and motivation for modern graphics APIs like it are outside the current goals of this project.
 

@@ -1,6 +1,6 @@
-[submodule "google/googletest"]
-	path = google/googletest
+[submodule "tools/google/googletest"]
+	path = tools/google/googletest
 	url = https://github.com/google/googletest.git
-[submodule "google/benchmark"]
-	path = google/benchmark
+[submodule "tools/google/benchmark"]
+	path = tools/google/benchmark
 	url = https://github.com/google/benchmark.git

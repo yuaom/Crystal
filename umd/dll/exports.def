@@ -1,0 +1,4 @@
+LIBRARY CRYSTALUMD64
+EXPORTS
+	OpenAdapter10
+	OpenAdapter10_2

@@ -12,18 +12,18 @@ D3D12 is not currently supported since the benefits and motivation for modern gr
 Crystal is intended to be built with the Microsoft Visual Studio environment and build tools.
 
 1. Install CMake 3.16.0
-1. Install [Visual Studio Community 2019](https://visualstudio.microsoft.com/vs/)
-1. Install the [Windows SDK](https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk)
-1. Install the [Windows WDK](https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk)
-1. Create solution files via Cmake:
+2. Install [Visual Studio Community 2019](https://visualstudio.microsoft.com/vs/)
+3. Install the [Windows SDK](https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk)
+4. Install the [Windows WDK](https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk)
+5. Clone Repository & Build
+   
 ```
+git clone --recurse-submodules https://github.com/tnamet/Crystal
 cd Crystal
 cmake -B ./build -DWDK="C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0"
 ```
 
-Optionally, you can update provided _build\_vs2019\_x64.cmd_. If you installed the WDK to a non-default path, you will need to open and update the WDK environment variable.
-
-See [Build Tips](build.md) for more information.
+Check [build.md](build.md) for known build issues.
 
 # Use
 
@@ -42,7 +42,7 @@ See the Smoke sample for initialization.
 
 # Components
 
-| Acronym | Name  | Description  |
+| Component | Name  | Description  |
 |---|---|---|
 | UMD | Usern Mode Device Driver | Drives creation of GPU work as a result of API calls made by the application.  |
 | KMT | Kernel Mode Thunk Layer | Interface between the OS, DX runtime, UMD, and rasterizer. |

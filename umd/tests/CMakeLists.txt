@@ -5,7 +5,7 @@ file(GLOB _SOURCES "*.cpp")
 add_executable( CrystalUmdTests ${_HEADERS} ${_SOURCES} )
 
 # Include Directories
-target_include_directories( CrystalUmdTests PRIVATE ${WDK_KM} )
+target_include_directories( CrystalUmdTests PRIVATE ${WDK_PATHS} )
 target_include_directories( CrystalUmdTests PRIVATE $<TARGET_PROPERTY:CrystalUmd,SOURCE_DIR> )
 target_include_directories( CrystalUmdTests PRIVATE $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
 target_include_directories( CrystalUmdTests PRIVATE $<TARGET_PROPERTY:Common,SOURCE_DIR> )

@@ -4,7 +4,7 @@ file(GLOB _SOURCE "*.cpp")
 
 add_library( GMM STATIC ${_HEADERS} ${_SOURCE} )
 
-target_include_directories( GMM PRIVATE ${WDK_KM} )
+target_include_directories( GMM PRIVATE ${WDK_PATHS} )
 
 set_target_properties( GMM PROPERTIES FOLDER "Common")
 set_target_properties( GMM PROPERTIES CXX_STANDARD 17)

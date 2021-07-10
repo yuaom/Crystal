@@ -14,13 +14,11 @@ if( NOT DEFINED WDK )
 	message( FATAL_ERROR "WDK Undefined! Please use -DWDK=<path> to define the WDK install path." )
 endif( NOT DEFINED WDK )
 
-set( WDK_KM ${WDK}\\km )
+message( STATUS "" )
+message( STATUS "WDK: ${WDK}")
+message( STATUS "" )
 
-message( STATUS "" )
-message( STATUS "WDK Setup:")
-message( STATUS "    WDK=${WDK}")
-message( STATUS " WDK_KM=${WDK_KM}")
-message( STATUS "" )
+set( WDK_PATHS ${WDK}\\km ${WDK}\\um ${WDK}\\shared )
 
 # Add testing projects
 set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Suppressing benchmark's tests" FORCE)

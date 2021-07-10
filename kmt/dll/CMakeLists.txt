@@ -7,7 +7,7 @@ add_library( CrystalKmtDLL SHARED ${_HEADERS} ${_SOURCES} exports.def )
 # Include Directories
 target_include_directories( CrystalKmtDLL PRIVATE $<TARGET_PROPERTY:Common,SOURCE_DIR> )
 target_include_directories( CrystalKmtDLL PRIVATE $<TARGET_PROPERTY:CrystalKmt,SOURCE_DIR> )
-target_include_directories( CrystalKmtDLL PRIVATE ${WDK_KM} )
+target_include_directories( CrystalKmtDLL PRIVATE ${WDK_PATHS} )
 target_include_directories( CrystalKmtDLL PRIVATE $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
 
 # Target Properties

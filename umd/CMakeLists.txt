@@ -6,7 +6,7 @@ add_library( CrystalUmd STATIC ${_HEADERS} ${_SOURCES} )
 
 # Include Directories
 target_include_directories( CrystalUmd PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
-target_include_directories( CrystalUmd PRIVATE ${WDK_KM} )
+target_include_directories( CrystalUmd PRIVATE ${WDK_PATHS} )
 target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
 target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:CrystalKmt,SOURCE_DIR> )
 target_include_directories( CrystalUmd PRIVATE $<TARGET_PROPERTY:Common,SOURCE_DIR> )

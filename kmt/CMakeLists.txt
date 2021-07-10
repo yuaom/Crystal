@@ -7,7 +7,7 @@ add_library( CrystalKmt STATIC ${_HEADERS} ${_SOURCES} )
 
 # Include Directories
 target_include_directories( CrystalKmt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
-target_include_directories( CrystalKmt PRIVATE ${WDK_KM} )
+target_include_directories( CrystalKmt PRIVATE ${WDK_PATHS} )
 target_include_directories( CrystalKmt PRIVATE $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
 target_include_directories( CrystalKmt PRIVATE $<TARGET_PROPERTY:Common,SOURCE_DIR> )
 

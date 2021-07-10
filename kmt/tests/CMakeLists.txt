@@ -5,7 +5,7 @@ file(GLOB _SOURCES "*.cpp")
 add_executable( CrystalKmtTests ${_HEADERS} ${_SOURCES} )
 
 # Include Directories
-target_include_directories( CrystalKmtTests PRIVATE ${WDK_KM} )
+target_include_directories( CrystalKmtTests PRIVATE ${WDK_PATHS} )
 target_include_directories( CrystalKmtTests PRIVATE $<TARGET_PROPERTY:CrystalKmt,SOURCE_DIR> )
 target_include_directories( CrystalKmtTests PRIVATE $<TARGET_PROPERTY:Raster,SOURCE_DIR> )
 target_include_directories( CrystalKmtTests PRIVATE $<TARGET_PROPERTY:Common,SOURCE_DIR> )
